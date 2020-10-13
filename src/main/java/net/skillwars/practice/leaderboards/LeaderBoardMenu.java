@@ -32,7 +32,7 @@ public class LeaderBoardMenu extends Menu{
 
     @Override
     public String getTitle(Player player){
-        return "§6§lStatistics";
+        return "§9§lEstadisticas";
     }
 
     @Override
@@ -59,7 +59,7 @@ public class LeaderBoardMenu extends Menu{
     }
 
     @AllArgsConstructor
-    private class KitButton extends Button{
+    private class KitButton extends Button {
 
         Kit kit;
 
@@ -75,7 +75,7 @@ public class LeaderBoardMenu extends Menu{
             for(PlayerData playerData : playerDataList2){
                 OfflinePlayer player1 = Bukkit.getOfflinePlayer(playerData.getUniqueId());
                 if(pos == 1 || pos == 2 || pos == 3){
-                    lore.add(Style.YELLOW + pos + " " + Style.GRAY + player1.getName() + ": " + Style.RESET + playerData.getElo(kit.getName()));
+                    lore.add(Style.DARK_AQUA + pos + " " + Style.GRAY + player1.getName() + ": " + Style.RESET + playerData.getElo(kit.getName()));
                 }else{
                     lore.add(Style.GRAY + pos + " " + player1.getName() + ": " + Style.RESET + playerData.getElo(kit.getName()));
                 }
@@ -83,7 +83,7 @@ public class LeaderBoardMenu extends Menu{
             }
 
             return new ItemBuilder(kit.getIcon().getType())
-                    .name(Style.GOLD + kit.getName() + Style.RESET + " Top 10")
+                    .name(Style.WHITE + "Top 10 " + Style.BLUE + kit.getName())
                     .durability(kit.getIcon().getDurability())
                     .lore(lore).build();
         }
@@ -101,15 +101,15 @@ public class LeaderBoardMenu extends Menu{
 
             Practice.getInstance().getKitManager().getKits().forEach(kit -> {
                 if(kit.isRanked()){
-                    lore.add(Style.YELLOW + kit.getName() + Style.GRAY +": " + Style.RESET + playerData.getElo(kit.getName()));
+                    lore.add(Style.AQUA + kit.getName() + Style.GRAY +": " + Style.RESET + playerData.getElo(kit.getName()));
                 }
             });
 
-            lore.add(Style.GOLD + "Global" + Style.GRAY + ": " + Style.RESET + playerData.getGlobalStats("ELO"));
+            lore.add(Style.DARK_AQUA + "Global" + Style.GRAY + ": " + Style.RESET + playerData.getGlobalStats("ELO"));
 
             ItemStack item = new ItemBuilder(Material.SKULL_ITEM)
                     .durability(3)
-                    .name(Style.GOLD + target.getName() + Style.GRAY + " Statistics")
+                    .name(Style.GRAY + "Estadisticas de " + Style.BLUE + target.getName())
                     .lore(lore)
                     .build();
 
@@ -134,7 +134,7 @@ public class LeaderBoardMenu extends Menu{
             for(PlayerData playerData : playerDataList2){
                 OfflinePlayer player1 = Bukkit.getOfflinePlayer(playerData.getUniqueId());
                 if(pos == 1 || pos == 2 || pos == 3){
-                    lore.add(Style.YELLOW + pos + " " + Style.GRAY + player1.getName() + ": " + Style.RESET + playerData.getGlobalStats("ELO"));
+                    lore.add(Style.DARK_AQUA + pos + " " + Style.GRAY + player1.getName() + ": " + Style.RESET + playerData.getGlobalStats("ELO"));
                 }else{
                     lore.add(Style.GRAY + pos + " " + player1.getName() + ": " + Style.RESET + playerData.getGlobalStats("ELO"));
                 }
@@ -142,7 +142,7 @@ public class LeaderBoardMenu extends Menu{
             }
 
             return new ItemBuilder(Material.NETHER_STAR)
-                    .name(Style.GOLD + "Global " + Style.RESET + " Top 10")
+                    .name(Style.WHITE + "Top 10 " + Style.BLUE + "Global")
                     .lore(lore)
                     .build();
         }

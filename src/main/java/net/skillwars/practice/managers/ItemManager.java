@@ -23,26 +23,25 @@ public class ItemManager {
 
     public ItemManager() {
         this.spawnItems = new ItemStack[]{
-                ItemUtil.createItem(Material.IRON_SWORD, CC.YELLOW + "Join Unranked Queue"),
+                ItemUtil.createItem(Material.IRON_SWORD, CC.YELLOW + "Join UnRanked Queue"),
                 ItemUtil.createItem(Material.DIAMOND_SWORD, CC.GREEN + "Join Ranked Queue"),
-//                ItemUtil.createItem(Material.GOLD_SWORD, CC.YELLOW + "FFA"),
-                ItemUtil.createItem(Material.BLAZE_ROD, CC.GREEN + "Events"),
+                ItemUtil.createItem(Material.EMPTY_MAP, CC.GREEN + "Events"),
+                null,
+                ItemUtil.createItem(Material.NETHER_STAR, CC.YELLOW + "Statistics"),
                 null,
                 ItemUtil.createItem(Material.NAME_TAG, CC.PRIMARY + "Create Party"),
-                null,
-                ItemUtil.createItem(Material.BEACON, CC.YELLOW + "Statistics"),
-                ItemUtil.createItem(Material.WATCH, CC.PRIMARY + "Settings"),
+                ItemUtil.createItem(Material.COMPASS, CC.PRIMARY + "Settings"),
                 ItemUtil.createItem(Material.BOOK, CC.GOLD + "Edit Kits"),
         };
         this.spawnItems2 = new ItemStack[]{
-                ItemUtil.createItem(Material.IRON_SWORD, CC.YELLOW + "Join Unranked Queue"),
+                ItemUtil.createItem(Material.IRON_SWORD, CC.YELLOW + "Join UnRanked Queue"),
                 ItemUtil.createItem(Material.DIAMOND_SWORD, CC.GREEN + "Join Ranked Queue"),
                 null,
                 null,
                 ItemUtil.createItem(Material.NAME_TAG, CC.PRIMARY + "Create Party"),
                 null,
                 null,
-                ItemUtil.createItem(Material.WATCH, CC.PRIMARY + "Settings"),
+                ItemUtil.createItem(Material.COMPASS, CC.PRIMARY + "Settings"),
                 ItemUtil.createItem(Material.BOOK, CC.GOLD + "Edit Kits"),
         };
         this.queueItems = new ItemStack[]{
@@ -101,7 +100,7 @@ public class ItemManager {
                 ItemUtil.createItem(Material.NETHER_STAR, CC.RED + "Leave Event"),
         };
         this.partyItems = new ItemStack[]{
-                ItemUtil.createItem(Material.IRON_SWORD, CC.YELLOW + "Join 2v2 Unranked Queue"),
+                ItemUtil.createItem(Material.IRON_SWORD, CC.YELLOW + "Join 2v2 UnRanked Queue"),
                 ItemUtil.createItem(Material.DIAMOND_SWORD, CC.GREEN + "Join 2v2 Ranked Queue"),
                 ItemUtil.createItem(Material.BONE, CC.YELLOW + "Settings"),
                 null,

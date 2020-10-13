@@ -102,8 +102,8 @@ public class TournamentRunnable extends BukkitRunnable {
                         Player leaderA = this.plugin.getServer().getPlayer(teamA.getLeader());
                         Player leaderB = this.plugin.getServer().getPlayer(teamB.getLeader());
 
-                        match.broadcast(CC.PRIMARY + "Starting a match with kit " + CC.SECONDARY + kit.getName() +
-                                CC.PRIMARY + " between " + CC.SECONDARY + leaderA.getName() + CC.PRIMARY + " and " + CC.SECONDARY + leaderB.getName() + CC.PRIMARY + ".");
+                        match.broadcast(CC.PRIMARY + "Empezando la pelea con el kit " + CC.SECONDARY + kit.getName() +
+                                CC.PRIMARY + " entre " + CC.SECONDARY + leaderA.getName() + CC.PRIMARY + " y " + CC.SECONDARY + leaderB.getName() + CC.PRIMARY + ".");
 
                         this.plugin.getMatchManager().createMatch(match);
 
@@ -114,23 +114,23 @@ public class TournamentRunnable extends BukkitRunnable {
                         for (UUID playerUUID : teamA.getAlivePlayers()) {
                             Player player = this.plugin.getServer().getPlayer(playerUUID);
 
-                            player.sendMessage(CC.PRIMARY + "You will be byed this round.");
+                            player.sendMessage(CC.PRIMARY + "No podras participar esta ronda.");
                         }
                     }
                 }
 
                 StringBuilder builder = new StringBuilder();
 
-                builder.append(CC.SECONDARY).append("Round ").append(this.tournament.getCurrentRound()).append(CC.PRIMARY).append(" has started!\n");
-                builder.append(CC.PRIMARY).append("Tip: Use ").append(CC.SECONDARY).append("/tournament status ").append(this.tournament.getId()).append(CC.PRIMARY)
-                        .append(" to see who's fighting + the status of the tournament!");
+                builder.append(CC.SECONDARY).append("Ronda ").append(this.tournament.getCurrentRound()).append(CC.PRIMARY).append(" ha iniciado!\n");
+                builder.append(CC.PRIMARY).append("Tip: Usa ").append(CC.SECONDARY).append("/tournament status ").append(this.tournament.getId()).append(CC.PRIMARY)
+                        .append(" para ver las peleas + el estado del tournament!");
 
                 this.tournament.broadcastWithSound(builder.toString(), Sound.FIREWORK_BLAST);
 
                 this.tournament.setTournamentState(TournamentState.FIGHTING);
             } else if ((countdown % 5 == 0 || countdown < 5) && countdown > 0) {
-                this.tournament.broadcastWithSound(CC.SECONDARY + "Round " + this.tournament.getCurrentRound() + CC.PRIMARY
-                        + " is starting in " + CC.SECONDARY + countdown + CC.PRIMARY + " seconds!", Sound.CLICK);
+                this.tournament.broadcastWithSound(CC.SECONDARY + "Ronda " + this.tournament.getCurrentRound() + CC.PRIMARY
+                        + " se iniciara en " + CC.SECONDARY + countdown + CC.PRIMARY + " segundos!", Sound.CLICK);
             }
         }
     }

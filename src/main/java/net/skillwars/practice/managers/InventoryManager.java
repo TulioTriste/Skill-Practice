@@ -29,28 +29,28 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
 public class InventoryManager {
-    private static final String MORE_PLAYERS = ChatColor.RED + "There must be at least 2 players in your party to do this.";
+    private static final String MORE_PLAYERS = ChatColor.RED + "Debe haber al menos 2 jugadores en tu party para hacer esto.";
 
     private final Practice plugin = Practice.getInstance();
 
-    @Getter
-    private final InventoryUI unrankedInventory = new InventoryUI(CC.PRIMARY + "Select an UnRanked Ladder", true, 2);
-    @Getter
-    private final InventoryUI rankedInventory = new InventoryUI(CC.PRIMARY + "Select a Ranked Ladder", true, 2);
-    @Getter
-    private final InventoryUI editorInventory = new InventoryUI(CC.PRIMARY + "Select an Editable Ladder", true, 2);
-    @Getter
-    private final InventoryUI duelInventory = new InventoryUI(CC.PRIMARY + "Select a Duel Ladder", true, 2);
-    @Getter
-    private final InventoryUI partySplitInventory = new InventoryUI(CC.PRIMARY + "Select a Party Split Kit", true, 2);
-    @Getter
-    private final InventoryUI partyFFAInventory = new InventoryUI(CC.PRIMARY + "Select a Party FFA Kit", true, 2);
-    //@Getter
-    //private final InventoryUI redroverInventory = new InventoryUI(ChatColor.RED + "Select a Redrover Kit", true, 2);
-    @Getter
-    private final InventoryUI partyEventInventory = new InventoryUI(CC.PRIMARY + "Select an Event", true, 1);
-    @Getter
-    private final InventoryUI partyInventory = new InventoryUI(CC.PRIMARY + "Duel a Party", true, 6);
+    @Getter private final InventoryUI unrankedInventory = new InventoryUI(CC.PRIMARY + "Select an UnRanked Ladder", true, 2);
+
+    @Getter private final InventoryUI rankedInventory = new InventoryUI(CC.PRIMARY + "Select a Ranked Ladder", true, 2);
+
+    @Getter private final InventoryUI editorInventory = new InventoryUI(CC.PRIMARY + "Select an Editable Ladder", true, 2);
+
+    @Getter private final InventoryUI duelInventory = new InventoryUI(CC.PRIMARY + "Select a Duel Ladder", true, 2);
+
+    @Getter private final InventoryUI partySplitInventory = new InventoryUI(CC.PRIMARY + "Select a Party Split Kit", true, 2);
+
+    @Getter private final InventoryUI partyFFAInventory = new InventoryUI(CC.PRIMARY + "Select a Party FFA Kit", true, 2);
+
+    //@Getter private final InventoryUI redroverInventory = new InventoryUI(ChatColor.RED + "Select a Redrover Kit", true, 2);
+
+    @Getter private final InventoryUI partyEventInventory = new InventoryUI(CC.PRIMARY + "Select an Event", true, 1);
+
+    @Getter private final InventoryUI partyInventory = new InventoryUI(CC.PRIMARY + "Duel a Party", true, 6);
+    @Getter private final InventoryUI partySettingsInventory = new InventoryUI(CC.PRIMARY + "Settings Party", true, 1);
 
     private final Map<String, InventoryUI> duelMapInventories = new HashMap<>();
     private final Map<String, InventoryUI> partyFFAMapInventories = new HashMap<>();
@@ -99,7 +99,7 @@ public class InventoryManager {
                             Player player = (Player) event.getWhoClicked();
 
                             if (kit.getKitEditContents()[0] == null) {
-                                player.sendMessage(ChatColor.RED + "This kit is not editable.");
+                                player.sendMessage(ChatColor.RED + "Este kit no se encuentra editable.");
                                 player.closeInventory();
                                 return;
                             }
@@ -292,8 +292,8 @@ public class InventoryManager {
 
         return ItemUtil.reloreItem(itemStack,
         		"",
-        		CC.GRAY + " » " + CC.PRIMARY + "In Queued: " + CC.WHITE + queueSize,
-                CC.GRAY + " » " + CC.PRIMARY + "In Match: " + CC.WHITE + inGameSize);
+        		CC.GRAY + " » " + CC.PRIMARY + "En Queue: " + CC.WHITE + queueSize,
+                CC.GRAY + " » " + CC.PRIMARY + "En Pelea: " + CC.WHITE + inGameSize);
     }
 
     private void addToQueue(Player player, PlayerData playerData, Kit kit, Party party, QueueType queueType) {
@@ -467,7 +467,7 @@ public class InventoryManager {
         if (kitMap != null && kitMap.containsKey(kitIndex)) {
             kitMap.get(kitIndex).setContents(player.getInventory().getContents().clone());
             player.sendMessage(
-                    CC.PRIMARY + "Successfully saved kit " + CC.SECONDARY + kitIndex + CC.PRIMARY + ".");
+                    CC.PRIMARY + "Kit guardado correctamente " + CC.SECONDARY + kitIndex + CC.PRIMARY + ".");
             return;
         }
 
@@ -475,7 +475,7 @@ public class InventoryManager {
                 kit.getName() + " Kit " + kitIndex);
         playerData.addPlayerKit(kitIndex, playerKit);
 
-        player.sendMessage(CC.PRIMARY + "Successfully saved kit " + CC.SECONDARY + kitIndex + CC.PRIMARY + ".");
+        player.sendMessage(CC.PRIMARY + "Kit guardado correctamente " + CC.SECONDARY + kitIndex + CC.PRIMARY + ".");
     }
 
     private void handleLoadKit(Player player, int kitIndex, Map<Integer, PlayerKit> kitMap) {
@@ -498,7 +498,7 @@ public class InventoryManager {
             this.plugin.getEditorManager().addRenamingKit(player.getUniqueId(), kitMap.get(kitIndex));
 
             player.closeInventory();
-            player.sendMessage(CC.PRIMARY + "Enter a name for this kit (chat colors are also applicable).");
+            player.sendMessage(CC.PRIMARY + "Inserta un nombre para este kit (los colores de chat tambien son aplicables).");
         }
     }
 
@@ -509,7 +509,7 @@ public class InventoryManager {
             kitMap.remove(kitIndex);
 
             player.sendMessage(
-                    CC.PRIMARY + "Successfully removed kit " + CC.SECONDARY + kitIndex + CC.PRIMARY + ".");
+                    CC.PRIMARY + "Kit removido correctamente " + CC.SECONDARY + kitIndex + CC.PRIMARY + ".");
 
             inventory.setItem(kitIndex + 1, 2, null);
             inventory.setItem(kitIndex + 1, 3, null);
@@ -529,7 +529,7 @@ public class InventoryManager {
         PlayerData targetData = this.plugin.getPlayerManager().getPlayerData(selected.getUniqueId());
 
         if (targetData.getPlayerState() != PlayerState.SPAWN) {
-            player.sendMessage(CC.RED + "Player is not in spawn.");
+            player.sendMessage(CC.RED + "Este jugador no se encuentra en el Spawn.");
             return;
         }
 
@@ -540,7 +540,7 @@ public class InventoryManager {
 
         if (partyDuel) {
             if (targetParty == null) {
-                player.sendMessage(CC.RED + "That player is not in a party.");
+                player.sendMessage(CC.RED + "Este jugador no se encuentra en una Party.");
                 return;
             }
         }
@@ -560,7 +560,7 @@ public class InventoryManager {
         } else {
             Arena arena = this.plugin.getArenaManager().getRandomArena(kit);
             if (arena == null) {
-                player.sendMessage(CC.RED + "No available arenas found.");
+                player.sendMessage(CC.RED + "No hay arenas disponibles.");
                 return;
             }
 
@@ -589,12 +589,12 @@ public class InventoryManager {
         }
         player.closeInventory();
         if (party.getMembers().size() < 4) {
-            player.sendMessage(ChatColor.RED + "There must be at least 4 players in your party to do this.");
+            player.sendMessage(ChatColor.RED + "Debe haber al menos 4 jugadores en tu party para hacer esto.");
         } else {
             Arena arena = this.plugin.getArenaManager().getRandomArena(kit);
 
             if (arena == null) {
-                player.sendMessage(ChatColor.RED + "There are no arenas available at this moment.");
+                player.sendMessage(ChatColor.RED + "No hay arenas disponibles en este momento.");
                 return;
             }
 
@@ -612,7 +612,7 @@ public class InventoryManager {
 
         PlayerData targetData = this.plugin.getPlayerManager().getPlayerData(selected.getUniqueId());
         if (targetData.getPlayerState() != PlayerState.SPAWN) {
-            player.sendMessage(CC.RED + "Player is not in spawn.");
+            player.sendMessage(CC.RED + "Este jugador no se encuentra en el Spawn.");
             return;
         }
 
@@ -620,12 +620,12 @@ public class InventoryManager {
         Party party = this.plugin.getPartyManager().getParty(player.getUniqueId());
         boolean partyDuel = party != null;
         if (partyDuel && targetParty == null) {
-            player.sendMessage(ChatColor.RED + "That player is not in a party.");
+            player.sendMessage(ChatColor.RED + "Este jugador no se encuentra en una Party.");
             return;
         }
         if (InventoryManager.this.plugin.getMatchManager().getMatchRequest(player.getUniqueId(), selected.getUniqueId()) != null) {
             player.sendMessage(
-                    CC.RED + "You already sent a match request to that player. Please wait until it expires.");
+                    CC.RED + "Ya enviaste una solicitud de pelea a ese jugador. Espere hasta que caduque.");
             return;
         }
 
@@ -679,26 +679,26 @@ public class InventoryManager {
         player.closeInventory();
 
         Clickable requestMessage = new Clickable(
-                CC.SECONDARY + player.getName() + CC.PRIMARY + " has sent you a " + (partyDuel ? "party" : "")
-                        + "duel request" + (kit.getName() != null ? " with kit " + CC.SECONDARY + kit.getName() + CC.PRIMARY
+                CC.SECONDARY + player.getName() + CC.PRIMARY + " Te ha enviado un " + (partyDuel ? "party" : "")
+                        + "duelo" + (kit.getName() != null ? " con el kit " + CC.SECONDARY + kit.getName() + CC.PRIMARY
                         : "")
-                        + (arena == null ? "" : " on arena " + arena.getName()) + ". "
-                        + CC.GREEN + "[Accept]",
-                CC.GREEN + "Click to accept",
+                        + (arena == null ? "" : " en la arena " + arena.getName()) + ". "
+                        + CC.GREEN + "[Aceptar]",
+                CC.GREEN + "Clic para aceptar",
                 "/accept " + player.getName() + " " + kit.getName());
 
         if (partyDuel) {
             targetParty.members().forEach(requestMessage::sendToPlayer);
 
-            party.broadcast(CC.PRIMARY + "Sent a party duel request to " + CC.SECONDARY + selected.getName()
-                    + CC.PRIMARY + "'s party with kit " + CC.SECONDARY + kit.getName() + CC.PRIMARY
-                    + (arena == null ? "" : CC.PRIMARY + " on arena " + arena.getName()) + ".");
+            party.broadcast(CC.PRIMARY + "Has enviado un duelo a " + CC.SECONDARY + selected.getName()
+                    + CC.PRIMARY + "'s party con el kit " + CC.SECONDARY + kit.getName() + CC.PRIMARY
+                    + (arena == null ? "" : CC.PRIMARY + " en la arena " + arena.getName()) + ".");
         } else {
             requestMessage.sendToPlayer(selected);
             player.sendMessage(
-                    CC.PRIMARY + "Sent a duel request to " + CC.SECONDARY + selected.getName() + CC.PRIMARY
-                            + " with kit " + CC.SECONDARY + kit.getName() + CC.PRIMARY
-                            + (arena == null ? "" : CC.PRIMARY + " on arena " + arena.getName()) + ".");
+                    CC.PRIMARY + "Has enviado un duelo a " + CC.SECONDARY + selected.getName() + CC.PRIMARY
+                            + " con el kit " + CC.SECONDARY + kit.getName() + CC.PRIMARY
+                            + (arena == null ? "" : CC.PRIMARY + " en la arena " + arena.getName()) + ".");
         }
     }
 
@@ -708,9 +708,9 @@ public class InventoryManager {
         Player leaderA = this.plugin.getServer().getPlayer(teams[0].getLeader());
         Player leaderB = this.plugin.getServer().getPlayer(teams[1].getLeader());
 
-        match.broadcast(CC.PRIMARY + "Starting a party split match with kit " + CC.SECONDARY + kit.getName()
-                + CC.PRIMARY + " and arena " + CC.SECONDARY + arena.getName() + CC.PRIMARY + " between "
-                + CC.SECONDARY + leaderA.getName() + CC.PRIMARY + "'s team and " + CC.SECONDARY + leaderB.getName()
+        match.broadcast(CC.PRIMARY + "Ha enviado un duelo de Split Party de " + CC.SECONDARY + kit.getName()
+                + CC.PRIMARY + " y la arena " + CC.SECONDARY + arena.getName() + CC.PRIMARY + " entre "
+                + CC.SECONDARY + leaderA.getName() + CC.PRIMARY + "'s team y " + CC.SECONDARY + leaderB.getName()
                 + CC.PRIMARY + "'s team.");
 
         this.plugin.getMatchManager().createMatch(match);
@@ -720,8 +720,8 @@ public class InventoryManager {
         MatchTeam team = new MatchTeam(party.getLeader(), Lists.newArrayList(party.getMembers()), 0);
         Match match = new Match(arena, kit, QueueType.UNRANKED, team);
 
-        match.broadcast(CC.PRIMARY + "Starting a party FFA match with kit " + CC.SECONDARY
-                + kit.getName() + CC.PRIMARY + " and arena " + CC.SECONDARY + arena.getName()
+        match.broadcast(CC.PRIMARY + "Ha enviado una pelea de FFA Party de " + CC.SECONDARY
+                + kit.getName() + CC.PRIMARY + " y la arena " + CC.SECONDARY + arena.getName()
                 + CC.PRIMARY + ".");
 
         this.plugin.getMatchManager().createMatch(match);
@@ -733,9 +733,9 @@ public class InventoryManager {
         Player leaderA = this.plugin.getServer().getPlayer(teams[0].getLeader());
         Player leaderB = this.plugin.getServer().getPlayer(teams[1].getLeader());
 
-        match.broadcast(CC.PRIMARY + "Starting a redrover match with kit " + CC.SECONDARY + kit.getName()
-                + CC.PRIMARY + " and arena " + CC.SECONDARY + arena.getName() + CC.PRIMARY + " between "
-                + CC.SECONDARY + leaderA.getName() + CC.PRIMARY + "'s team and " + CC.SECONDARY + leaderB.getName()
+        match.broadcast(CC.PRIMARY + "Ha enviado una pelea de Redrover Party de " + CC.SECONDARY + kit.getName()
+                + CC.PRIMARY + " y la arena " + CC.SECONDARY + arena.getName() + CC.PRIMARY + " entre "
+                + CC.SECONDARY + leaderA.getName() + CC.PRIMARY + "'s team y " + CC.SECONDARY + leaderB.getName()
                 + CC.PRIMARY + "'s team.");
 
         this.plugin.getMatchManager().createMatch(match);

@@ -131,26 +131,26 @@ public class MatchManager {
             return;
         }
 
-        String deathMessage = CC.SECONDARY + player.getName() + CC.PRIMARY + " was " +
-                (killer != null ? "slain by " + CC.SECONDARY + killer.getName() + CC.PRIMARY :
-                        "killed") + "!";
+        String deathMessage = CC.SECONDARY + player.getName() + CC.PRIMARY + " ha " +
+                (killer != null ? "sido asesinado por " + CC.SECONDARY + killer.getName() + CC.PRIMARY :
+                        "muerto") + "!";
 
         match.broadcast(deathMessage);
 
         if (match.isRedrover()) {
             if (match.getMatchState() != MatchState.SWITCHING) {
-                Clickable inventories = new Clickable(CC.PRIMARY + "Inventories: ");
+                Clickable inventories = new Clickable(CC.PRIMARY + "Inventarios: ");
                 if (killer != null) {
                     InventorySnapshot snapshot = new InventorySnapshot(killer, match);
                     this.plugin.getInventoryManager().addSnapshot(snapshot);
                     inventories.add(CC.GREEN + killer.getName() + " ",
-                            CC.PRIMARY + "View Inventory",
+                            CC.PRIMARY + "Ver inventario",
                             "/inv " + snapshot.getSnapshotId());
                 }
                 InventorySnapshot snapshot = new InventorySnapshot(player, match);
                 this.plugin.getInventoryManager().addSnapshot(snapshot);
                 inventories.add(CC.RED + player.getName() + " ",
-                        CC.PRIMARY + "View Inventory",
+                        CC.PRIMARY + "Ver inventario",
                         "/inv " + snapshot.getSnapshotId());
                 match.broadcast(inventories);
                 match.setMatchState(MatchState.SWITCHING);
@@ -346,7 +346,7 @@ public class MatchManager {
             if (!match.haveSpectated(player.getUniqueId())) {
                 match.getTeams().forEach(team -> team.alivePlayers().forEach(player2 -> {
                     if(!player.hasPermission("practice.staff")){
-                        player2.sendMessage(CC.SECONDARY + player.getName() + CC.PRIMARY + " is no longer spectating.");
+                        player2.sendMessage(CC.SECONDARY + player.getName() + CC.PRIMARY + " ya no esta Especteando.");
                     }
                 }));
                 match.addHaveSpectated(player.getUniqueId());

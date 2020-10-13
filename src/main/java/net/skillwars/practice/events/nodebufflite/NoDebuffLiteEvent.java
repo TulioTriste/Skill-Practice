@@ -2,11 +2,13 @@ package net.skillwars.practice.events.nodebufflite;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import me.joeleoli.nucleus.Nucleus;
 import net.skillwars.practice.Practice;
 import net.skillwars.practice.events.EventCountdownTask;
 import net.skillwars.practice.events.PracticeEvent;
 import net.skillwars.practice.kit.Kit;
 import net.skillwars.practice.player.PlayerData;
+import net.skillwars.practice.util.CC;
 import net.skillwars.practice.util.CustomLocation;
 import net.skillwars.practice.util.PlayerUtil;
 
@@ -107,7 +109,7 @@ public class NoDebuffLiteEvent extends PracticeEvent<NoDebuffLitePlayer> {
                 ((CraftPlayer) player).getHandle().playerConnection.player.setFakingDeath(false);*/
                 player.spigot().respawn();
 
-                sendMessage(ChatColor.YELLOW + "(Event) " + ChatColor.RED + player.getName() + ChatColor.GRAY + " has been eliminated" + (killer == null ? "." : " by " + ChatColor.GREEN + killer.getName()));
+                sendMessage(ChatColor.RED + player.getName() + ChatColor.GRAY + " ha sido eliminado" + (killer == null ? "." : " por " + ChatColor.GREEN + killer.getName()));
 
                 if (this.getByState(NoDebuffLitePlayer.MiniNoDebuffState.WAITING).size() == 1) {
                     Player winner = Bukkit.getPlayer(this.getByState(NoDebuffLitePlayer.MiniNoDebuffState.WAITING).get(0));
@@ -115,10 +117,8 @@ public class NoDebuffLiteEvent extends PracticeEvent<NoDebuffLitePlayer> {
                     PlayerData winnerData = Practice.getInstance().getPlayerManager().getPlayerData(winner.getUniqueId());
                     winnerData.setSumoEventWins(winnerData.getSumoEventWins() + 1);
 
-                    for (int i = 0; i <= 2; i++) {
-                        String announce = ChatColor.YELLOW + "(Event) " + ChatColor.GREEN.toString() + "Winner: " + winner.getName();
-                        Bukkit.broadcastMessage(announce);
-                    }
+                    String announce = ChatColor.YELLOW + "(Event) " + ChatColor.GREEN.toString() + "Winner: " + winner.getName();
+                    Bukkit.broadcastMessage(announce);
 
                     this.fighting.clear();
                     end();
@@ -143,9 +143,11 @@ public class NoDebuffLiteEvent extends PracticeEvent<NoDebuffLitePlayer> {
 
             PlayerData winnerData = Practice.getInstance().getPlayerManager().getPlayerData(winner.getUniqueId());
             //winnerData.setSumoEventWins(winnerData.getSumoEventWins() + 1);
+            String winnerChat = CC.translate(Nucleus.getInstance().getChat().getPlayerPrefix(winner) + winner.getName());
 
-            String announce = ChatColor.YELLOW + "(Event) " + ChatColor.GREEN.toString() + "Winner: " + winner.getName();
-            Bukkit.broadcastMessage(announce);
+            Bukkit.broadcastMessage("");
+            Bukkit.broadcastMessage(ChatColor.DARK_AQUA.toString() + ChatColor.BOLD + "NoDebuffLite Event " + ChatColor.AQUA.toString() + "Ganador: " + winnerChat);
+            Bukkit.broadcastMessage("");
 
             this.fighting.clear();
             end();
@@ -160,7 +162,7 @@ public class NoDebuffLiteEvent extends PracticeEvent<NoDebuffLitePlayer> {
             return;
         }
 
-        sendMessage(ChatColor.YELLOW + "(Event) " + ChatColor.GRAY + "Selecting random players...");
+        sendMessage(ChatColor.DARK_AQUA.toString() + ChatColor.BOLD + "NoDebuffLite Event " + ChatColor.GRAY + "Seleccionando jugadores randoms...");
 
         this.fighting.clear();
 
@@ -209,7 +211,7 @@ public class NoDebuffLiteEvent extends PracticeEvent<NoDebuffLitePlayer> {
         picked1.showPlayer(picked2);
         picked2.showPlayer(picked1);
 
-        sendMessage(ChatColor.YELLOW + "Starting event match. " + ChatColor.GREEN + "(" + picked1.getName() + " vs " + picked2.getName() + ")");
+        sendMessage(ChatColor.YELLOW + "Empezando la Pelea. " + ChatColor.GREEN + "(" + picked1.getName() + " vs " + picked2.getName() + ")");
 
         BukkitTask task = new MiniNoDebuffFightTask(picked1, picked2, picked1Data, picked2Data).runTaskTimer(getPlugin(), 0, 20);
 
@@ -262,13 +264,13 @@ public class NoDebuffLiteEvent extends PracticeEvent<NoDebuffLitePlayer> {
             }
 
             if (time == 90) {
-                PlayerUtil.sendMessage(ChatColor.YELLOW + "The match starts in " + ChatColor.GREEN + 3 + ChatColor.YELLOW + "...", player, other);
+                PlayerUtil.sendMessage(ChatColor.AQUA + "La pelea iniciara en " + ChatColor.GREEN + 3 + ChatColor.AQUA + "...", player, other);
             } else if (time == 89) {
-                PlayerUtil.sendMessage(ChatColor.YELLOW + "The match starts in " + ChatColor.GREEN + 2 + ChatColor.YELLOW + "...", player, other);
+                PlayerUtil.sendMessage(ChatColor.AQUA + "La pelea iniciara en " + ChatColor.GREEN + 2 + ChatColor.AQUA + "...", player, other);
             } else if (time == 88) {
-                PlayerUtil.sendMessage(ChatColor.YELLOW + "The match starts in " + ChatColor.GREEN + 1 + ChatColor.YELLOW + "...", player, other);
+                PlayerUtil.sendMessage(ChatColor.AQUA + "La pelea iniciara en " + ChatColor.GREEN + 1 + ChatColor.AQUA + "...", player, other);
             } else if (time == 87) {
-                PlayerUtil.sendMessage(ChatColor.GREEN + "The match has started, good luck!", player, other);
+                PlayerUtil.sendMessage(ChatColor.GREEN + "La pelea ha iniciado, buena suerte!", player, other);
                 this.otherSumo.setState(NoDebuffLitePlayer.MiniNoDebuffState.FIGHTING);
                 this.playerSumo.setState(NoDebuffLitePlayer.MiniNoDebuffState.FIGHTING);
             } else if (time <= 0) {
@@ -281,9 +283,9 @@ public class NoDebuffLiteEvent extends PracticeEvent<NoDebuffLitePlayer> {
             }
 
             if (Arrays.asList(30, 25, 20, 15, 10).contains(time)) {
-                PlayerUtil.sendMessage(ChatColor.YELLOW + "The match ends in " + ChatColor.GREEN + time + ChatColor.YELLOW + "...", player, other);
+                PlayerUtil.sendMessage(ChatColor.YELLOW + "La pelea se terminara en " + ChatColor.GREEN + time + ChatColor.YELLOW + "...", player, other);
             } else if (Arrays.asList(5, 4, 3, 2, 1).contains(time)) {
-                PlayerUtil.sendMessage(ChatColor.YELLOW + "The match is ending in " + ChatColor.GREEN + time + ChatColor.YELLOW + "...", player, other);
+                PlayerUtil.sendMessage(ChatColor.YELLOW + "La pelea terminara en " + ChatColor.GREEN + time + ChatColor.YELLOW + "...", player, other);
             }
 
             time--;

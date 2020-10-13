@@ -43,6 +43,7 @@ public class PracticeAdapter implements FrameAdapter {
 
 		if (playerData == null) {
 			this.plugin.getLogger().warning(player.getName() + "'s player data is null");
+			player.kickPlayer("Porfavor reinicia.");
 			return null;
 		}
 
@@ -104,6 +105,9 @@ public class PracticeAdapter implements FrameAdapter {
 						}
 						if (linessb.contains("{fights}")) {
 							linessb = linessb.replace("{fights}", String.valueOf(StatusCache.getInstance().getFighting()));
+						}
+						if (linessb.contains("{queue}")) {
+							linessb = linessb.replace("{queue}", String.valueOf(StatusCache.getInstance().getQueueing()));
 						}
 						lines.add(Color.translate(linessb));
 					}
@@ -274,12 +278,13 @@ public class PracticeAdapter implements FrameAdapter {
 			if (string.contains("{normal-match}")) {
 				if (!match.isPartyMatch() && !match.isFFA() && !match.isParty()) {
 					for (String linessb : config.getConfig().getStringList("fight.normal-match")) {
-						if (linessb.contains("{opponent}")) {
-							Player opponentPlayer = match.getTeams().get(0).getPlayers().get(0) == player.getUniqueId()
-									? this.plugin.getServer().getPlayer(match.getTeams().get(1).getPlayers().get(0))
-									: this.plugin.getServer().getPlayer(match.getTeams().get(0).getPlayers().get(0));
-							linessb = linessb.replace("{opponent}", opponentPlayer.getName());
-						}
+						Player opponentPlayer = match.getTeams().get(0).getPlayers().get(0) == player.getUniqueId()
+								? this.plugin.getServer().getPlayer(match.getTeams().get(1).getPlayers().get(0))
+								: this.plugin.getServer().getPlayer(match.getTeams().get(0).getPlayers().get(0));
+						linessb = linessb.replace("{opponent}", opponentPlayer.getName())
+						.replace("{player}", player.getName())
+						.replace("{opponentPing}", String.valueOf(PlayerUtil.getPing(opponentPlayer)))
+						.replace("{playerPing}", String.valueOf(PlayerUtil.getPing(player)));
 						lines.add(Color.translate(linessb));
 					}
 				}

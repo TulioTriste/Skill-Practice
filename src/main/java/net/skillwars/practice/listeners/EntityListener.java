@@ -88,9 +88,7 @@ public class EntityListener implements Listener {
         PlayerData entityData = this.plugin.getPlayerManager().getPlayerData(entity.getUniqueId());
         PracticeEvent eventEntity = this.plugin.getEventManager().getEventPlaying(entity);
 
-        Player damager;
-
-        damager = (Player) e.getDamager();
+        Player damager = (Player) e.getDamager();
 
         PlayerData damagerData = this.plugin.getPlayerManager().getPlayerData(damager.getUniqueId());
 
@@ -103,6 +101,21 @@ public class EntityListener implements Listener {
         boolean isEventDamager = this.plugin.getEventManager().getEventPlaying(damager) != null;
 
         PracticeEvent eventDamager = this.plugin.getEventManager().getEventPlaying(damager);
+        PracticeEvent event = this.plugin.getEventManager().getEventPlaying(entity);
+
+        if (isEventEntity && isEventDamager && eventDamager instanceof TeamFightEvent && event instanceof TeamFightEvent) {
+            TeamFightEvent eventt = (TeamFightEvent) event;
+            if (eventt.getBlueTeam().contains(entity.getUniqueId())) {
+                if (eventt.getBlueTeam().contains(damager.getUniqueId())) {
+                    e.setCancelled(true);
+                }
+            }
+            else if (eventt.getRedTeam().contains(entity.getUniqueId())) {
+                if (eventt.getRedTeam().contains(damager.getUniqueId())) {
+                    e.setCancelled(true);
+                }
+            }
+        }
 
         if(damagerData.getPlayerState() == PlayerState.SPECTATING || this.plugin.getEventManager().getSpectators().containsKey(damager.getUniqueId())) {
             e.setCancelled(true);

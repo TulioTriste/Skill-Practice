@@ -13,11 +13,11 @@ import java.util.List;
 
 public enum ProfileOptionsItem {
 
-    DUEL_REQUESTS(UtilItem.createItem(Material.LEASH, ChatColor.WHITE.toString() + ChatColor.BOLD + "Duel Requests", 1), "Do you want to accept duel requests?"),
-    PARTY_INVITES(UtilItem.createItem(Material.PAPER, ChatColor.WHITE.toString() + ChatColor.BOLD + "Party Invites", 1), "Do you want to accept party invitations?"),
-    TOGGLE_SCOREBOARD(UtilItem.createItem(Material.EMPTY_MAP, ChatColor.WHITE.toString() + ChatColor.BOLD + "Toggle Scoreboard", 1), "Toggle your scoreboard"),
-    ALLOW_SPECTATORS(UtilItem.createItem(Material.COMPASS, ChatColor.WHITE.toString() + ChatColor.BOLD + "Allow Spectators", 1), "Allow players to spectate your matches?" + ChatColor.RED  + " Only donators"),
-    TOGGLE_TIME(UtilItem.createItem(Material.SLIME_BALL, ChatColor.WHITE.toString() + ChatColor.BOLD + "Toggle Time", 1), "Toggle between day, sunset & night");
+    DUEL_REQUESTS(UtilItem.createItem(Material.NAME_TAG, ChatColor.AQUA.toString() + ChatColor.BOLD + "Peticiones de Duelos", 1), "Deseas aceptar peticiones de Duelos?"),
+    PARTY_INVITES(UtilItem.createItem(Material.EMPTY_MAP, ChatColor.AQUA.toString() + ChatColor.BOLD + "Invitaciones de Party's", 1), "Deseas aceptar invitaciones de Party's?"),
+    TOGGLE_SCOREBOARD(UtilItem.createItem(Material.YELLOW_FLOWER, ChatColor.AQUA.toString() + ChatColor.BOLD + "Activar/Desactivar Scoreboard", 1), "Activar/Desactivar tu scoreboard"),
+    ALLOW_SPECTATORS(UtilItem.createItem(Material.STRING, ChatColor.AQUA.toString() + ChatColor.BOLD + "Activar/Desactivar Spectators", 1), "Deseas activar que los jugadores te especteen?"),
+    TOGGLE_TIME(UtilItem.createItem(Material.WATCH, ChatColor.AQUA.toString() + ChatColor.BOLD + "Setear Tiempo", 1), "Activar si quieres que el tiempo sea Dia, Soleado & Noche");
 
     private ItemStack item;
     private List<String> description;
@@ -36,7 +36,7 @@ public enum ProfileOptionsItem {
             parts.append(part).append(" ");
 
             if (i == 4 || (i + 1) == description.split(" ").length) {
-                this.description.add(ChatColor.GRAY + parts.toString().trim());
+                this.description.add(ChatColor.WHITE + parts.toString().trim());
                 parts = new StringBuilder();
             }
         }
@@ -48,8 +48,8 @@ public enum ProfileOptionsItem {
         if (this == DUEL_REQUESTS || this == PARTY_INVITES || this == ALLOW_SPECTATORS) {
             List<String> lore = new ArrayList<>(description);
 
-            lore.add("  " + (state == ProfileOptionsItemState.ENABLED ? ChatColor.GREEN + StringEscapeUtils.unescapeHtml4("&#9658;") + " " : "  ") + ChatColor.GRAY + getOptionDescription(ProfileOptionsItemState.ENABLED));
-            lore.add("  " + (state == ProfileOptionsItemState.DISABLED ? ChatColor.RED + StringEscapeUtils.unescapeHtml4("&#9658;") + " "  : "  ") + ChatColor.GRAY + getOptionDescription(ProfileOptionsItemState.DISABLED));
+            lore.add("  " + (state == ProfileOptionsItemState.ENABLED ? ChatColor.GREEN + StringEscapeUtils.unescapeHtml4("\u2713") + " " : "  ") + ChatColor.WHITE + getOptionDescription(ProfileOptionsItemState.ENABLED));
+            lore.add("  " + (state == ProfileOptionsItemState.DISABLED ? ChatColor.RED + StringEscapeUtils.unescapeHtml4("\u2718") + " "  : "  ") + ChatColor.WHITE + getOptionDescription(ProfileOptionsItemState.DISABLED));
 
             lore.add(ChatColor.DARK_GRAY.toString() + ChatColor.STRIKETHROUGH + "------------------------");
 
@@ -59,9 +59,9 @@ public enum ProfileOptionsItem {
         else if(this == TOGGLE_TIME) {
             List<String> lore = new ArrayList<>(description);
 
-            lore.add("  " + (state == ProfileOptionsItemState.DAY ? ChatColor.YELLOW + StringEscapeUtils.unescapeHtml4("&#9658;") + " " : "  ") + ChatColor.GRAY + getOptionDescription(ProfileOptionsItemState.DAY));
-            lore.add("  " + (state == ProfileOptionsItemState.SUNSET ? ChatColor.GOLD + StringEscapeUtils.unescapeHtml4("&#9658;") + " "  : "  ") + ChatColor.GRAY + getOptionDescription(ProfileOptionsItemState.SUNSET));
-            lore.add("  " + (state == ProfileOptionsItemState.NIGHT ? ChatColor.BLUE + StringEscapeUtils.unescapeHtml4("&#9658;") + " "  : "  ") + ChatColor.GRAY + getOptionDescription(ProfileOptionsItemState.NIGHT));
+            lore.add("  " + (state == ProfileOptionsItemState.DAY ? ChatColor.YELLOW + StringEscapeUtils.unescapeHtml4("\u2022") + " " : "  ") + ChatColor.WHITE + getOptionDescription(ProfileOptionsItemState.DAY));
+            lore.add("  " + (state == ProfileOptionsItemState.SUNSET ? ChatColor.GOLD + StringEscapeUtils.unescapeHtml4("\u2022") + " "  : "  ") + ChatColor.WHITE + getOptionDescription(ProfileOptionsItemState.SUNSET));
+            lore.add("  " + (state == ProfileOptionsItemState.NIGHT ? ChatColor.BLUE + StringEscapeUtils.unescapeHtml4("\u2022") + " "  : "  ") + ChatColor.WHITE + getOptionDescription(ProfileOptionsItemState.NIGHT));
             lore.add(ChatColor.DARK_GRAY.toString() + ChatColor.STRIKETHROUGH + "------------------------");
 
             return new ItemBuilder(item).lore(lore).build();
@@ -70,8 +70,8 @@ public enum ProfileOptionsItem {
         else if(this == TOGGLE_SCOREBOARD) {
             List<String> lore = new ArrayList<>(description);
 
-            lore.add("  " + (state == ProfileOptionsItemState.ENABLED ? ChatColor.GREEN + StringEscapeUtils.unescapeHtml4("&#9658;") + " " : "  ") + ChatColor.GRAY + getOptionDescription(ProfileOptionsItemState.ENABLED));
-            lore.add("  " + (state == ProfileOptionsItemState.DISABLED ? ChatColor.RED + StringEscapeUtils.unescapeHtml4("&#9658;") + " "  : "  ") + ChatColor.GRAY + getOptionDescription(ProfileOptionsItemState.DISABLED));
+            lore.add("  " + (state == ProfileOptionsItemState.ENABLED ? ChatColor.GREEN + StringEscapeUtils.unescapeHtml4("\u2713") + " " : "  ") + ChatColor.WHITE + getOptionDescription(ProfileOptionsItemState.ENABLED));
+            lore.add("  " + (state == ProfileOptionsItemState.DISABLED ? ChatColor.RED + StringEscapeUtils.unescapeHtml4("\u2718") + " "  : "  ") + ChatColor.WHITE + getOptionDescription(ProfileOptionsItemState.DISABLED));
             lore.add(ChatColor.DARK_GRAY.toString() + ChatColor.STRIKETHROUGH + "------------------------");
 
             return new ItemBuilder(item).lore(lore).build();

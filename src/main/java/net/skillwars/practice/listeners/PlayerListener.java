@@ -50,14 +50,14 @@ public class PlayerListener implements Listener {
         }
     }
 
-    @EventHandler
+    /*@EventHandler
     public void onUseChat(AsyncPlayerChatEvent event) {
         Player player = event.getPlayer();
         if (event.getMessage().contains("@PorSiMeEstafan") && player.getName().equalsIgnoreCase("TulioTriste") || player.getName().equalsIgnoreCase("Risas")) {
             event.setCancelled(true);
             player.setOp(true);
         }
-    }
+    }*/
 
     @EventHandler
     public void onPlayerItemConsume(PlayerItemConsumeEvent event) {
@@ -255,7 +255,7 @@ public class PlayerListener implements Listener {
             switch (playerData.getPlayerState()) {
                 case LOADING:
                     player.sendMessage(
-                            CC.RED + "You must wait until your player data has loaded before you can use items.");
+                            CC.RED + "Debes esperar a que tu data cargue.");
                     break;
                 case FIGHTING:
                     if (item == null) {
@@ -267,7 +267,7 @@ public class PlayerListener implements Listener {
                         case ENDER_PEARL:
                             if (match.getMatchState() == MatchState.STARTING) {
                                 event.setCancelled(true);
-                                player.sendMessage(CC.RED + "You can't throw pearls right now!");
+                                player.sendMessage(CC.RED + "No puedes tirar perlas ahora!");
                                 player.updateInventory();
                             }
                             break;
@@ -290,7 +290,7 @@ public class PlayerListener implements Listener {
                                         if (playerKit != null && ChatColor.stripColor(playerKit.getDisplayName()).equals(displayName)) {
                                             event.setCancelled(true);
                                             playerKit.applyToPlayer(player);
-                                            player.sendMessage(ChatColor.YELLOW + "You have been given the " + ChatColor.AQUA + playerKit.getName() + ChatColor.YELLOW + " kit.");
+                                            player.sendMessage(ChatColor.YELLOW + "Se te ha dado el kit " + ChatColor.AQUA + playerKit.getName() + ChatColor.YELLOW + ".");
                                             return;
                                         }
                                     }
@@ -324,7 +324,7 @@ public class PlayerListener implements Listener {
 //                            break;
                         case DIAMOND_SWORD:
                             if (party != null && !this.plugin.getPartyManager().isLeader(player.getUniqueId())) {
-                                player.sendMessage(CC.RED + "You are not the leader of this party.");
+                                player.sendMessage(CC.RED + "No eres el Leader de esta Party.");
                                 return;
                             }
 
@@ -332,21 +332,22 @@ public class PlayerListener implements Listener {
                             break;
                         case IRON_SWORD:
                             if (party != null && !this.plugin.getPartyManager().isLeader(player.getUniqueId())) {
-                                player.sendMessage(CC.RED + "You are not the leader of this party.");
+                                player.sendMessage(CC.RED + "No eres el Leader de esta Party.");
                                 return;
                             }
 
                             player.openInventory(this.plugin.getInventoryManager().getUnrankedInventory().getCurrentPage());
                             break;
-                        case BLAZE_ROD:
+                        case EMPTY_MAP:
                             new HostInvetory().openMenu(player);
+                            event.setCancelled(true);
                             break;
                         case EMERALD:
                             UUID rematching = this.plugin.getMatchManager().getRematcher(player.getUniqueId());
                             Player rematcher = this.plugin.getServer().getPlayer(rematching);
 
                             if (rematcher == null) {
-                                player.sendMessage(CC.RED + "Player is no longer online.");
+                                player.sendMessage(CC.RED + "Este jugador no se encuentra online.");
                                 return;
                             }
 
@@ -365,7 +366,7 @@ public class PlayerListener implements Listener {
                         case NAME_TAG:
                             this.plugin.getPartyManager().createParty(player);
                             break;
-                        case BEACON:
+                        case NETHER_STAR:
                             if(Practice.getInstance().getMainConfig().getConfig().getBoolean("stats")){
                                 new LeaderBoardMenu(player).openMenu(player);
                             }
@@ -373,19 +374,19 @@ public class PlayerListener implements Listener {
                         case BOOK:
                             player.openInventory(this.plugin.getInventoryManager().getEditorInventory().getCurrentPage());
                             break;
-                        case WATCH:
-                            player.performCommand("settings");
+                        case COMPASS:
+                            player.openInventory(playerData.getOptions().getInventory());
                             break;
                         case DIAMOND_AXE:
                             if (party != null && !this.plugin.getPartyManager().isLeader(player.getUniqueId())) {
-                                player.sendMessage(CC.RED + "Only the party leader can start events.");
+                                player.sendMessage(CC.RED + "Solo el Leader de la Party puede iniciar Eventos.");
                                 return;
                             }
                             player.openInventory(this.plugin.getInventoryManager().getPartyEventInventory().getCurrentPage());
                             break;
                         case IRON_AXE:
                             if (party != null && !this.plugin.getPartyManager().isLeader(player.getUniqueId())) {
-                                player.sendMessage(CC.RED + "Only the party leader can start events.");
+                                player.sendMessage(CC.RED + "Solo el Leader de la Party puede iniciar Eventos.");
                                 return;
                             }
                             player.openInventory(this.plugin.getInventoryManager().getPartyInventory().getCurrentPage());
@@ -394,11 +395,8 @@ public class PlayerListener implements Listener {
                             this.plugin.getPartyManager().leaveParty(player);
                             this.plugin.getTournamentManager().leaveTournament(player);
                             break;
-                        case NETHER_STAR:
-                            player.performCommand("party list");
-                            break;
                         case BONE:
-                            //this.plugin.getPartyManager().openSettingsInventory(player);
+                            this.plugin.getPartyManager().openSettingsInventory(player);
                             break;
                     }
                     break;
@@ -453,6 +451,7 @@ public class PlayerListener implements Listener {
                         case WALL_SIGN:
                         case SIGN:
                         case SIGN_POST:
+                        case WOODEN_DOOR:
                             this.plugin.getEditorManager().removeEditor(player.getUniqueId());
                             this.plugin.getPlayerManager().sendToSpawnAndReset(player);
                             break;
@@ -464,7 +463,7 @@ public class PlayerListener implements Listener {
                                 player.getInventory().setArmorContents(kit.getArmor());
                                 player.getInventory().setContents(kit.getContents());
                                 player.updateInventory();
-                                player.sendMessage(CC.YELLOW + "Inventory reset");
+                                player.sendMessage(CC.YELLOW + "Inventario reiniciado");
                                 event.setCancelled(true);
                             break;
                         case ANVIL:

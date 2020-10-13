@@ -24,7 +24,7 @@ public class EditorManager {
         player.teleport(this.plugin.getSpawnManager().getEditorLocation().toBukkitLocation());
         player.getInventory().setArmorContents(kit.getArmor());
         player.getInventory().setContents(kit.getContents());
-        player.sendMessage(CC.PRIMARY + "Now editing kit " + CC.SECONDARY + kit.getName() + CC.PRIMARY + ". Armor will be applied automatically in the kit.");
+        player.sendMessage(CC.PRIMARY + "Actualmente editando el kit " + CC.SECONDARY + kit.getName() + CC.PRIMARY + ". La armadura será aplicada automaticamente en el kit.");
 /*    	new BukkitRunnable(){
 			@Override
 			public void run(){

@@ -72,7 +72,7 @@ public class PartyManager {
         this.plugin.getInventoryManager().addParty(player);
         this.plugin.getPlayerManager().sendToSpawnAndResetNoTP(player);
 
-        player.sendMessage(ChatColor.YELLOW + "You have created a party.");
+        player.sendMessage(ChatColor.YELLOW + "Has creado una Party.");
     }
 
     private void disbandParty(Party party, boolean tournament) {
@@ -83,7 +83,7 @@ public class PartyManager {
             party.getBroadcastTask().cancel();
         }
 
-        party.broadcast(ChatColor.YELLOW + "Your party has been disbanded.");
+        party.broadcast(ChatColor.YELLOW + "Tu Party ha sido disbandeada.");
 
         party.members().forEach(member -> {
             PlayerData memberData = this.plugin.getPlayerManager().getPlayerData(member.getUniqueId());
@@ -111,7 +111,7 @@ public class PartyManager {
         } else if (this.plugin.getTournamentManager().getTournament(player.getUniqueId()) != null) {
             this.disbandParty(party, true);
         } else {
-            party.broadcast(ChatColor.RED.toString() + ChatColor.BOLD + "[-] " + ChatColor.YELLOW + player.getName() + " left the party.");
+            party.broadcast(ChatColor.RED + player.getName() + " se ha ido de la Party.");
             party.removeMember(player.getUniqueId());
 
             this.partyLeaders.remove(player.getUniqueId());
@@ -139,7 +139,7 @@ public class PartyManager {
         Party party = this.getParty(leader);
 
         if (this.plugin.getTournamentManager().getTournament(leader) != null) {
-            player.sendMessage(ChatColor.RED + "That player is in a tournament.");
+            player.sendMessage(ChatColor.RED + "Este jugador esta en un Tournament.");
             return;
         }
 
@@ -149,7 +149,7 @@ public class PartyManager {
 
         this.plugin.getPlayerManager().sendToSpawnAndResetNoTP(player);
 
-        party.broadcast(ChatColor.GREEN.toString() + ChatColor.BOLD + "[+] " + ChatColor.YELLOW + player.getName() + " joined the party.");
+        party.broadcast(ChatColor.GREEN + player.getName() + " ha entrado a la Party.");
 
         party.getMembers().forEach(member -> {
             Player target = Bukkit.getPlayer(member);
@@ -158,7 +158,7 @@ public class PartyManager {
         });
     }
 
-    /*public void openSettingsInventory(Player player) {
+    public void openSettingsInventory(Player player) {
         InventoryUI inv = Practice.getInstance().getInventoryManager().getPartySettingsInventory();
 
         inv.setItem(2, new InventoryUI.AbstractClickableItem(ItemUtil.createItem(Material.PAPER, CC.translate("&f&lEditar limite de Miembros"))) {
@@ -177,5 +177,5 @@ public class PartyManager {
         });
 
         player.openInventory(inv.getCurrentPage());
-    } */
+    }
 }

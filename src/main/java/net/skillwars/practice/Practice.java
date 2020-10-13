@@ -121,7 +121,7 @@ public class Practice extends JavaPlugin {
         registerListeners();
         registerManagers();
         
-        if(Bukkit.getWorld("arenas") == null) {
+        /*if(Bukkit.getWorld("arenas") == null) {
         	WorldCreator creator = new WorldCreator("arenas");
         	creator.generator(new ChunkGenerator() {
         	    @Override
@@ -130,7 +130,7 @@ public class Practice extends JavaPlugin {
         	    }
         	});
         	Bukkit.createWorld(creator);
-        }
+        }*/
         
         if(Bukkit.getWorld("events") == null) {
         	WorldCreator creator = new WorldCreator("events");

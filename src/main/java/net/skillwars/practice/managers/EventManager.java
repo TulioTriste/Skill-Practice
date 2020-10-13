@@ -46,7 +46,7 @@ public class EventManager {
         ).forEach(this::addEvent);
 
         boolean newWorld;
-        eventWorld = plugin.getServer().getWorld("event");
+        eventWorld = plugin.getServer().getWorld("events");
         newWorld = false;
 
         enabled = false;

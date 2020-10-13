@@ -84,40 +84,40 @@ public class InventorySnapshot {
             int potCount = (int) Arrays.stream(contents).filter(Objects::nonNull).map(ItemStack::getDurability).filter(d -> d == 16421).count();
 
             this.inventoryUI.setItem(47, new InventoryUI.EmptyClickableItem(ItemUtil.reloreItem(
-                    ItemUtil.createItem(Material.POTION, CC.PRIMARY + "Health Potions: " + CC.SECONDARY + potCount, potCount, (short) 16421),
-                    CC.PRIMARY + "Missed Potions: " + CC.SECONDARY + playerData.getMissedPots())));
+                    ItemUtil.createItem(Material.POTION, CC.PRIMARY + "Pociones de Curacion: " + CC.SECONDARY + potCount, potCount, (short) 16421),
+                    CC.PRIMARY + "Pociones gastadas: " + CC.SECONDARY + playerData.getMissedPots())));
         } else if (soupMatch) {
             int soupCount = (int) Arrays.stream(contents).filter(Objects::nonNull).map(ItemStack::getType).filter(d -> d == Material.MUSHROOM_SOUP).count();
 
             this.inventoryUI.setItem(47, new InventoryUI.EmptyClickableItem(ItemUtil.createItem(
-                    Material.MUSHROOM_SOUP, CC.PRIMARY + "Remaining Soups: " + CC.SECONDARY + soupCount, soupCount, (short) 16421)));
+                    Material.MUSHROOM_SOUP, CC.PRIMARY + "Sopas restantes: " + CC.SECONDARY + soupCount, soupCount, (short) 16421)));
         }
 
         this.inventoryUI.setItem(48,
-                new InventoryUI.EmptyClickableItem(ItemUtil.createItem(Material.SKULL_ITEM, CC.PRIMARY + "Hearts: "
+                new InventoryUI.EmptyClickableItem(ItemUtil.createItem(Material.SKULL_ITEM, CC.PRIMARY + "Corazones: "
                         + CC.SECONDARY + MathUtil.roundToHalves(health / 2.0D) + " / 10 ❤", (int) Math.round(health / 2.0D))));
 
         this.inventoryUI.setItem(49,
-                new InventoryUI.EmptyClickableItem(ItemUtil.createItem(Material.COOKED_BEEF, CC.PRIMARY + "Hunger: "
+                new InventoryUI.EmptyClickableItem(ItemUtil.createItem(Material.COOKED_BEEF, CC.PRIMARY + "Comida: "
                         + CC.SECONDARY + MathUtil.roundToHalves(food / 2.0D) + " / 10 ❤", (int) Math.round(food / 2.0D))));
 
         this.inventoryUI.setItem(50,
                 new InventoryUI.EmptyClickableItem(ItemUtil.reloreItem(
-                        ItemUtil.createItem(Material.BREWING_STAND_ITEM, CC.PRIMARY + "Potion Effects", potionEffectStrings.size())
+                        ItemUtil.createItem(Material.BREWING_STAND_ITEM, CC.PRIMARY + "Efectos de Pociones", potionEffectStrings.size())
                         , potionEffectStrings.toArray(new String[]{}))));
 
         this.inventoryUI.setItem(51, new InventoryUI.EmptyClickableItem(
                 ItemUtil.reloreItem(
-                        ItemUtil.createItem(Material.DIAMOND_SWORD, CC.PRIMARY + "Statistics"),
-                        CC.PRIMARY + "Longest Combo: " + CC.SECONDARY + playerData.getLongestCombo() + " Hit" +
+                        ItemUtil.createItem(Material.DIAMOND_SWORD, CC.PRIMARY + "Estadisticas"),
+                        CC.PRIMARY + "Combo mas Largo: " + CC.SECONDARY + playerData.getLongestCombo() + " Hit" +
                                 (playerData.getLongestCombo() > 1 ? "s" : ""),
-                        CC.PRIMARY + "Total Hits: " + CC.SECONDARY + playerData.getHits() + " Hit" + (playerData.getHits() > 1 ? "s" : ""))));
+                        CC.PRIMARY + "Hits Totales: " + CC.SECONDARY + playerData.getHits() + " Hit" + (playerData.getHits() > 1 ? "s" : ""))));
 
         if (!match.isParty()) {
             for (int i = 0; i < 2; i++) {
                 this.inventoryUI.setItem(i == 0 ? 53 : 45, new InventoryUI.AbstractClickableItem(
-                        ItemUtil.reloreItem(ItemUtil.createItem(Material.PAPER, CC.PRIMARY + "View Other Inventory"),
-                                CC.PRIMARY + "Click to view the other inventory")) {
+                        ItemUtil.reloreItem(ItemUtil.createItem(Material.PAPER, CC.PRIMARY + "Ver otro Inventario"),
+                                CC.PRIMARY + "Clic para ver el otro Inventario")) {
                     @Override
                     public void onClick(InventoryClickEvent inventoryClickEvent) {
                         Player clicker = (Player) inventoryClickEvent.getWhoClicked();

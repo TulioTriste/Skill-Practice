@@ -39,7 +39,7 @@ public class Kit {
         player.getInventory().setContents(contents);
         player.getInventory().setArmorContents(armor);
         player.updateInventory();
-        player.sendMessage(ChatColor.GREEN + "Giving you the default kit.");
+        player.sendMessage(ChatColor.GREEN + "Giveando el kit por defecto.");
     }
 
     public void whitelistArena(String arena) {

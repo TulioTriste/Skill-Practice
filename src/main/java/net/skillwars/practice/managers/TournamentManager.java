@@ -59,9 +59,9 @@ public class TournamentManager {
 
         new TournamentRunnable(tournament).runTaskTimer(this.plugin, 20L, 20L);
 
-        commandSender.sendMessage(CC.PRIMARY + "Successfully created tournament id " + CC.SECONDARY + id + CC.PRIMARY
-                + " with team size " + CC.SECONDARY + teamSize + CC.PRIMARY + ", kit " + CC.SECONDARY + kitName + CC.PRIMARY
-                + ", and tournament size " + CC.SECONDARY + size + CC.PRIMARY + ".");
+        commandSender.sendMessage(CC.PRIMARY + "Se ha creado el Tournament correctamente con la id " + CC.SECONDARY + id + CC.PRIMARY
+                + " con un tamaño de team " + CC.SECONDARY + teamSize + CC.PRIMARY + ", kit " + CC.SECONDARY + kitName + CC.PRIMARY
+                + ", y tamaño de tournament " + CC.SECONDARY + size + CC.PRIMARY + ".");
     }
 
     private void playerLeft(Tournament tournament, Player player) {
@@ -69,13 +69,13 @@ public class TournamentManager {
 
         tournament.removePlayer(player.getUniqueId());
 
-        player.sendMessage(CC.PRIMARY + "You left the tournament.");
+        player.sendMessage(CC.PRIMARY + "Te has salido del Tournament.");
 
         this.players.remove(player.getUniqueId());
 
         this.plugin.getPlayerManager().sendToSpawnAndReset(player);
 
-        tournament.broadcast(CC.SECONDARY + player.getName() + CC.PRIMARY + " has left the tournament. ("
+        tournament.broadcast(CC.SECONDARY + player.getName() + CC.PRIMARY + " se ha salido del Tournament. ("
                 + CC.SECONDARY + tournament.getPlayers().size() + CC.PRIMARY + "/" + CC.SECONDARY + tournament.getSize() + CC.PRIMARY + ")");
 
         if (team != null) {
@@ -89,7 +89,7 @@ public class TournamentManager {
 
                     String names = TeamUtil.getNames(tournamentTeam);
 
-                    this.plugin.getServer().broadcastMessage(names + " won Tournament " + CC.SECONDARY + tournament.getId() + CC.PRIMARY + "!");
+                    this.plugin.getServer().broadcastMessage(names + " ha ganado el Tournament " + CC.SECONDARY + tournament.getId() + CC.PRIMARY + "!");
 
                     for (UUID playerUUID : tournamentTeam.getAlivePlayers()) {
                         this.players.remove(playerUUID);
@@ -113,15 +113,15 @@ public class TournamentManager {
 
             tournament.removePlayer(player.getUniqueId());
 
-            player.sendMessage(CC.RED + "You have been eliminated.");
-            player.sendMessage(CC.RED + "Do /tournament status " + tournament.getId() + " to see who is left in the tournament.");
+            player.sendMessage(CC.RED + "Has sido eliminado.");
+            player.sendMessage(CC.RED + "Usa /tournament status " + tournament.getId() + " para ver la informacion del Tournament.");
 
             this.players.remove(player.getUniqueId());
         }
 
-        String word = losingTeam.getAlivePlayers().size() > 1 ? "have" : "has";
+        String word = losingTeam.getAlivePlayers().size() > 1 ? "tienes" : "tiene";
 
-        tournament.broadcast(TeamUtil.getNames(losingTeam) + CC.PRIMARY + " " + word + " been eliminated by " +
+        tournament.broadcast(TeamUtil.getNames(losingTeam) + CC.PRIMARY + " " + word + " ha sido eliminado por " +
                 TeamUtil.getNames(winnerTeam) + CC.PRIMARY + ". ("
                 + CC.SECONDARY + tournament.getPlayers().size() + CC.PRIMARY + "/" + CC.SECONDARY + tournament.getSize() + CC.PRIMARY + ")");
     }
@@ -142,7 +142,7 @@ public class TournamentManager {
                     this.playerLeft(tournament, member);
                 }
             } else {
-                player.sendMessage(CC.RED + "You are not the leader of this party!");
+                player.sendMessage(CC.RED + "No eres el Leader de esta Party!");
             }
         } else {
             this.playerLeft(tournament, player);
@@ -156,7 +156,7 @@ public class TournamentManager {
 
         this.plugin.getPlayerManager().sendToSpawnAndReset(player);
 
-        tournament.broadcast(CC.SECONDARY + player.getName() + CC.PRIMARY + " has joined the tournament. ("
+        tournament.broadcast(CC.SECONDARY + player.getName() + CC.PRIMARY + " ha entrado al Tournament. ("
                 + CC.SECONDARY + tournament.getPlayers().size() + CC.PRIMARY + "/" + CC.SECONDARY + tournament.getSize() + CC.PRIMARY + ")");
     }
 
@@ -168,7 +168,7 @@ public class TournamentManager {
             if (this.plugin.getPartyManager().isLeader(player.getUniqueId())) {
                 if ((party.getMembers().size() + tournament.getPlayers().size()) <= tournament.getSize()) {
                     if (party.getMembers().size() != tournament.getTeamSize() || party.getMembers().size() == 1) {
-                        player.sendMessage(CC.RED + "You are in a party that does not match this tournament's description!");
+                        player.sendMessage(CC.RED + "Estas en una Party que no coincide con este Tournament!");
                     } else {
                         for (UUID memberUUID : party.getMembers()) {
                             Player member = this.plugin.getServer().getPlayer(memberUUID);
@@ -177,10 +177,10 @@ public class TournamentManager {
                         }
                     }
                 } else {
-                    player.sendMessage(CC.RED + "This tournament is full!");
+                    player.sendMessage(CC.RED + "Este Tournament se encuentra lleno!");
                 }
             } else {
-                player.sendMessage(CC.RED + "You are not the leader of this party!");
+                player.sendMessage(CC.RED + "No eres el leader de la Party!");
             }
         } else {
             this.playerJoined(tournament, player);
@@ -232,8 +232,8 @@ public class TournamentManager {
 
         this.teamEliminated(tournament, winningTournamentTeam, losingTournamentTeam);
 
-        winningTournamentTeam.broadcast(CC.PRIMARY + "Tip: If you're bored, do " + CC.SECONDARY + "/tournament status " + tournament.getId() + CC.PRIMARY + " to see the " +
-                "remaining matches of this round!");
+        winningTournamentTeam.broadcast(CC.PRIMARY + "Tip: Si te encuentras aburrido, usa " + CC.SECONDARY + "/tournament status " + tournament.getId() + CC.PRIMARY + " para ver " +
+                "lo restante de las rondas del Tournament!");
 
         if (tournament.getMatches().size() == 0) {
             if (tournament.getAliveTeams().size() > 1) {
@@ -243,7 +243,7 @@ public class TournamentManager {
             } else {
                 String names = TeamUtil.getNames(winningTournamentTeam);
 
-                this.plugin.getServer().broadcastMessage(names + " won Tournament " + CC.SECONDARY + tournament.getId() + CC.PRIMARY + "!");
+                this.plugin.getServer().broadcastMessage(names + " ha ganado el Tournament " + CC.SECONDARY + tournament.getId() + CC.PRIMARY + "!");
 
                 for (UUID playerUUID : winningTournamentTeam.getAlivePlayers()) {
                     this.players.remove(playerUUID);

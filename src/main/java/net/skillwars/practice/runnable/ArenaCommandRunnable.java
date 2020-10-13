@@ -46,14 +46,14 @@ public class ArenaCommandRunnable implements Runnable {
 
                 if (--ArenaCommandRunnable.this.times > 0) {
                     ArenaCommandRunnable.this.plugin.getServer().getConsoleSender().sendMessage(
-                            CC.PRIMARY + "Placed a standalone arena of " + CC.SECONDARY + arena.getName() + CC.PRIMARY
-                                    + " at " + CC.SECONDARY + minX + CC.PRIMARY + ", " + CC.SECONDARY + minZ
+                            CC.PRIMARY + "Se ha puesto la arena independiente " + CC.SECONDARY + arena.getName() + CC.PRIMARY
+                                    + " en " + CC.SECONDARY + minX + CC.PRIMARY + ", " + CC.SECONDARY + minZ
                                     + CC.PRIMARY + ". " + CC.SECONDARY + ArenaCommandRunnable.this.times +
-                                    CC.PRIMARY + " arenas remaining.");
+                                    CC.PRIMARY + " arenas restantes.");
                     ArenaCommandRunnable.this.duplicateArena(arena, (int) maxX, (int) maxZ);
                 } else {
-                    ArenaCommandRunnable.this.plugin.getServer().getConsoleSender().sendMessage(CC.PRIMARY + "Finished pasting " + CC.SECONDARY
-                            + ArenaCommandRunnable.this.copiedArena.getName() + CC.PRIMARY + "'s standalone arenas.");
+                    ArenaCommandRunnable.this.plugin.getServer().getConsoleSender().sendMessage(CC.PRIMARY + "Se ha pegado " + CC.SECONDARY
+                            + ArenaCommandRunnable.this.copiedArena.getName() + CC.PRIMARY + "'s arenas independientes.");
                     ArenaCommandRunnable.this.plugin.getArenaManager().setGeneratingArenaRunnables(
                             ArenaCommandRunnable.this.plugin.getArenaManager().getGeneratingArenaRunnables() - 1);
                 }

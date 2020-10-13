@@ -4,8 +4,8 @@ import org.bukkit.ChatColor;
 
 public final class CC {
 
-	public static final String PRIMARY = ChatColor.GOLD.toString();
-	public static final String SECONDARY = ChatColor.YELLOW.toString();
+	public static final String PRIMARY = ChatColor.DARK_AQUA.toString();
+	public static final String SECONDARY = ChatColor.AQUA.toString();
 
 	public static final String B_PRIMARY = PRIMARY + ChatColor.BOLD;
 	public static final String B_SECONDARY = SECONDARY + ChatColor.BOLD;

@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum QueueType {
 
-    UNRANKED("Unranked"),
+    UNRANKED("UnRanked"),
     RANKED("Ranked");
 
     private final String name;

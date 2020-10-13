@@ -55,18 +55,18 @@ public class QueueManager {
         this.queued.put(playerData.getUniqueId(), entry);
         this.giveQueueItems(player);
         player.sendMessage(type == QueueType.RANKED ?
-                CC.PRIMARY + "You were added to the " + CC.SECONDARY + type.getName() + " " + kitName + CC.PRIMARY +
+                CC.PRIMARY + "Has sido añadido a " + CC.SECONDARY + type.getName() + " " + kitName + CC.PRIMARY +
                         " " +
                         "queue" +
-                        " with " + CC.SECONDARY + elo + CC.PRIMARY + " elo." :
-                CC.PRIMARY + "You were added to the " + CC.SECONDARY + "Unranked " + kitName + CC.PRIMARY + " queue.");
+                        " con " + CC.SECONDARY + elo + CC.PRIMARY + " de elo." :
+                CC.PRIMARY + "Has sido añadido a " + CC.SECONDARY + "UnRanked " + kitName + CC.PRIMARY + " queue.");
 
         this.playerQueueTime.put(player.getUniqueId(), System.currentTimeMillis());
 
         if (!this.findMatch(player, kitName, elo, type) && type.isRanked()) {
-            player.sendMessage(CC.SECONDARY + "Searching in ELO range " + CC.PRIMARY
+            player.sendMessage(CC.SECONDARY + "Buscando en el rango de ELO " + CC.PRIMARY
                     + (playerData.getEloRange() == -1
-                    ? "Unrestricted"
+                    ? "Restringido"
                     : "[" + Math.max(elo - playerData.getEloRange() / 2, 0)
                     + " -> " + Math.max(elo + playerData.getEloRange() / 2, 0) + "]"));
         }
@@ -97,6 +97,7 @@ public class QueueManager {
 
         if (playerData == null) {
             this.plugin.getLogger().warning(player.getName() + "'s player data is null");
+            player.kickPlayer("Porfavor vuelve a ingresar.");
             return false;
         }
         // Increase elo range by 50 every second after 5 seconds
@@ -114,8 +115,8 @@ public class QueueManager {
                     eloRange = 3000;
                 } else {
                     player.sendMessage(
-                            CC.SECONDARY + "Searching in ELO range "
-                                    + CC.PRIMARY + (eloRange == -1 ? "Unrestricted"
+                            CC.SECONDARY + "Buscando en el rango de ELO "
+                                    + CC.PRIMARY + (eloRange == -1 ? "Restringido"
                                     : "[" + Math.max(elo - eloRange / 2, 0) + " -> " +
                                     Math.max(elo + eloRange / 2, 0) + "]"));
                 }
@@ -208,22 +209,22 @@ public class QueueManager {
             String matchedFoundMatchMessage;
 
             if (type.isRanked()) {
-                playerFoundMatchMessage = CC.PRIMARY + "Found " + type.getName().toLowerCase() + " match: " + CC
+                playerFoundMatchMessage = CC.PRIMARY + "Se ha encontrado una pelea " + type.getName().toLowerCase() + ": " + CC
                         .GREEN +
                         player.getName() + " (" + elo + " elo)" + CC.PRIMARY
                         + " vs. " + CC.RED + opponentPlayer.getName() + " (" +
                         this.queued.get(opponentPlayer.getUniqueId()).getElo() + " elo)";
-                matchedFoundMatchMessage = CC.PRIMARY + "Found " + type.getName().toLowerCase() + " match: " +
+                matchedFoundMatchMessage = CC.PRIMARY + "Se ha encontrado una pelea " + type.getName().toLowerCase() + ": " +
                         CC.GREEN +
                         opponentPlayer.getName() + " (" +
                         this.queued.get(opponentPlayer.getUniqueId()).getElo()
                         + " elo)" + CC.PRIMARY + " vs. " + CC.RED + player.getName() + " (" + elo
                         + " elo)";
             } else {
-                playerFoundMatchMessage = CC.PRIMARY + "Found unranked match: " + CC.GREEN + player.getName() +
+                playerFoundMatchMessage = CC.PRIMARY + "Se ha encontrado una pelea UnRanked: " + CC.GREEN + player.getName() +
                         CC.PRIMARY
                         + " vs. " + CC.RED + opponentPlayer.getName();
-                matchedFoundMatchMessage = CC.PRIMARY + "Found unranked match: " + CC.GREEN + opponentPlayer.getName
+                matchedFoundMatchMessage = CC.PRIMARY + "Se ha encontrado una pelea UnRanked: " + CC.GREEN + opponentPlayer.getName
                         () +
                         CC.PRIMARY + " vs. " + CC.RED + player.getName();
             }
@@ -258,16 +259,16 @@ public class QueueManager {
 		if(entry == null){
 			return;
 		}
-        player.sendMessage(CC.PRIMARY + "You were removed from the " + CC.SECONDARY + entry.getQueueType().getName()
-                + " " + entry.getKitName() + CC.PRIMARY + " queue.");
+        player.sendMessage(CC.PRIMARY + "has sido removido de la queue " + CC.SECONDARY + entry.getQueueType().getName()
+                + " " + entry.getKitName() + CC.PRIMARY + ".");
     }
 
     public void addPartyToQueue(final Player leader, final Party party, final String kitName, final QueueType type) {
         if (type.isRanked() && !this.rankedEnabled) {
-            leader.sendMessage(CC.RED + "Ranked is currently disabled until the server restarts.");
+            leader.sendMessage(CC.RED + "Ranked esta actualmente desabilitado.");
             leader.closeInventory();
         } else if (party.getMembers().size() != 2) {
-            leader.sendMessage(CC.RED + "You can only join the queue with 2 players in your party.");
+            leader.sendMessage(CC.RED + "Solo puedes entrar a la queue si hay 2 miembros en la party.");
             leader.closeInventory();
         } else {
             party.getMembers().stream().map(this.plugin.getPlayerManager()::getPlayerData).forEach(member -> member.setPlayerState(PlayerState.QUEUE));
@@ -276,10 +277,10 @@ public class QueueManager {
             this.queued.put(playerData.getUniqueId(), new QueueEntry(type, kitName, elo, true));
             this.giveQueueItems(leader);
             party.broadcast(type.isRanked() ?
-                    CC.PRIMARY + "Your party was added to the " + type.getName().toLowerCase() + " " + CC.SECONDARY
-                            + kitName + CC.PRIMARY + " queue with " + CC.SECONDARY + elo + CC.PRIMARY + " elo." :
-                    CC.PRIMARY + "Your party was added to the unranked " + CC.SECONDARY + kitName + CC.PRIMARY +
-                            " queue.");
+                    CC.PRIMARY + "Tu party ha sido añadida a la queue " + type.getName().toLowerCase() + " " + CC.SECONDARY
+                            + kitName + CC.PRIMARY + " con " + CC.SECONDARY + elo + CC.PRIMARY + " elo." :
+                    CC.PRIMARY + "Tu party ha sido añadida a la queue Unranked " + CC.SECONDARY + kitName + CC.PRIMARY +
+                            ".");
             this.playerQueueTime.put(party.getLeader(), System.currentTimeMillis());
             this.findMatch(party, kitName, elo, type);
         }
@@ -299,7 +300,7 @@ public class QueueManager {
                 eloRange = 1000;
             }
             partyA.broadcast(
-                    CC.SECONDARY + "Searching in ELO range " + CC.PRIMARY + "[" + (elo - eloRange / 2) + " -> " +
+                    CC.SECONDARY + "Buscando en el rango de ELO " + CC.PRIMARY + "[" + (elo - eloRange / 2) + " -> " +
                             (elo + eloRange / 2) + "]");
         }
 
@@ -330,21 +331,21 @@ public class QueueManager {
         String partyBFoundMatchMessage;
 
         if (type.isRanked()) {
-            partyAFoundMatchMessage = CC.PRIMARY + "Found ranked match: " + CC.GREEN + leaderA.getName() +
+            partyAFoundMatchMessage = CC.PRIMARY + "Se ha encontrado una pelea Ranked: " + CC.GREEN + leaderA.getName() +
                     "'s party (" +
                     elo + " elo)" + CC.PRIMARY + " vs. "
                     + CC.RED + leaderB.getName() + "'s Party (" +
                     this.queued.get(leaderB.getUniqueId()).getElo() + " elo)";
-            partyBFoundMatchMessage = CC.PRIMARY + "Found ranked match: " + CC.GREEN + leaderB.getName() + "'s party ("
+            partyBFoundMatchMessage = CC.PRIMARY + "Se ha encontrado una pelea Ranked: " + CC.GREEN + leaderB.getName() + "'s party ("
                     + this.queued.get(leaderB.getUniqueId()).getElo() + " elo)" + CC.PRIMARY +
                     " vs. " +
                     CC.RED + leaderA.getName() + "'s Party (" + elo + " elo)";
         } else {
-            partyAFoundMatchMessage = CC.PRIMARY + "Found unranked match: " + CC.GREEN + leaderA.getName() +
+            partyAFoundMatchMessage = CC.PRIMARY + "Se ha encontrado una pelea UnRanked: " + CC.GREEN + leaderA.getName() +
                     "'s party" +
                     CC.PRIMARY + " vs. "
                     + CC.RED + leaderB.getName() + "'s party";
-            partyBFoundMatchMessage = CC.PRIMARY + "Found unranked match: " + CC.GREEN + leaderB.getName() +
+            partyBFoundMatchMessage = CC.PRIMARY + "Se ha encontrado una pelea UnRanked: " + CC.GREEN + leaderB.getName() +
                     "'s party" +
                     CC.PRIMARY + " vs. "
                     + CC.RED + leaderA.getName() + "'s party";
@@ -375,8 +376,8 @@ public class QueueManager {
 
         party.members().forEach(this.plugin.getPlayerManager()::sendToSpawnAndReset);
 
-        String type = entry.getQueueType().isRanked() ? "Ranked" : "Unranked";
+        String type = entry.getQueueType().isRanked() ? "Ranked" : "UnRanked";
 
-        party.broadcast(ChatColor.GREEN.toString() + ChatColor.BOLD + "[*] " + ChatColor.YELLOW + "You party has left the " + type + " " + entry.getKitName() + " queue.");
+        party.broadcast(ChatColor.YELLOW + "Tu party se ha salido de la queue " + type + " " + entry.getKitName() + ".");
     }
 }

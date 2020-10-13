@@ -46,7 +46,7 @@ public class ProfileOptionsListeners implements Listener {
                     } else if (item == ProfileOptionsItem.ALLOW_SPECTATORS) {
 
                         if(!player.hasPermission("practice.togglespectators")){
-                            player.sendMessage(ChatColor.RED + "Ony donators");
+                            player.sendMessage(ChatColor.RED + "Solo donadores");
                             return;
                         }
 

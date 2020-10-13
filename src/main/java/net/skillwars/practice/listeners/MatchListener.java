@@ -37,14 +37,14 @@ public class MatchListener implements Listener {
         Kit kit = match.getKit();
 
         if (!kit.isEnabled()) {
-            match.broadcast(CC.RED + "This kit is currently disabled, try another kit.");
+            match.broadcast(CC.RED + "Este kit se encuentra desactivado, prueba con otro kit.");
             this.plugin.getMatchManager().removeMatch(match);
             return;
         }
 
         if (kit.isSpleef()) {
             if (match.getArena().getAvailableArenas().size() <= 0) {
-                match.broadcast(ChatColor.RED + "There are no arenas available.");
+                match.broadcast(ChatColor.RED + "No hay arenas disponibles.");
                 this.plugin.getMatchManager().removeMatch(match);
                 return;
             }
@@ -160,7 +160,7 @@ public class MatchListener implements Listener {
     @EventHandler
     public void onMatchEnd(MatchEndEvent event) {
         Match match = event.getMatch();
-        Clickable inventories = new Clickable(CC.PRIMARY + "Inventories: ");
+        Clickable inventories = new Clickable(CC.PRIMARY + "Inventarios: ");
 
         match.setMatchState(MatchState.ENDING);
         match.setWinningTeamId(event.getWinningTeam().getTeamID());
@@ -168,7 +168,7 @@ public class MatchListener implements Listener {
 
         if (match.isFFA()) {
             Player winner = this.plugin.getServer().getPlayer(event.getWinningTeam().getAlivePlayers().get(0));
-            String winnerMessage = CC.PRIMARY + "Winner: " + CC.SECONDARY + winner.getName();
+            String winnerMessage = CC.PRIMARY + "Ganador: " + CC.SECONDARY + winner.getName();
 
             event.getWinningTeam().players().forEach(player -> {
                 if (!match.hasSnapshot(player.getUniqueId())) {
@@ -176,7 +176,7 @@ public class MatchListener implements Listener {
                 }
                 inventories.add((player.getUniqueId() == winner.getUniqueId() ? CC.GREEN : CC.RED)
                                 + player.getName() + " ",
-                        CC.PRIMARY + "View Inventory",
+                        CC.PRIMARY + "Ver inventario",
                         "/inv " + match.getSnapshot(player.getUniqueId()).getSnapshotId());
 
 
@@ -204,7 +204,7 @@ public class MatchListener implements Listener {
             match.broadcast(winnerMessage);
             match.broadcast(inventories);
         } else if (match.isRedrover()) {
-            match.broadcast(CC.SECONDARY + event.getWinningTeam().getLeaderName() + CC.PRIMARY + " has won the redrover!");
+            match.broadcast(CC.SECONDARY + event.getWinningTeam().getLeaderName() + CC.PRIMARY + " ha ganado el Redrover!");
         } else {
             match.getTeams().forEach(team -> team.players().forEach(player -> {
                 if (!match.hasSnapshot(player.getUniqueId())) {
@@ -216,7 +216,7 @@ public class MatchListener implements Listener {
                                 event.getWinningTeam().getTeamID();
                 inventories.add((onWinningTeam ? CC.GREEN : CC.RED)
                                 + player.getName() + " ",
-                        CC.PRIMARY + "View inventory",
+                        CC.PRIMARY + "Ver inventario",
                         "/inv " + match.getSnapshot(player.getUniqueId()).getSnapshotId());
 
                 MatchTeam otherTeam = team == match.getTeams().get(0) ? match.getTeams().get(1) : match.getTeams().get(0);
@@ -252,7 +252,7 @@ public class MatchListener implements Listener {
                 this.plugin.getInventoryManager().addSnapshot(snapshot);
             }
 
-            String winnerMessage = CC.PRIMARY + (match.isParty() ? "Winning Team: " : "Winner: ")
+            String winnerMessage = CC.PRIMARY + (match.isParty() ? "Ha ganado el team: " : "Ganador: ")
                     + CC.SECONDARY + event.getWinningTeam().getLeaderName();
 
             match.broadcast(winnerMessage);
@@ -299,7 +299,7 @@ public class MatchListener implements Listener {
                     winnerMemberData.setPartyElo(kitName, newWinnerElo);
                     loserMemberData.setPartyElo(kitName, newLoserElo);
 
-                    eloMessage = CC.YELLOW + "Elo Change: " + CC.GREEN + winnerLeader.getName() + ", " +
+                    eloMessage = CC.YELLOW + "Cambios de elo: " + CC.GREEN + winnerLeader.getName() + ", " +
                             winnerMember.getName() + " " + newWinnerElo +
                             " (+" + (newWinnerElo - winnerElo) + ") " + CC.RED + loserLeader.getName() + "," +
                             " " +
@@ -321,7 +321,7 @@ public class MatchListener implements Listener {
                     newElo[0] = newWinnerElo;
                     newElo[1] = newLoserElo;
 
-                    eloMessage = CC.YELLOW + "Elo Changes: " + CC.GREEN + winnerLeader.getName() + " " + newWinnerElo +
+                    eloMessage = CC.YELLOW + "Cambios de elo: " + CC.GREEN + winnerLeader.getName() + " " + newWinnerElo +
                             " (+" + (newWinnerElo - winnerElo) + ") " +
                             CC.RED + loserLeader.getName() + " " + newLoserElo + " (" +
                             (newLoserElo - loserElo) + ")";

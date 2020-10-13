@@ -30,11 +30,11 @@ public class SpawnManager {
     private CustomLocation tournamentSecond;
     private CustomLocation tournamentMin;
     private CustomLocation tournamentMax;
-    private CustomLocation redroverLocation;
-    private CustomLocation redroverFirst;
-    private CustomLocation redroverSecond;
-    private CustomLocation redroverMin;
-    private CustomLocation redroverMax;
+    private CustomLocation teamFightsLocation;
+    private CustomLocation teamFightsFirst;
+    private CustomLocation teamFightsSecond;
+    private CustomLocation teamFightsMin;
+    private CustomLocation teamFightsMax;
     private CustomLocation ffaLocation;
     private CustomLocation ffaMin;
     private CustomLocation ffaMax;
@@ -70,12 +70,12 @@ public class SpawnManager {
             this.tournamentFirst = CustomLocation.stringToLocation(config.getString("tournamentFirst"));
             this.tournamentSecond = CustomLocation.stringToLocation(config.getString("tournamentSecond"));
         }
-        if (config.contains("redroverLocation")) {
-            this.redroverLocation = CustomLocation.stringToLocation(config.getString("redroverLocation"));
-            this.redroverMin = CustomLocation.stringToLocation(config.getString("redroverMin"));
-            this.redroverMax = CustomLocation.stringToLocation(config.getString("redroverMax"));
-            this.redroverFirst = CustomLocation.stringToLocation(config.getString("redroverFirst"));
-            this.redroverSecond = CustomLocation.stringToLocation(config.getString("redroverSecond"));
+        if (config.contains("teamfightsLocation")) {
+            this.teamFightsLocation = CustomLocation.stringToLocation(config.getString("teamfightsLocation"));
+            this.teamFightsMin = CustomLocation.stringToLocation(config.getString("teamfightsMin"));
+            this.teamFightsMax = CustomLocation.stringToLocation(config.getString("teamfightsMax"));
+            this.teamFightsFirst = CustomLocation.stringToLocation(config.getString("teamfightsFirst"));
+            this.teamFightsSecond = CustomLocation.stringToLocation(config.getString("teamfightsSecond"));
         }
         if (config.contains("ffaLocation")) {
             this.ffaLocation = CustomLocation.stringToLocation(config.getString("ffaLocation"));
@@ -118,16 +118,16 @@ public class SpawnManager {
             config.set("tournamentFirst", CustomLocation.locationToString(this.tournamentFirst));
         if(tournamentSecond != null)
             config.set("tournamentSecond", CustomLocation.locationToString(this.tournamentSecond));
-        if(redroverLocation != null)
-            config.set("redroverLocation", CustomLocation.locationToString(this.redroverLocation));
-        if(redroverMin != null)
-            config.set("redroverMin", CustomLocation.locationToString(this.redroverMin));
-        if(redroverMax != null)
-            config.set("redroverMax", CustomLocation.locationToString(this.redroverMax));
-        if(redroverFirst != null)
-            config.set("redroverFirst", CustomLocation.locationToString(this.redroverFirst));
-        if(redroverSecond != null)
-            config.set("redroverSecond", CustomLocation.locationToString(this.redroverSecond));
+        if(teamFightsLocation != null)
+            config.set("teamfightsLocation", CustomLocation.locationToString(this.teamFightsLocation));
+        if(teamFightsMin != null)
+            config.set("teamfightsMin", CustomLocation.locationToString(this.teamFightsMin));
+        if(teamFightsMax != null)
+            config.set("teamfightsMax", CustomLocation.locationToString(this.teamFightsMax));
+        if(teamFightsFirst != null)
+            config.set("teamfightsFirst", CustomLocation.locationToString(this.teamFightsFirst));
+        if(teamFightsSecond != null)
+            config.set("teamfightsSecond", CustomLocation.locationToString(this.teamFightsSecond));
         this.plugin.getMainConfig().save();
     }
 

@@ -38,7 +38,7 @@ public class SpawnsCommand extends Command {
             sender.sendMessage(Style.translate("&c/" + alias + " sumolocation/sumofirst/sumosecond/sumomin/sumomax"));
             sender.sendMessage(Style.translate("&c/" + alias + " tournamentlocation/tournamentfirst/tournamentsecond/tournamentmin/tournamentmax"));
             sender.sendMessage(Style.translate("&c/" + alias + " ffalocation/ffamin/ffamax"));
-            sender.sendMessage(Style.translate("&c/" + alias + " redroverlocation/redroverfirst/redroversecond/redrovermin/redrovermax"));
+            sender.sendMessage(Style.translate("&c/" + alias + " teamfightslocation/teamfightsfirst/teamfightssecond/teamfightsmin/teamfightsmax"));
             sender.sendMessage(Style.translate("&7&m--------------------------------"));
             return true;
         }
@@ -158,34 +158,34 @@ public class SpawnsCommand extends Command {
                 player.sendMessage(ChatColor.GREEN + "Successfully set the ffa max.");
                 break;
             }
-            case "redroverlocation": {
-                Practice.getInstance().getSpawnManager().setRedroverLocation(CustomLocation.fromBukkitLocation(player.getLocation()));
+            case "teamfightslocation": {
+                Practice.getInstance().getSpawnManager().setTeamFightsLocation(CustomLocation.fromBukkitLocation(player.getLocation()));
                 Practice.getInstance().getSpawnManager().saveConfig();
-                player.sendMessage(ChatColor.GREEN + "Successfully set the redrover location.");
+                player.sendMessage(ChatColor.GREEN + "Successfully set the teamfights location.");
                 break;
             }
-            case "redroverfirst": {
-                Practice.getInstance().getSpawnManager().setRedroverFirst(CustomLocation.fromBukkitLocation(player.getLocation()));
+            case "teamfightsfirst": {
+                Practice.getInstance().getSpawnManager().setTeamFightsFirst(CustomLocation.fromBukkitLocation(player.getLocation()));
                 Practice.getInstance().getSpawnManager().saveConfig();
-                player.sendMessage(ChatColor.GREEN + "Successfully set the redrover first.");
+                player.sendMessage(ChatColor.GREEN + "Successfully set the teamfights first.");
                 break;
             }
-            case "redroversecond": {
-                Practice.getInstance().getSpawnManager().setRedroverSecond(CustomLocation.fromBukkitLocation(player.getLocation()));
+            case "teamfightssecond": {
+                Practice.getInstance().getSpawnManager().setTeamFightsSecond(CustomLocation.fromBukkitLocation(player.getLocation()));
                 Practice.getInstance().getSpawnManager().saveConfig();
-                player.sendMessage(ChatColor.GREEN + "Successfully set the redrover second.");
+                player.sendMessage(ChatColor.GREEN + "Successfully set the teamfights second.");
                 break;
             }
-            case "redrovermin": {
-                Practice.getInstance().getSpawnManager().setRedroverMin(CustomLocation.fromBukkitLocation(player.getLocation()));
+            case "teamfightsmin": {
+                Practice.getInstance().getSpawnManager().setTeamFightsMin(CustomLocation.fromBukkitLocation(player.getLocation()));
                 Practice.getInstance().getSpawnManager().saveConfig();
-                player.sendMessage(ChatColor.GREEN + "Successfully set the redrover min.");
+                player.sendMessage(ChatColor.GREEN + "Successfully set the teamfights min.");
                 break;
             }
-            case "redrovermax": {
-                Practice.getInstance().getSpawnManager().setRedroverMax(CustomLocation.fromBukkitLocation(player.getLocation()));
+            case "teamfightsmax": {
+                Practice.getInstance().getSpawnManager().setTeamFightsMax(CustomLocation.fromBukkitLocation(player.getLocation()));
                 Practice.getInstance().getSpawnManager().saveConfig();
-                player.sendMessage(ChatColor.GREEN + "Successfully set the redrover max.");
+                player.sendMessage(ChatColor.GREEN + "Successfully set the teamfights max.");
                 break;
             }
         }

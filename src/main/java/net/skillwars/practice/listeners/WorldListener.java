@@ -72,10 +72,10 @@ public class WorldListener implements Listener {
                     event.setCancelled(true);
                 }
             } else if (match.getKit().isSpleef()) {
-                double minX = match.getStandaloneArena().getMin().getX();
-                double minZ = match.getStandaloneArena().getMin().getZ();
-                double maxX = match.getStandaloneArena().getMax().getX();
-                double maxZ = match.getStandaloneArena().getMax().getZ();
+                double minX = match.getArena().getMin().getX();
+                double minZ = match.getArena().getMin().getZ();
+                double maxX = match.getArena().getMax().getX();
+                double maxZ = match.getArena().getMax().getZ();
                 if (minX > maxX) {
                     double lastMinX = minX;
                     minX = maxX;
@@ -133,10 +133,10 @@ public class WorldListener implements Listener {
             if (!match.getKit().isBuild()) {
                 event.setCancelled(true);
             } else {
-                double minX = match.getStandaloneArena().getMin().getX();
-                double minZ = match.getStandaloneArena().getMin().getZ();
-                double maxX = match.getStandaloneArena().getMax().getX();
-                double maxZ = match.getStandaloneArena().getMax().getZ();
+                double minX = match.getArena().getMin().getX();
+                double minZ = match.getArena().getMin().getZ();
+                double maxX = match.getArena().getMax().getX();
+                double maxZ = match.getArena().getMax().getZ();
                 if (minX > maxX) {
                     double lastMinX = minX;
                     minX = maxX;
@@ -150,7 +150,7 @@ public class WorldListener implements Listener {
                 }
                 if (player.getLocation().getX() >= minX && player.getLocation().getX() <= maxX
                         && player.getLocation().getZ() >= minZ && player.getLocation().getZ() <= maxZ) {
-                    if ((player.getLocation().getY() - match.getStandaloneArena().getA().getY()) < 5.0D) {
+                    if ((player.getLocation().getY() - match.getArena().getA().getY()) < 5.0D) {
                         match.addPlacedBlockLocation(event.getBlockPlaced().getLocation());
                     } else {
                         event.setCancelled(true);
@@ -182,10 +182,10 @@ public class WorldListener implements Listener {
             if (!match.getKit().isBuild()) {
                 event.setCancelled(true);
             } else {
-                double minX = match.getStandaloneArena().getMin().getX();
-                double minZ = match.getStandaloneArena().getMin().getZ();
-                double maxX = match.getStandaloneArena().getMax().getX();
-                double maxZ = match.getStandaloneArena().getMax().getZ();
+                double minX = match.getArena().getMin().getX();
+                double minZ = match.getArena().getMin().getZ();
+                double maxX = match.getArena().getMax().getX();
+                double maxZ = match.getArena().getMax().getZ();
                 if (minX > maxX) {
                     double lastMinX = minX;
                     minX = maxX;
@@ -199,7 +199,7 @@ public class WorldListener implements Listener {
                 }
                 if (player.getLocation().getX() >= minX && player.getLocation().getX() <= maxX
                         && player.getLocation().getZ() >= minZ && player.getLocation().getZ() <= maxZ) {
-                    if ((player.getLocation().getY() - match.getStandaloneArena().getA().getY()) < 5.0D) {
+                    if ((player.getLocation().getY() - match.getArena().getA().getY()) < 5.0D) {
                         Block block = event.getBlockClicked().getRelative(event.getBlockFace());
                         match.addPlacedBlockLocation(block.getLocation());
                     } else {
