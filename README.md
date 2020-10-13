@@ -9,6 +9,7 @@
 - Con /eventos te abre una GUI donde seleccionas cual queres hostear. Si uno esta iniciado otra persona no puede iniciar otro. Y deberan esperar 30 segundos despues de que termine el evento abierto para hostear otro. (✓)
 - Evento NoDebuff Lite: Bracket de NoDebuff (✓)
 - Comando para modificar el elo a los usuarios (✓)
+- Evento Teamfight: Entre todos los que entren al evento se dividen 2 equipos (✓)
 
 *EVENTOS
 
@@ -26,7 +27,6 @@
 
 - Colas Ranked y Unranked (Que los kits puedas ubicarlos a tu gusto en el menu)
 - Configuracion en GUI de party (Limite de miembros con un permiso para que los vips tengan mas slots, que la party sea publica + broadcast)
-- Evento Teamfight: Entre todos los que entren al evento se dividen 2 equipos
 - Evento FFA
 
 
