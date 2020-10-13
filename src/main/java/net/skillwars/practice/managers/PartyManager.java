@@ -158,7 +158,7 @@ public class PartyManager {
         });
     }
 
-    public void openSettingsInventory(Player player) {
+    /*public void openSettingsInventory(Player player) {
         InventoryUI inv = Practice.getInstance().getInventoryManager().getPartySettingsInventory();
 
         inv.setItem(2, new InventoryUI.AbstractClickableItem(ItemUtil.createItem(Material.PAPER, CC.translate("&f&lEditar limite de Miembros"))) {
@@ -177,6 +177,5 @@ public class PartyManager {
         });
 
         player.openInventory(inv.getCurrentPage());
-    }
-
+    } */
 }

@@ -1,15 +1,14 @@
-package net.skillwars.practice.events.nodebufflite;
-
-import org.bukkit.ChatColor;
+package net.skillwars.practice.events.ffa;
 
 import net.skillwars.practice.events.EventCountdownTask;
 import net.skillwars.practice.events.PracticeEvent;
+import org.bukkit.ChatColor;
 
 import java.util.Arrays;
 
-public class NoDebuffLiteCountdownTask extends EventCountdownTask {
+public class FFACountdownTask extends EventCountdownTask {
 
-    public NoDebuffLiteCountdownTask(PracticeEvent event) {
+    public FFACountdownTask(PracticeEvent event) {
         super(event, 60);
     }
 

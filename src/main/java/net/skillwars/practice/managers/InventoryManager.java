@@ -29,30 +29,28 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
 public class InventoryManager {
-
     private static final String MORE_PLAYERS = ChatColor.RED + "There must be at least 2 players in your party to do this.";
 
     private final Practice plugin = Practice.getInstance();
 
-    @Getter private final InventoryUI unrankedInventory = new InventoryUI(CC.PRIMARY + "Select an UnRanked Ladder", true, 2);
-
-    @Getter private final InventoryUI rankedInventory = new InventoryUI(CC.PRIMARY + "Select a Ranked Ladder", true, 2);
-
-    @Getter private final InventoryUI editorInventory = new InventoryUI(CC.PRIMARY + "Select an Editable Ladder", true, 2);
-
-    @Getter private final InventoryUI duelInventory = new InventoryUI(CC.PRIMARY + "Select a Duel Ladder", true, 2);
-
-    @Getter private final InventoryUI partySplitInventory = new InventoryUI(CC.PRIMARY + "Select a Party Split Kit", true, 2);
-
-    @Getter private final InventoryUI partyFFAInventory = new InventoryUI(CC.PRIMARY + "Select a Party FFA Kit", true, 2);
+    @Getter
+    private final InventoryUI unrankedInventory = new InventoryUI(CC.PRIMARY + "Select an UnRanked Ladder", true, 2);
+    @Getter
+    private final InventoryUI rankedInventory = new InventoryUI(CC.PRIMARY + "Select a Ranked Ladder", true, 2);
+    @Getter
+    private final InventoryUI editorInventory = new InventoryUI(CC.PRIMARY + "Select an Editable Ladder", true, 2);
+    @Getter
+    private final InventoryUI duelInventory = new InventoryUI(CC.PRIMARY + "Select a Duel Ladder", true, 2);
+    @Getter
+    private final InventoryUI partySplitInventory = new InventoryUI(CC.PRIMARY + "Select a Party Split Kit", true, 2);
+    @Getter
+    private final InventoryUI partyFFAInventory = new InventoryUI(CC.PRIMARY + "Select a Party FFA Kit", true, 2);
     //@Getter
     //private final InventoryUI redroverInventory = new InventoryUI(ChatColor.RED + "Select a Redrover Kit", true, 2);
-
-    @Getter private final InventoryUI partyEventInventory = new InventoryUI(CC.PRIMARY + "Select an Event", true, 1);
-
-    @Getter private final InventoryUI partyInventory = new InventoryUI(CC.PRIMARY + "Duel a Party", true, 6);
-
-    @Getter private final InventoryUI partySettingsInventory = new InventoryUI(CC.PRIMARY + "Party Settings", true, 1);
+    @Getter
+    private final InventoryUI partyEventInventory = new InventoryUI(CC.PRIMARY + "Select an Event", true, 1);
+    @Getter
+    private final InventoryUI partyInventory = new InventoryUI(CC.PRIMARY + "Duel a Party", true, 6);
 
     private final Map<String, InventoryUI> duelMapInventories = new HashMap<>();
     private final Map<String, InventoryUI> partyFFAMapInventories = new HashMap<>();

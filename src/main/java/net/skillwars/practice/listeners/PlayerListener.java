@@ -398,7 +398,7 @@ public class PlayerListener implements Listener {
                             player.performCommand("party list");
                             break;
                         case BONE:
-                            this.plugin.getPartyManager().openSettingsInventory(player);
+                            //this.plugin.getPartyManager().openSettingsInventory(player);
                             break;
                     }
                     break;
@@ -463,6 +463,7 @@ public class PlayerListener implements Listener {
                             //Check if the edit kit contents are empty before opening the inventory.
                                 player.getInventory().setArmorContents(kit.getArmor());
                                 player.getInventory().setContents(kit.getContents());
+                                player.updateInventory();
                                 player.sendMessage(CC.YELLOW + "Inventory reset");
                                 event.setCancelled(true);
                             break;

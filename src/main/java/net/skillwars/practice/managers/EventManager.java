@@ -4,6 +4,7 @@ import lombok.Setter;
 import net.skillwars.practice.Practice;
 import net.skillwars.practice.events.EventState;
 import net.skillwars.practice.events.PracticeEvent;
+import net.skillwars.practice.events.ffa.FFAEvent;
 import net.skillwars.practice.events.nodebufflite.NoDebuffLiteEvent;
 import net.skillwars.practice.events.teamfights.TeamFightEvent;
 import net.skillwars.practice.events.sumo.SumoEvent;
@@ -38,6 +39,7 @@ public class EventManager {
 
     public EventManager() {
         Arrays.asList(
+                FFAEvent.class,
                 SumoEvent.class,
                 NoDebuffLiteEvent.class,
                 TeamFightEvent.class

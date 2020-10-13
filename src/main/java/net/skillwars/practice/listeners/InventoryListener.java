@@ -13,6 +13,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
 public class InventoryListener implements Listener {
+
     private final Practice plugin;
 
     public InventoryListener() {

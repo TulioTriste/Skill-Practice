@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.Map;
 
 public class HostInvetory extends Menu {
+
     @Override
     public String getTitle(Player player) {
         return Color.translate("&9&lEventos");

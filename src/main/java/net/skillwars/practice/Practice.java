@@ -16,6 +16,8 @@ import net.skillwars.practice.commands.arena.param.ArenaParameterType;
 import net.skillwars.practice.commands.duel.AcceptCommand;
 import net.skillwars.practice.commands.duel.DuelCommand;
 import net.skillwars.practice.commands.duel.SpectateCommand;
+import net.skillwars.practice.commands.elo.EloCommand;
+import net.skillwars.practice.commands.elo.EloManagerCommand;
 import net.skillwars.practice.commands.event.*;
 import net.skillwars.practice.commands.management.*;
 import net.skillwars.practice.commands.time.DayCommand;
@@ -182,7 +184,9 @@ public class Practice extends JavaPlugin {
                 new NightCommand(),
                 new SunsetCommand(),
                 new SettingsCommand(),
-                new EventsCommand()
+                new EventsCommand(),
+                new EloCommand(),
+                new EloManagerCommand()
         ).forEach(command -> registerCommand(command, getName()));
     }
 
