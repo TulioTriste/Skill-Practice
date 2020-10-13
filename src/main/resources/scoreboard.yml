@@ -1,0 +1,74 @@
+title: "&3&lSkill Practice"
+lobby:
+  no-fight:
+    - "&bOnline&7: &f{online}"
+    - "&bIn Fight&7: &f{fights}"
+  in-queue:
+    - "&3Queue &7({queue-name})"
+    - " &7 &bLadder&7: {queue-kitname}"
+    - "{queue-ranked}"
+  in-queue-ranked-lines:
+    - " &7» &bRange&7: &f{range}"
+  in-party:
+    - "&3Party &7({party-members})"
+    - " &7» &bLeader&7: &f{party-leader}"
+  in-event:
+    - "&3&lEvent &b({event})"
+    - "{sumo}"
+  event-in-lobby:
+    - "&bEvent&7: &f{event}"
+  in-event-sumo-lines:
+    - "&bPlayers&7: &f{players}&7/&f{limit}"
+    - "{starting}"
+    - "{state}"
+    - "{fight}"
+  in-event-sumo-starting-lines:
+    - "&bStarting&7: &f{time}s"
+  in-event-sumo-state-lines:
+    - "&bState&7: &f{state}"
+  in-event-sumo-fighting-lines:
+    - ""
+    - "   &b{firstplayer} &7({firstping})"
+    - "       &dVS"
+    - "   &b{secondplayer} &7({secondping})"
+  in-tournament:
+    - ""
+    - "&3&lTournament &7({size}v{size})"
+    - " &7» &bLadder&7: &f{ladder}"
+    - " &7» &bStage&7: &fRound #{stage}"
+    - " &7» &bPlayers&7: &f{players}/{maxplayers}"
+    - "{countdown}"
+  in-tournament-countdown-lines:
+    - " &7» &bStarting&7: &f{countdown}s"
+  lines:
+    - "&7&m-----------------------"
+    - "{no-fight}"
+    - "{in-queue}"
+    - "{lobby-event}"
+    - "{events}"
+    - "{tournament}"
+    - "{party}"
+    - ""
+    - "&7&odiscord.gg/skillwars"
+    - "&7&m-----------------------"
+fight:
+  normal-match:
+    - "&aOpponent&7: &f{opponent}"
+  in-party-ffa-match:
+    - "&3Party FFA"
+    - " &bLeft players &7{ffa-left-players}/{ffa-max-players}"
+    - ""
+  in-party-teams-match:
+    - "&3Opponent"
+    - " &bPlayers &7({opponent-left-players}/{opponent-max-players})"
+    - ""
+    - "&3Your Party"
+    - " &bPlayers &7({party-left-players}/{party-max-players})"
+    - ""
+  lines:
+    - "&7&m-----------------------"
+    - "{normal-match}"
+    - "{party-ffa-match}"
+    - "{party-teams-match}"
+    - "&bDuration&7: &f{duration}"
+    - "&7&m-----------------------"

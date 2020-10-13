@@ -1,0 +1,6 @@
+main: net.skillwars.practice.Practice
+name: Practice
+version: 1.0
+authors: ["TulioTriste", "Risas", "EnzoL_"]
+depend:
+  - Nucleus
