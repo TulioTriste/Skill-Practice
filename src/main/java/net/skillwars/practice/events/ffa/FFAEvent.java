@@ -1,11 +1,13 @@
 package net.skillwars.practice.events.ffa;
 
 import lombok.Getter;
+import me.joeleoli.nucleus.Nucleus;
 import net.skillwars.practice.Practice;
 import net.skillwars.practice.events.EventCountdownTask;
 import net.skillwars.practice.events.PracticeEvent;
 import net.skillwars.practice.kit.Kit;
 import net.skillwars.practice.player.PlayerData;
+import net.skillwars.practice.util.CC;
 import net.skillwars.practice.util.CustomLocation;
 import net.skillwars.practice.util.PlayerUtil;
 import org.bukkit.Bukkit;
@@ -80,10 +82,11 @@ public class FFAEvent extends PracticeEvent<FFAPlayer> {
                     PlayerData winnerData = Practice.getInstance().getPlayerManager().getPlayerData(winner.getUniqueId());
                     winnerData.setSumoEventWins(winnerData.getSumoEventWins() + 1);
 
-                    for (int i = 0; i <= 2; i++) {
-                        String announce = ChatColor.YELLOW + "(Event) " + ChatColor.GREEN.toString() + "Winner: " + winner.getName();
-                        Bukkit.broadcastMessage(announce);
-                    }
+                    String winnerChat = CC.translate(Nucleus.getInstance().getChat().getPlayerPrefix(winner) + winner.getName());
+
+                    Bukkit.broadcastMessage("");
+                    Bukkit.broadcastMessage(ChatColor.DARK_AQUA.toString() + ChatColor.BOLD + "FFA Event " + ChatColor.AQUA.toString() + "Ganador: " + winnerChat);
+                    Bukkit.broadcastMessage("");
 
                     this.fighting.clear();
                     end();

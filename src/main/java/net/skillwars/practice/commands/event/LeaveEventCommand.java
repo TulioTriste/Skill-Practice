@@ -31,7 +31,7 @@ public class LeaveEventCommand extends Command {
         } else if (inTournament) {
             this.leaveTournament(player);
         } else {
-            player.sendMessage(ChatColor.RED + "There is nothing to leave.");
+            player.sendMessage(ChatColor.RED + "No hay nada de que salir.");
         }
         return true;
     }
@@ -46,11 +46,11 @@ public class LeaveEventCommand extends Command {
     private void leaveEvent(Player player) {
         PracticeEvent event = this.plugin.getEventManager().getEventPlaying(player);
         if (event == null) {
-            player.sendMessage(ChatColor.RED + "That event doesn't exist.");
+            player.sendMessage(ChatColor.RED + "Este evento no existe.");
             return;
         }
         if (!this.plugin.getEventManager().isPlaying(player, event)) {
-            player.sendMessage(ChatColor.RED + "You are not in an event.");
+            player.sendMessage(ChatColor.RED + "No estas en un evento.");
             return;
         }
         event.leave(player);

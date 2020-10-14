@@ -18,7 +18,7 @@ public class ArenaParameterType implements ParameterType<Arena> {
     public Arena transform(CommandSender sender, String source) {
         Arena arena = Practice.getInstance().getArenaManager().getArena(source);
         if (arena == null) {
-            sender.sendMessage(ChatColor.RED + "That arena doesn't exist!");
+            sender.sendMessage(ChatColor.RED + "Esta arena no existe.");
             return (null);
         }
         return arena;

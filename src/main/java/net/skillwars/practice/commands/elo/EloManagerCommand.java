@@ -28,7 +28,7 @@ public class EloManagerCommand extends Command {
         }
 
         if (args.length < 1) {
-            sender.sendMessage(CC.translate("&3&lEloManager"));
+            sender.sendMessage(CC.translate("&3&lELO Manager"));
             sender.sendMessage(CC.translate(""));
             sender.sendMessage(CC.translate("&b/elomanager set <player> <elo> <kitName|all>"));
             sender.sendMessage(CC.translate("&b/elomanager reset <player> <kitName|all>"));
@@ -39,7 +39,7 @@ public class EloManagerCommand extends Command {
         if (args[0].equalsIgnoreCase("set")) {
 
             if (args.length < 4) {
-                sender.sendMessage(CC.translate("&cUsa: /elomanager set <player> <elo> <kitName|all>"));
+                sender.sendMessage(CC.translate("&cUsage: /elomanager set <player> <elo> <kitName|all>"));
                 return true;
             }
 
@@ -82,7 +82,7 @@ public class EloManagerCommand extends Command {
         else if (args[0].equalsIgnoreCase("reset")) {
 
             if (args.length < 3) {
-                sender.sendMessage(CC.translate("&cUsa: /elomanager reset <player> <kitName|all>"));
+                sender.sendMessage(CC.translate("&cUsage: /elomanager reset <player> <kitName|all>"));
                 return true;
             }
 

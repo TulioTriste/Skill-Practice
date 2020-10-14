@@ -32,16 +32,16 @@ public class StatusEventCommand extends Command {
         Player player = (Player) sender;
         PlayerData playerData = this.plugin.getPlayerManager().getPlayerData(player.getUniqueId());
         if (playerData.getPlayerState() != PlayerState.SPAWN) {
-            player.sendMessage(ChatColor.RED + "Cannot execute this command in your current state.");
+            player.sendMessage(ChatColor.RED + "Solo puedes ejecutar este comando en el Spawn.");
             return true;
         }
         if (this.plugin.getTournamentManager().getTournaments().size() == 0) {
-            player.sendMessage(ChatColor.RED + "There is no available tournaments.");
+            player.sendMessage(ChatColor.RED + "No hay ningún torneo disponible.");
             return true;
         }
         for (Tournament tournament : this.plugin.getTournamentManager().getTournaments().values()) {
             if (tournament == null) {
-                player.sendMessage(ChatColor.RED + "This tournament doesn't exist.");
+                player.sendMessage(ChatColor.RED + "Este torneo no existe.");
                 return true;
             }
             player.sendMessage(ChatColor.DARK_GRAY.toString() + ChatColor.STRIKETHROUGH + "----------------------------------------------------");

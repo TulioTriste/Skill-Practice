@@ -17,7 +17,7 @@ public class ArenaCommand {
 
     private Practice plugin = Practice.getInstance();
 
-    private String NO_ARENA = ChatColor.RED + "That arena doesn't exist!";
+    private String NO_ARENA = ChatColor.RED + "Esta arena no existe!";
 
     @Command(names = "arena", permissionNode = "practice.arena")
     public static void help(Player player) {
@@ -38,17 +38,17 @@ public class ArenaCommand {
     public static void create(Player player, @Parameter(name = "name") String name) {
         Arena arena = Practice.getInstance().getArenaManager().getArena(name);
         if (arena != null) {
-            player.sendMessage(ChatColor.RED + "That arena already exists!");
+            player.sendMessage(ChatColor.RED + "Esta arena ya existe!");
         }
 
         Practice.getInstance().getArenaManager().createArena(name);
-        player.sendMessage(ChatColor.GREEN + "Successfully created arena " + name + ".");
+        player.sendMessage(ChatColor.GREEN + "La arena " + name + " se ha creado correctamente.");
     }
 
     @Command(names = "arena delete", permissionNode = "practice.arena.delete")
     public static void delete(Player player, @Parameter(name = "arena") Arena arena) {
         Practice.getInstance().getArenaManager().deleteArena(arena.getName());
-        player.sendMessage(ChatColor.GREEN + "Successfully deleted arena " + arena.getName() + ".");
+        player.sendMessage(ChatColor.GREEN + "La arena " + arena.getName() + " se ha eliminado correctamente.");
     }
 
     @Command(names = "arena a", permissionNode = "practice.arena.a")
@@ -58,7 +58,7 @@ public class ArenaCommand {
         location.setY(location.getBlockY() + 3.0);
         location.setZ(location.getBlockZ() + 0.5);
         arena.setA(CustomLocation.fromBukkitLocation(location));
-        player.sendMessage(ChatColor.GREEN + "Successfully set position A for arena " + arena.getName() + ".");
+        player.sendMessage(ChatColor.GREEN + "Se ha colocado la posición A correctamente en la arena " + arena.getName() + ".");
     }
 
     @Command(names = "arena b", permissionNode = "practice.arena.b")
@@ -68,31 +68,31 @@ public class ArenaCommand {
         location.setY(location.getBlockY() + 3.0);
         location.setZ(location.getBlockZ() + 0.5);
         arena.setB(CustomLocation.fromBukkitLocation(location));
-        player.sendMessage(ChatColor.GREEN + "Successfully set position B for arena " + arena.getName() + ".");
+        player.sendMessage(ChatColor.GREEN + "Se ha colocado la posición B correctamente en la arena " + arena.getName() + ".");
     }
 
     @Command(names = "arena min", permissionNode = "practice.arena.min")
     public static void min(Player player, @Parameter(name = "arena") Arena arena) {
         arena.setMin(CustomLocation.fromBukkitLocation(player.getLocation()));
-        player.sendMessage(ChatColor.GREEN + "Successfully set minimum position for arena " + arena.getName() + ".");
+        player.sendMessage(ChatColor.GREEN + "Se ha colocado la posición minima correctamente en la arena " + arena.getName() + ".");
     }
 
     @Command(names = "arena max", permissionNode = "practice.arena.max")
     public static void max(Player player, @Parameter(name = "arena") Arena arena) {
         arena.setMax(CustomLocation.fromBukkitLocation(player.getLocation()));
-        player.sendMessage(ChatColor.GREEN + "Successfully set maximum position for arena " + arena.getName() + ".");
+        player.sendMessage(ChatColor.GREEN + "Se ha colocado la posición máxima correctamente en la arena " + arena.getName() + ".");
     }
 
     @Command(names = "arena enable", permissionNode = "practice.arena.enable")
     public static void enable(Player player, @Parameter(name = "arena") Arena arena) {
         arena.setEnabled(true);
-        player.sendMessage(ChatColor.GREEN + "Successfully enabled arena " + arena.getName() + ".");
+        player.sendMessage(ChatColor.GREEN + "La arena " + arena.getName() + " se ha activado correctamente.");
     }
 
     @Command(names = "arena disable", permissionNode = "practice.arena.disable")
     public static void disable(Player player, @Parameter(name = "arena") Arena arena) {
         arena.setEnabled(false);
-        player.sendMessage(ChatColor.GREEN + "Successfully disable arena " + arena.getName() + ".");
+        player.sendMessage(ChatColor.GREEN + "La arena " + arena.getName() + " se ha desactivado correctamente.");
     }
 
     @Command(names = "arena generate", permissionNode = "practice.arena.generate")
@@ -106,7 +106,7 @@ public class ArenaCommand {
     @Command(names = "arena save", permissionNode = "practice.arena.save")
     public static void save(Player player, @Parameter(name = "arena") Arena arena) {
         Practice.getInstance().getArenaManager().reloadArenas();
-        player.sendMessage(ChatColor.GREEN + "Successfully reloaded the arenas.");
+        player.sendMessage(ChatColor.GREEN + "Todas las arenas se han reiniciado correctamente.");
     }
 
     @Command(names = "arena tp", permissionNode = "practice.arena.disable")
@@ -116,7 +116,7 @@ public class ArenaCommand {
         Location location =  MathUtil.getMiddle(locationA.toBukkitLocation(), locationB.toBukkitLocation());
         Location target = location.setDirection(MathUtil.getMiddle(locationA.toBukkitLocation(), locationB.toBukkitLocation()).subtract(location).toVector());
         player.teleport(target);
-        player.sendMessage(ChatColor.GREEN + "Successfully teleport to arena " + arena.getName() + ".");
+        player.sendMessage(ChatColor.GREEN + "Te has teletransportado hacia la arena " + arena.getName() + ".");
     }
 
     @Command(names = "arena manage", permissionNode = "practice.arena.manage")
