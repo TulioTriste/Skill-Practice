@@ -27,8 +27,6 @@
 
 - Colas Ranked y Unranked (Que los kits puedas ubicarlos a tu gusto en el menu)
 - Configuracion en GUI de party (Limite de miembros con un permiso para que los vips tengan mas slots, que la party sea publica + broadcast)
-- Evento FFA
-
 
 --------------------------------------
 ARENAS
