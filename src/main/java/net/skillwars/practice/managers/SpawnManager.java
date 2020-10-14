@@ -35,9 +35,9 @@ public class SpawnManager {
     private CustomLocation teamFightsSecond;
     private CustomLocation teamFightsMin;
     private CustomLocation teamFightsMax;
-    private CustomLocation ffaLocation;
-    private CustomLocation ffaMin;
-    private CustomLocation ffaMax;
+    private CustomLocation FFALocation;
+    private CustomLocation FFAMin;
+    private CustomLocation FFAMax;
 
     public SpawnManager() {
         this.plugin = Practice.getInstance();
@@ -78,9 +78,9 @@ public class SpawnManager {
             this.teamFightsSecond = CustomLocation.stringToLocation(config.getString("teamfightsSecond"));
         }
         if (config.contains("ffaLocation")) {
-            this.ffaLocation = CustomLocation.stringToLocation(config.getString("ffaLocation"));
-            this.ffaMin = CustomLocation.stringToLocation(config.getString("ffaMin"));
-            this.ffaMax = CustomLocation.stringToLocation(config.getString("ffaMax"));
+            this.FFALocation = CustomLocation.stringToLocation(config.getString("ffaLocation"));
+            this.FFAMin = CustomLocation.stringToLocation(config.getString("ffaMin"));
+            this.FFAMax = CustomLocation.stringToLocation(config.getString("ffaMax"));
         }
     }
 
@@ -128,6 +128,12 @@ public class SpawnManager {
             config.set("teamfightsFirst", CustomLocation.locationToString(this.teamFightsFirst));
         if(teamFightsSecond != null)
             config.set("teamfightsSecond", CustomLocation.locationToString(this.teamFightsSecond));
+        if(FFALocation != null)
+            config.set("ffaLocation", CustomLocation.locationToString(this.FFALocation));
+        if(FFAMin != null)
+            config.set("ffaMin", CustomLocation.locationToString(this.FFAMin));
+        if(FFAMax != null)
+            config.set("ffaMax", CustomLocation.locationToString(this.FFAMax));
         this.plugin.getMainConfig().save();
     }
 

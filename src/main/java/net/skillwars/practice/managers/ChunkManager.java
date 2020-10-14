@@ -123,8 +123,8 @@ public class ChunkManager {
             }
         }
 
-        CustomLocation ffaMin = this.plugin.getSpawnManager().getFfaMin();
-        CustomLocation ffaMax = this.plugin.getSpawnManager().getFfaMax();
+        CustomLocation ffaMin = this.plugin.getSpawnManager().getFFAMin();
+        CustomLocation ffaMax = this.plugin.getSpawnManager().getFFAMax();
 
         if (ffaMin != null && ffaMax != null) {
             int ffaMinX = ffaMin.toBukkitLocation().getBlockX() >> 4;

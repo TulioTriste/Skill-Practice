@@ -159,6 +159,28 @@ public class EventManager {
         player.setFlying(true);
     }
 
+    public void addSpectatorFFA(Player player, PlayerData playerData, FFAEvent event) {
+
+        this.addSpectator(player, playerData, event);
+
+        if (event.getSpawnLocations().size() == 1) {
+            player.teleport(event.getSpawnLocations().get(0).toBukkitLocation());
+        } else {
+            List<CustomLocation> spawnLocations = new ArrayList<>(event.getSpawnLocations());
+            player.teleport(spawnLocations.remove(ThreadLocalRandom.current().nextInt(spawnLocations.size())).toBukkitLocation());
+        }
+
+
+        for(Player eventPlayer : event.getBukkitPlayers()) {
+            player.showPlayer(eventPlayer);
+        }
+
+        player.setGameMode(GameMode.SPECTATOR);
+
+        player.setAllowFlight(true);
+        player.setFlying(true);
+    }
+
     private void addSpectator(Player player, PlayerData playerData, PracticeEvent event) {
 
         playerData.setPlayerState(PlayerState.SPECTATING);

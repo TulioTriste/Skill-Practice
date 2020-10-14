@@ -6,6 +6,8 @@ import lombok.Setter;
 import me.joeleoli.nucleus.Nucleus;
 import net.skillwars.practice.Practice;
 import net.skillwars.practice.event.EventStartEvent;
+import net.skillwars.practice.events.ffa.FFAEvent;
+import net.skillwars.practice.events.ffa.FFAPlayer;
 import net.skillwars.practice.events.nodebufflite.NoDebuffLiteEvent;
 import net.skillwars.practice.events.nodebufflite.NoDebuffLitePlayer;
 import net.skillwars.practice.events.sumo.SumoEvent;
@@ -119,6 +121,15 @@ public abstract class PracticeEvent<K extends EventPlayer> {
             for (final NoDebuffLitePlayer sumoPlayer : sumoEvent.getPlayers().values()) {
                 if (sumoPlayer.getFightTask() != null) {
                     sumoPlayer.getFightTask().cancel();
+                }
+            }
+        }
+
+        if (this instanceof FFAEvent) {
+            final FFAEvent ffaEvent = (FFAEvent) this;
+            for (final FFAPlayer ffaPlayer : ffaEvent.getPlayers().values()) {
+                if (ffaPlayer.getFightTask() != null) {
+                    ffaPlayer.getFightTask().cancel();
                 }
             }
         }

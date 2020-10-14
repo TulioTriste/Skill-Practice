@@ -141,19 +141,19 @@ public class SpawnsCommand extends Command {
                 break;
             }
             case "ffalocation": {
-                Practice.getInstance().getSpawnManager().setFfaLocation(CustomLocation.fromBukkitLocation(player.getLocation()));
+                Practice.getInstance().getSpawnManager().setFFALocation(CustomLocation.fromBukkitLocation(player.getLocation()));
                 Practice.getInstance().getSpawnManager().saveConfig();
                 player.sendMessage(ChatColor.GREEN + "Successfully set the ffa location.");
                 break;
             }
             case "ffamin": {
-                Practice.getInstance().getSpawnManager().setFfaMin(CustomLocation.fromBukkitLocation(player.getLocation()));
+                Practice.getInstance().getSpawnManager().setFFAMin(CustomLocation.fromBukkitLocation(player.getLocation()));
                 Practice.getInstance().getSpawnManager().saveConfig();
                 player.sendMessage(ChatColor.GREEN + "Successfully set the ffa min.");
                 break;
             }
             case "ffamax": {
-                Practice.getInstance().getSpawnManager().setFfaMax(CustomLocation.fromBukkitLocation(player.getLocation()));
+                Practice.getInstance().getSpawnManager().setFFAMax(CustomLocation.fromBukkitLocation(player.getLocation()));
                 Practice.getInstance().getSpawnManager().saveConfig();
                 player.sendMessage(ChatColor.GREEN + "Successfully set the ffa max.");
                 break;

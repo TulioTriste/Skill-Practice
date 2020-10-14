@@ -1,6 +1,8 @@
 package net.skillwars.practice.listeners;
 
 import net.skillwars.practice.Practice;
+import net.skillwars.practice.events.ffa.FFAEvent;
+import net.skillwars.practice.events.ffa.FFAPlayer;
 import net.skillwars.practice.events.nodebufflite.NoDebuffLitePlayer;
 import net.skillwars.practice.events.teamfights.TeamFightEvent;
 import net.skillwars.practice.events.sumo.SumoPlayer;
@@ -137,6 +139,11 @@ public class EntityListener implements Listener {
             return;
         }
 
+        if (isEventDamager && eventDamager instanceof FFAEvent && ((FFAEvent) eventDamager).getPlayer(damager).getState() != FFAPlayer.FFAState.FIGHTING || isEventEntity &&  eventDamager instanceof FFAEvent && ((FFAEvent) eventEntity).getPlayer(entity).getState() != FFAPlayer.FFAState.FIGHTING || !isEventDamager && damagerData.getPlayerState() != PlayerState.FIGHTING || !isEventEntity && entityData.getPlayerState() != PlayerState.FIGHTING) {
+            e.setCancelled(true);
+            return;
+        }
+
         if (isEventDamager && eventDamager instanceof NoDebuffLiteEvent
                 && ((NoDebuffLiteEvent) eventDamager).getPlayer(damager).getState() != NoDebuffLitePlayer.MiniNoDebuffState.FIGHTING
                 || isEventEntity &&  eventDamager instanceof NoDebuffLiteEvent
@@ -164,6 +171,13 @@ public class EntityListener implements Listener {
                 eventEntity instanceof NoDebuffLiteEvent
                 || damagerData.getPlayerState() == PlayerState.EVENT
                 && eventDamager instanceof NoDebuffLiteEvent) {
+            return;
+        }
+
+        if(entityData.getPlayerState() == PlayerState.EVENT &&
+                eventEntity instanceof FFAEvent
+                || damagerData.getPlayerState() == PlayerState.EVENT
+                && eventDamager instanceof FFAEvent) {
             return;
         }
 
