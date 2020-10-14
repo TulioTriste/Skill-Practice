@@ -4,17 +4,14 @@ import net.skillwars.practice.Practice;
 import net.skillwars.practice.party.Party;
 import net.skillwars.practice.player.PlayerData;
 import net.skillwars.practice.util.CC;
+import net.skillwars.practice.util.ItemBuilder;
 import net.skillwars.practice.util.ItemUtil;
 import net.skillwars.practice.util.TtlHashMap;
 import net.skillwars.practice.util.inventory.InventoryUI;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import org.bukkit.Material;
@@ -23,6 +20,8 @@ import org.bukkit.entity.Player;
 import net.skillwars.practice.player.PlayerState;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 public class PartyManager {
 
@@ -159,23 +158,31 @@ public class PartyManager {
     }
 
     public void openSettingsInventory(Player player) {
-        InventoryUI inv = Practice.getInstance().getInventoryManager().getPartySettingsInventory();
+        Inventory inv = Bukkit.createInventory(null, 9, CC.PRIMARY + "Settings Party");
+        Party party = plugin.getPartyManager().getParty(player.getUniqueId());
 
-        inv.setItem(2, new InventoryUI.AbstractClickableItem(ItemUtil.createItem(Material.PAPER, CC.translate("&f&lEditar limite de Miembros"))) {
+        List<String> membersLimitLore = new ArrayList<>(CC.translate(Arrays.asList("&7&m------------------------",
+                "&fDa clic izquierdo o derecho",
+                "&fpara que puedas insertar la",
+                "&fcantidad de miembros en tu Party",
+                "",
+                " &e\u2022 &fMiembros: " + party.getLimit(),
+                "&7&m------------------------")));
+        ItemStack membersLimit = new ItemBuilder(ItemUtil.createItem(Material.PAPER, CC.translate("&b&lEditar limite de Miembros"))).lore(membersLimitLore).build();
 
-            @Override
-            public void onClick(InventoryClickEvent event) {
-                event.getWhoClicked().sendMessage("test");
-            }
-        });
+        List<String> statusItemLores = new ArrayList<>(CC.translate(Arrays.asList("&7&m------------------------",
+                "&fAbrir la Party para todo el publico",
+                "&fpara que cualquiera pueda unirse",
+                "",
+                (party.isOpen() ? "&a\u2713 " : "  ") + "&fEnabled",
+                (party.isOpen() ? "  " : "&c\u2718 ") + "&fDisabled",
+                "&7&m------------------------")));
 
-        inv.setItem(6, new InventoryUI.AbstractClickableItem(ItemUtil.createItem(Material.DOUBLE_PLANT, CC.translate(""))) {
-            @Override
-            public void onClick(InventoryClickEvent event) {
-                event.getWhoClicked().sendMessage("hola");
-            }
-        });
+        ItemStack statusParty = new ItemBuilder(ItemUtil.createItem(Material.DOUBLE_PLANT, CC.translate("&b&lHacer Publica la Party"))).lore(statusItemLores).build();
 
-        player.openInventory(inv.getCurrentPage());
+        inv.setItem(2, statusParty);
+        inv.setItem(6, new ItemBuilder(membersLimit).build());
+
+        player.openInventory(inv);
     }
 }

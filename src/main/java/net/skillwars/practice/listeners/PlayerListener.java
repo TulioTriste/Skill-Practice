@@ -1,6 +1,7 @@
 package net.skillwars.practice.listeners;
 
 import net.skillwars.practice.Practice;
+import net.skillwars.practice.events.EventState;
 import net.skillwars.practice.kit.PlayerKit;
 import net.skillwars.practice.leaderboards.LeaderBoardMenu;
 import net.skillwars.practice.match.Match;
@@ -374,9 +375,6 @@ public class PlayerListener implements Listener {
                         case BOOK:
                             player.openInventory(this.plugin.getInventoryManager().getEditorInventory().getCurrentPage());
                             break;
-                        case COMPASS:
-                            player.openInventory(playerData.getOptions().getInventory());
-                            break;
                         case DIAMOND_AXE:
                             if (party != null && !this.plugin.getPartyManager().isLeader(player.getUniqueId())) {
                                 player.sendMessage(CC.RED + "Solo el Leader de la Party puede iniciar Eventos.");
@@ -422,9 +420,9 @@ public class PlayerListener implements Listener {
                     PracticeEvent practiceEvent = this.plugin.getEventManager().getEventPlaying(player);
 
                     if (item.getType() == Material.NETHER_STAR) {
-                        if(practiceEvent != null) {
+                        if (practiceEvent != null) {
                             practiceEvent.leave(player);
-                        }else{
+                        } else {
                             this.plugin.getPlayerManager().sendToSpawnAndReset(player);
                         }
                     }
@@ -434,7 +432,6 @@ public class PlayerListener implements Listener {
                         return;
                     }
                     if (item.getType() == Material.REDSTONE) {
-
                         if(this.plugin.getEventManager().getSpectators().containsKey(player.getUniqueId())) {
                             this.plugin.getEventManager().removeSpectator(player);
                         } else if (party == null) {

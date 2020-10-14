@@ -50,7 +50,6 @@ public class InventoryManager {
     @Getter private final InventoryUI partyEventInventory = new InventoryUI(CC.PRIMARY + "Select an Event", true, 1);
 
     @Getter private final InventoryUI partyInventory = new InventoryUI(CC.PRIMARY + "Duel a Party", true, 6);
-    @Getter private final InventoryUI partySettingsInventory = new InventoryUI(CC.PRIMARY + "Settings Party", true, 1);
 
     private final Map<String, InventoryUI> duelMapInventories = new HashMap<>();
     private final Map<String, InventoryUI> partyFFAMapInventories = new HashMap<>();

@@ -2,6 +2,8 @@ package net.skillwars.practice.util;
 
 import org.bukkit.ChatColor;
 
+import java.util.List;
+
 public final class CC {
 
 	public static final String PRIMARY = ChatColor.DARK_AQUA.toString();
@@ -90,6 +92,13 @@ public final class CC {
 	
 	public static String translate(String n) {
 		return ChatColor.translateAlternateColorCodes('&', n);
+	}
+
+	public static List<String> translate(List<String> n) {
+		for (int i = 0; i < n.size(); ++i) {
+			n.set(i, translate(n.get(i)));
+		}
+		return n;
 	}
 
 	static {

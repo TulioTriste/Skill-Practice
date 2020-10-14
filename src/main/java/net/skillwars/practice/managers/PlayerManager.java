@@ -285,7 +285,7 @@ public class PlayerManager {
         player.getInventory().setContents(items);
         if(inParty){
             Party party = this.plugin.getPartyManager().getParty(player.getUniqueId());
-            player.getInventory().setItem(7, ItemUtil.createItem(Material.NETHER_STAR, CC.YELLOW + Bukkit.getPlayer(party.getLeader()).getName() + "´s Party"));
+            player.getInventory().setItem(7, ItemUtil.createItem(Material.BEACON, CC.YELLOW + Bukkit.getPlayer(party.getLeader()).getName() + "´s Party"));
         }
         if (isRematching && !inParty && !inTournament && !inEvent) {
             player.getInventory().setItem(3, ItemUtil.createItem(Material.EMERALD, ChatColor.BLUE.toString() + "Rematch"));

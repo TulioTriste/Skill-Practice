@@ -113,7 +113,7 @@ public class SumoEvent extends PracticeEvent<SumoPlayer> {
                     winnerData.setSumoEventWins(winnerData.getSumoEventWins() + 1);
 
                     Bukkit.broadcastMessage("");
-                    Bukkit.broadcastMessage(ChatColor.DARK_AQUA.toString() + "Sumo Event " + ChatColor.AQUA.toString() + "Winner: " + ChatColor.RESET + winner.getName());
+                    Bukkit.broadcastMessage(ChatColor.DARK_AQUA.toString() + ChatColor.BOLD + "Sumo Event " + ChatColor.AQUA.toString() + "Winner: " + ChatColor.RESET + winner.getName());
                     Bukkit.broadcastMessage("");
 
                     this.fighting.clear();

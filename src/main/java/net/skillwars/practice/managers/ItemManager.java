@@ -25,13 +25,13 @@ public class ItemManager {
         this.spawnItems = new ItemStack[]{
                 ItemUtil.createItem(Material.IRON_SWORD, CC.YELLOW + "Join UnRanked Queue"),
                 ItemUtil.createItem(Material.DIAMOND_SWORD, CC.GREEN + "Join Ranked Queue"),
+                null,
+                null,
+                ItemUtil.createItem(Material.NETHER_STAR, CC.YELLOW + "Estadisticas"),
+                null,
                 ItemUtil.createItem(Material.EMPTY_MAP, CC.GREEN + "Events"),
-                null,
-                ItemUtil.createItem(Material.NETHER_STAR, CC.YELLOW + "Statistics"),
-                null,
-                ItemUtil.createItem(Material.NAME_TAG, CC.PRIMARY + "Create Party"),
-                ItemUtil.createItem(Material.COMPASS, CC.PRIMARY + "Settings"),
-                ItemUtil.createItem(Material.BOOK, CC.GOLD + "Edit Kits"),
+                ItemUtil.createItem(Material.NAME_TAG, CC.PRIMARY + "Crear Party"),
+                ItemUtil.createItem(Material.BOOK, CC.GOLD + "Editar Kits"),
         };
         this.spawnItems2 = new ItemStack[]{
                 ItemUtil.createItem(Material.IRON_SWORD, CC.YELLOW + "Join UnRanked Queue"),
@@ -41,7 +41,7 @@ public class ItemManager {
                 ItemUtil.createItem(Material.NAME_TAG, CC.PRIMARY + "Create Party"),
                 null,
                 null,
-                ItemUtil.createItem(Material.COMPASS, CC.PRIMARY + "Settings"),
+                ItemUtil.createItem(Material.COMPASS, CC.PRIMARY + "Ajustes"),
                 ItemUtil.createItem(Material.BOOK, CC.GOLD + "Edit Kits"),
         };
         this.queueItems = new ItemStack[]{

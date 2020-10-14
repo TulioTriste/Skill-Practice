@@ -49,7 +49,7 @@ public class PracticeChat implements ChatFormat {
         return Style.GRAY
                 + Style.translate(Nucleus.getInstance().getChat().getPlayerPrefix(sender))
                 + sender.getDisplayName()
-                + Style.DARK_GRAY + ": " + Style.WHITE
+                + Style.GRAY + ": " + Style.WHITE
                 + (sender.hasPermission("nucleus.chat.color") ? Style.translate(message) : message);
     }
 
@@ -58,7 +58,7 @@ public class PracticeChat implements ChatFormat {
 		return Style.GRAY
                 + Style.translate(Nucleus.getInstance().getChat().getPlayerPrefix(sender))
                 + sender.getDisplayName()
-                + Style.DARK_GRAY + ": " + Style.WHITE
+                + Style.GRAY + ": " + Style.WHITE
                 + (sender.hasPermission("nucleus.chat.color") ? Style.translate(message) : message);
 	}
 }

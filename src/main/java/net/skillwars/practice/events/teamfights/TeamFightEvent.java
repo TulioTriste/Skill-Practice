@@ -7,6 +7,7 @@ import lombok.Setter;
 import me.joeleoli.nucleus.Nucleus;
 import net.skillwars.practice.Practice;
 import net.skillwars.practice.events.EventCountdownTask;
+import net.skillwars.practice.events.EventState;
 import net.skillwars.practice.events.PracticeEvent;
 import net.skillwars.practice.events.nodebufflite.NoDebuffLitePlayer;
 import net.skillwars.practice.player.PlayerData;
@@ -94,7 +95,7 @@ public class TeamFightEvent extends PracticeEvent<TeamFightPlayer> {
 					data.getFightPlayer().getFightTask().cancel();
 				}
 
-				sendMessage(ChatColor.RED + player.getName() + ChatColor.GRAY + " has been eliminated.");
+				sendMessage(ChatColor.RED + player.getName() + ChatColor.GRAY + " ha sido eliminado.");
 				this.getPlayers().remove(player.getUniqueId());
 
 				getPlugin().getServer().getScheduler().runTask(getPlugin(), () -> {
@@ -109,7 +110,11 @@ public class TeamFightEvent extends PracticeEvent<TeamFightPlayer> {
 				this.blueTeam.remove(player.getUniqueId());
 			}
 
-			if(this.blueTeam.size() == 0 || this.redTeam.size() == 0) {
+			if (this.blueTeam.size() == 0 || this.redTeam.size() == 0) {
+
+				if (this.getState().equals(EventState.STARTED)) {
+					gameTask.cancel();
+				}
 
 				List<UUID> winnerTeam = getWinningTeam();
 				String winnerTeamName = ChatColor.WHITE.toString() + ChatColor.BOLD + "Tie";
@@ -134,7 +139,6 @@ public class TeamFightEvent extends PracticeEvent<TeamFightPlayer> {
 				Bukkit.broadcastMessage(ChatColor.DARK_AQUA.toString() + ChatColor.BOLD + "TeamFights Event " + ChatColor.AQUA.toString() + "Ganador: " + winnerTeamName);
 				Bukkit.broadcastMessage("");
 
-				gameTask.cancel();
 				end();
 			}
 		};

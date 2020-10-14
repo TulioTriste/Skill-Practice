@@ -199,7 +199,8 @@ public class Practice extends JavaPlugin {
                 //new EnderpearlListener(this),
                 new UIListener(),
                 new InventoryListener(),
-                new ProfileOptionsListeners()
+                new ProfileOptionsListeners(),
+                new ChatListener()
         ).forEach(listener -> getServer().getPluginManager().registerEvents(listener, this));
     }
 
