@@ -1,5 +1,6 @@
 package net.skillwars.practice.commands;
 
+import net.skillwars.practice.util.CC;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -28,19 +29,19 @@ public class FlyCommand extends Command {
         }
         Player player = (Player) sender;
         if (!player.hasPermission("practice.fly")) {
-            player.sendMessage(ChatColor.RED + "You do not have permission to use that command.");
+            player.sendMessage(ChatColor.RED + "No tienes permisos para ejecutar este comando.");
             return true;
         }
         PlayerData playerData = this.plugin.getPlayerManager().getPlayerData(player.getUniqueId());
         if (playerData.getPlayerState() != PlayerState.SPAWN) {
-            player.sendMessage(ChatColor.RED + "Cannot execute this command in your current state.");
+            player.sendMessage(ChatColor.RED + "Solo puedes ejecutar este comando en el Spawn.");
             return true;
         }
         player.setAllowFlight(!player.getAllowFlight());
         if (player.getAllowFlight()) {
-            player.sendMessage(ChatColor.YELLOW + "Your flight has been enabled.");
+            player.sendMessage(CC.SECONDARY + "Tu modo de vuelo ha sido &aactivado.");
         } else {
-            player.sendMessage(ChatColor.YELLOW + "Your flight has been disabled.");
+            player.sendMessage(CC.SECONDARY + "Tu modo de vuelo ha sido &cdesactivado.");
         }
         return true;
     }

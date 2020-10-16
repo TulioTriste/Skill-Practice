@@ -6,6 +6,7 @@ import net.skillwars.practice.events.nodebufflite.NoDebuffLiteEvent;
 import net.skillwars.practice.events.teamfights.TeamFightEvent;
 import net.skillwars.practice.party.Party;
 import net.skillwars.practice.player.PlayerData;
+import net.skillwars.practice.util.CC;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -40,26 +41,26 @@ public class SpectateEventCommand extends Command {
         PlayerData playerData = this.plugin.getPlayerManager().getPlayerData(player.getUniqueId());
         Party party = this.plugin.getPartyManager().getParty(playerData.getUniqueId());
         if (party != null || (playerData.getPlayerState() != PlayerState.SPAWN && playerData.getPlayerState() != PlayerState.SPECTATING)) {
-            player.sendMessage(ChatColor.RED + "Cannot execute this command in your current state.");
+            player.sendMessage(ChatColor.RED + "Solo puedes ejecutar este comando en el Spawn.");
             return true;
         }
         PracticeEvent event = this.plugin.getEventManager().getByName(args[0]);
         if (event == null) {
-            player.sendMessage(ChatColor.RED + "That player is currently not in an event.");
+            player.sendMessage(ChatColor.RED + "Este jugador no esta en un evento.");
             return true;
         }
         if (event.getState() != EventState.STARTED) {
-            player.sendMessage(ChatColor.RED + "That event hasn't started, please wait.");
+            player.sendMessage(ChatColor.RED + "Este evento aún no comienza, espera...");
             return true;
         }
         if (playerData.getPlayerState() == PlayerState.SPECTATING) {
             if (this.plugin.getEventManager().getSpectators().containsKey(player.getUniqueId())) {
-                player.sendMessage(ChatColor.RED + "You are already spectating this event.");
+                player.sendMessage(ChatColor.RED + "Ya estas especteando este evento.");
                 return true;
             }
             this.plugin.getEventManager().removeSpectator(player);
         }
-        player.sendMessage(ChatColor.GREEN + "You are now spectating " + ChatColor.GRAY + event.getName() + " Event" + ChatColor.GREEN + ".");
+        player.sendMessage(CC.SECONDARY + "Estas especteando el evento " + CC.PRIMARY + event.getName() + CC.SECONDARY + ".");
         if (event instanceof SumoEvent) {
             this.plugin.getEventManager().addSpectatorSumo(player, playerData, (SumoEvent) event);
         } else if (event instanceof NoDebuffLiteEvent) {

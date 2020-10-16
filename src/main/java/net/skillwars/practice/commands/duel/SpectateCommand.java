@@ -21,6 +21,7 @@ import net.skillwars.practice.util.StringUtil;
 import java.util.Collections;
 
 public class SpectateCommand extends Command {
+
     private Practice plugin;
 
     public SpectateCommand() {
@@ -43,7 +44,7 @@ public class SpectateCommand extends Command {
         PlayerData playerData = this.plugin.getPlayerManager().getPlayerData(player.getUniqueId());
         Party party = this.plugin.getPartyManager().getParty(playerData.getUniqueId());
         if (party != null || (playerData.getPlayerState() != PlayerState.SPAWN && playerData.getPlayerState() != PlayerState.SPECTATING)) {
-            player.sendMessage(ChatColor.RED + "Cannot execute this command in your current state.");
+            player.sendMessage(ChatColor.RED + "Para usar este comando tienes que estar en el Spawn.");
             return true;
         }
         Player target = this.plugin.getServer().getPlayer(args[0]);
@@ -55,7 +56,7 @@ public class SpectateCommand extends Command {
         if (targetData.getPlayerState() == PlayerState.EVENT) {
             PracticeEvent event = this.plugin.getEventManager().getEventPlaying(target);
             if (event == null) {
-                player.sendMessage(ChatColor.RED + "That player is currently not in an event.");
+                player.sendMessage(ChatColor.RED + "Este jugador no esta en un evento.");
                 return true;
             }
             if (event instanceof SumoEvent) {
@@ -68,14 +69,14 @@ public class SpectateCommand extends Command {
             return true;
         } else {
             if (targetData.getPlayerState() != PlayerState.FIGHTING) {
-                player.sendMessage(ChatColor.RED + "That player is currently not in a fight.");
+                player.sendMessage(ChatColor.RED + "Este jugador no está en una pelea.");
                 return true;
             }
             Match targetMatch = this.plugin.getMatchManager().getMatch(targetData);
             if (!targetMatch.isParty()) {
 
                 if (!targetData.getOptions().isSpectators() && !player.hasPermission("practice.staff")) {
-                    player.sendMessage(ChatColor.RED + "That player has ignored spectators.");
+                    player.sendMessage(ChatColor.RED + "Este jugador tienes los espectadores desactivados.");
                     return true;
                 }
 
@@ -83,19 +84,19 @@ public class SpectateCommand extends Command {
                 MatchTeam team2 = targetMatch.getTeams().get(1);
                 PlayerData otherPlayerData = this.plugin.getPlayerManager().getPlayerData(team.getPlayers().get(0) == target.getUniqueId() ? team2.getPlayers().get(0) : team.getPlayers().get(0));
                 if (otherPlayerData != null && !otherPlayerData.getOptions().isSpectators() && !player.hasPermission("practice.staff")) {
-                    player.sendMessage(ChatColor.RED + "That player has ignored spectators.");
+                    player.sendMessage(ChatColor.RED + "Este jugador tienes los espectadores desactivados.");
                     return true;
                 }
             }
             if (playerData.getPlayerState() == PlayerState.SPECTATING) {
                 Match match = this.plugin.getMatchManager().getSpectatingMatch(player.getUniqueId());
                 if (match.equals(targetMatch)) {
-                    player.sendMessage(CC.RED + "You are already spectating this match.");
+                    player.sendMessage(CC.RED + "Ya estas especteando esta pelea.");
                     return true;
                 }
                 match.removeSpectator(player.getUniqueId());
             }
-            player.sendMessage(CC.PRIMARY + "You are now spectating " + CC.SECONDARY + target.getName() + CC.PRIMARY + ".");
+            player.sendMessage(CC.PRIMARY + "Ahora estas espectando a " + CC.SECONDARY + target.getName() + CC.PRIMARY + ".");
             this.plugin.getMatchManager().addSpectator(player, playerData, target, targetMatch);
             return true;
         }

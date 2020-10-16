@@ -28,14 +28,14 @@ public class EloCommand extends Command {
         }
 
         if (args.length < 1) {
-            sender.sendMessage(CC.translate("&cUsa: /elo <player>"));
+            sender.sendMessage(this.getUsage());
             return true;
         }
 
         Player target = Bukkit.getPlayer(args[0]);
 
         if (target == null) {
-            sender.sendMessage(CC.translate("&cJugador '&f" + args[0] + "&c' not found."));
+            sender.sendMessage(CC.translate("&cJugador '&f" + args[0] + "&c' no encontrado."));
             return true;
         }
 

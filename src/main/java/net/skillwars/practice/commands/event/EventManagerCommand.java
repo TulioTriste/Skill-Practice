@@ -25,18 +25,18 @@ public class EventManagerCommand extends Command {
             return true;
         }
         if(args.length == 0) {
-        	sender.sendMessage(Style.translate("&6&lEventManager Command"));
+        	sender.sendMessage(Style.translate("&3&lEventManager Command"));
         	sender.sendMessage(Style.translate(""));
-        	sender.sendMessage(Style.translate("&c/" + alias + " start {event}"));
-        	sender.sendMessage(Style.translate("&c/" + alias + " end {event}"));
-        	sender.sendMessage(Style.translate("&c/" + alias + " status {event}"));
-        	sender.sendMessage(Style.translate("&c/" + alias + " cooldown {event}"));
-        	sender.sendMessage("");
+            sender.sendMessage(Style.translate("&b/" + alias + " start <event>"));
+            sender.sendMessage(Style.translate("&b/" + alias + " end <event>"));
+            sender.sendMessage(Style.translate("&b/" + alias + " status <event>"));
+            sender.sendMessage(Style.translate("&b/" + alias + " cooldown <event>"));
+            sender.sendMessage("");
         	return true;
         }
         Player player = (Player) sender;
         if (!player.hasPermission("practice.admin")) {
-            player.sendMessage(ChatColor.RED + "You do not have permission to use that command.");
+            player.sendMessage(ChatColor.RED + "No tienes permisos para ejecutar este comando.");
             return true;
         }
         String action = args[0];
@@ -45,16 +45,16 @@ public class EventManagerCommand extends Command {
             eventName = args[1];
         }
         if (this.plugin.getEventManager().getByName(eventName) == null) {
-            player.sendMessage(ChatColor.RED + "That event doesn't exist.");
+            player.sendMessage(ChatColor.RED + "Este evento no existe.");
             return true;
         }
         PracticeEvent event = this.plugin.getEventManager().getByName(eventName);
         if (action.equalsIgnoreCase("START") && event.getState() == EventState.WAITING) {
             event.getCountdownTask().setTimeUntilStart(5);
-            player.sendMessage(ChatColor.RED + "Event was force started.");
+            player.sendMessage(ChatColor.RED + "El evento ha sido forzado a comenzar.");
         } else if (action.equalsIgnoreCase("END") && event.getState() == EventState.STARTED) {
             event.end();
-            player.sendMessage(ChatColor.RED + "Event was cancelled.");
+            player.sendMessage(ChatColor.RED + "El evento ha sido cancelado.");
         } else if (action.equalsIgnoreCase("STATUS")) {
             String[] message = {ChatColor.YELLOW + "Event: " + ChatColor.WHITE + event.getName(), ChatColor.YELLOW + "Host: " + ChatColor.WHITE + ((event.getHost() == null) ? "Player Left" : event.getHost().getName()), ChatColor.YELLOW + "Players: " + ChatColor.WHITE + event.getPlayers().size() + "/" + event.getLimit(), ChatColor.YELLOW + "State: " + ChatColor.WHITE + event.getState().name()};
             player.sendMessage(message);

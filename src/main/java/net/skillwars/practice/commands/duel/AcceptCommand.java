@@ -19,6 +19,7 @@ import net.skillwars.practice.util.CC;
 import net.skillwars.practice.util.StringUtil;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -28,7 +29,7 @@ public class AcceptCommand extends Command {
     public AcceptCommand() {
         super("accept");
         this.plugin = Practice.getInstance();
-        this.setDescription("Accept a player's duel.");
+        this.setDescription("Accept a duel.");
         this.setUsage(ChatColor.RED + "Usage: /accept <player>");
     }
 
@@ -43,7 +44,7 @@ public class AcceptCommand extends Command {
         }
         PlayerData playerData = this.plugin.getPlayerManager().getPlayerData(player.getUniqueId());
         if (playerData.getPlayerState() != PlayerState.SPAWN) {
-            player.sendMessage(ChatColor.RED + "Unable to accept a duel within your duel.");
+            player.sendMessage(ChatColor.RED + "No puede aceptar un duelo mientras estas en uno.");
             return true;
         }
         Player target = this.plugin.getServer().getPlayer(args[0]);
@@ -52,12 +53,12 @@ public class AcceptCommand extends Command {
             return true;
         }
         if (player.getName().equals(target.getName())) {
-            player.sendMessage(ChatColor.RED + "You can't duel yourself.");
+            player.sendMessage(ChatColor.RED + "No puedes luchar contra ti mismo.");
             return true;
         }
         PlayerData targetData = this.plugin.getPlayerManager().getPlayerData(target.getUniqueId());
         if (targetData.getPlayerState() != PlayerState.SPAWN) {
-            player.sendMessage(ChatColor.RED + "That player is currently busy.");
+            player.sendMessage(ChatColor.RED + "Este jugador ya está en un duelo.");
             return true;
         }
         MatchRequest request = this.plugin.getMatchManager().getMatchRequest(target.getUniqueId(), player.getUniqueId());
@@ -68,7 +69,7 @@ public class AcceptCommand extends Command {
             }
         }
         if (request == null) {
-            player.sendMessage(ChatColor.RED + "You do not have any pending requests.");
+            player.sendMessage(ChatColor.RED + "No tiene ninguna solicitud pendiente.");
             return true;
         }
         if (request.getRequester().equals(target.getUniqueId())) {
@@ -79,14 +80,14 @@ public class AcceptCommand extends Command {
             Party targetParty = partyManager.getParty(target.getUniqueId());
             if (request.isParty()) {
                 if (party == null || targetParty == null || !partyManager.isLeader(target.getUniqueId()) || !partyManager.isLeader(target.getUniqueId())) {
-                    player.sendMessage(CC.RED + "Either you or that player is not a party leader.");
+                    player.sendMessage(CC.RED + "Tú o ese jugador no es líder del grupo.");
                     return true;
                 }
                 playersA.addAll(party.getMembers());
                 playersB.addAll(targetParty.getMembers());
             } else {
                 if (party != null || targetParty != null) {
-                    player.sendMessage(CC.RED + "One of you are in a party.");
+                    player.sendMessage(CC.RED + "Uno de ustedes está en una party.");
                     return true;
                 }
                 playersA.add(player.getUniqueId());
@@ -98,8 +99,8 @@ public class AcceptCommand extends Command {
             Match match = new Match(request.getArena(), kit2, QueueType.UNRANKED, teamA, teamB);
             Player leaderA = this.plugin.getServer().getPlayer(teamA.getLeader());
             Player leaderB = this.plugin.getServer().getPlayer(teamB.getLeader());
-            match.broadcast(CC.PRIMARY + "Starting a match with kit " + CC.SECONDARY + request.getKitName() +
-                    CC.PRIMARY + " between " + CC.SECONDARY + leaderA.getName() + CC.PRIMARY + " and " + CC.SECONDARY + leaderB.getName() + CC.PRIMARY + ".");
+            match.broadcast(CC.PRIMARY + "Comenzando el duelo con el kit " + CC.SECONDARY + request.getKitName() +
+                    CC.PRIMARY + " entre " + CC.SECONDARY + leaderA.getName() + CC.PRIMARY + " y " + CC.SECONDARY + leaderB.getName() + CC.PRIMARY + ".");
             this.plugin.getMatchManager().createMatch(match);
         }
         return true;

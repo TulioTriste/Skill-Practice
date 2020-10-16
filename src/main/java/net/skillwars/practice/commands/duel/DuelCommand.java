@@ -10,6 +10,8 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.Collections;
+
 public class DuelCommand extends Command {
     private Practice plugin;
 
@@ -18,6 +20,7 @@ public class DuelCommand extends Command {
         this.plugin = Practice.getInstance();
         this.setDescription("Duel a player.");
         this.setUsage(ChatColor.RED + "Usage: /duel <player>");
+        this.setAliases(Collections.singletonList("duel"));
     }
 
     public boolean execute(CommandSender sender, String alias, String[] args) {
@@ -30,12 +33,12 @@ public class DuelCommand extends Command {
             return true;
         }
         if (this.plugin.getTournamentManager().getTournament(player.getUniqueId()) != null) {
-            player.sendMessage(ChatColor.RED + "You are currently in a tournament.");
+            player.sendMessage(ChatColor.RED + "Actualmente estas en un torneo.");
             return true;
         }
         PlayerData playerData = this.plugin.getPlayerManager().getPlayerData(player.getUniqueId());
         if (playerData.getPlayerState() != PlayerState.SPAWN) {
-            player.sendMessage(ChatColor.RED + "Cannot execute this command in your current state.");
+            player.sendMessage(ChatColor.RED + "Para usar este comando tienes que estar en el Spawn.");
             return true;
         }
         Player target = this.plugin.getServer().getPlayer(args[0]);
@@ -45,41 +48,41 @@ public class DuelCommand extends Command {
             return true;
         }
         if (this.plugin.getTournamentManager().getTournament(target.getUniqueId()) != null) {
-            player.sendMessage(ChatColor.RED + "That player is currently in a tournament.");
+            player.sendMessage(ChatColor.RED + "Este jugador esta actualmente en un torneo.");
             return true;
         }
         Party party = this.plugin.getPartyManager().getParty(player.getUniqueId());
         Party targetParty = this.plugin.getPartyManager().getParty(target.getUniqueId());
         if (player.getName().equals(target.getName())) {
-            player.sendMessage(ChatColor.RED + "You can't duel yourself.");
+            player.sendMessage(ChatColor.RED + "No puedes luchar contra ti mismo.");
             return true;
         }
         if (party != null && targetParty != null && party == targetParty) {
-            player.sendMessage(ChatColor.RED + "You can't duel yourself.");
+            player.sendMessage(ChatColor.RED + "No puedes luchar contra ti mismo.");
             return true;
         }
         if (party != null && !this.plugin.getPartyManager().isLeader(player.getUniqueId())) {
-            player.sendMessage(ChatColor.RED + "You are not the leader fo the party.");
+            player.sendMessage(ChatColor.RED + "No eres el líder de la party.");
             return true;
         }
         PlayerData targetData = this.plugin.getPlayerManager().getPlayerData(target.getUniqueId());
 
         if (targetData.getPlayerState() != PlayerState.SPAWN) {
-            player.sendMessage(ChatColor.RED + "That player is currently busy.");
+            player.sendMessage(ChatColor.RED + "Este jugador ya está en un duelo.");
             return true;
         }
 
         if (!targetData.getOptions().isDuelRequests()) {
-            player.sendMessage(ChatColor.RED + "That player has ignored duel requests.");
+            player.sendMessage(ChatColor.RED + "Este jugador tiene los duelos desactivados.");
             return true;
         }
 
         if (party == null && targetParty != null) {
-            player.sendMessage(ChatColor.RED + "That player is currently in a party.");
+            player.sendMessage(ChatColor.RED + "Este jugador está actualmente en una party.");
             return true;
         }
         if (party != null && targetParty == null) {
-            player.sendMessage(ChatColor.RED + "You are currently in a party.");
+            player.sendMessage(ChatColor.RED + "Actualmente estas en una party.");
             return true;
         }
         playerData.setDuelSelecting(target.getUniqueId());
