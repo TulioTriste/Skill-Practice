@@ -115,7 +115,6 @@ public class MatchManager {
 
     public void createMatch(Match match) {
         this.matches.put(match.getMatchId(), match);
-
         this.plugin.getServer().getPluginManager().callEvent(new MatchStartEvent(match));
     }
 

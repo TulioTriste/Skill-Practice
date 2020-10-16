@@ -117,7 +117,7 @@ public class InventorySnapshot {
             for (int i = 0; i < 2; i++) {
                 this.inventoryUI.setItem(i == 0 ? 53 : 45, new InventoryUI.AbstractClickableItem(
                         ItemUtil.reloreItem(ItemUtil.createItem(Material.PAPER, CC.PRIMARY + "Ver otro Inventario"),
-                                CC.PRIMARY + "Clic para ver el otro Inventario")) {
+                                CC.PRIMARY + "Click para ver el otro Inventario")) {
                     @Override
                     public void onClick(InventoryClickEvent inventoryClickEvent) {
                         Player clicker = (Player) inventoryClickEvent.getWhoClicked();

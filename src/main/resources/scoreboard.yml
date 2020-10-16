@@ -2,7 +2,8 @@ title: "&3&lSkill Practice"
 lobby:
   no-fight:
     - "&bOnline&7: &f{online}"
-    - "&bIn Fight&7: &f{fights}"
+    - "&bEn Pelea&7: &f{fights}"
+    - "&bEn Queue&7: &f{queue}"
   in-queue:
     - "&3Queue &7({queue-name})"
     - " &7 &bLadder&7: {queue-kitname}"
@@ -39,7 +40,7 @@ lobby:
     - " &7» &bPlayers&7: &f{players}/{maxplayers}"
     - "{countdown}"
   in-tournament-countdown-lines:
-    - " &7» &bStarting&7: &f{countdown}s"
+    - " &7» &bIniciando&7: &f{countdown}s"
   lines:
     - "&7&m-----------------------"
     - "{no-fight}"
@@ -53,10 +54,10 @@ lobby:
     - "&7&m-----------------------"
 fight:
   normal-match:
-    - "&aOpponent&7: &f{opponent}"
+    - "&aOponente&7: &f{opponent}"
   in-party-ffa-match:
     - "&3Party FFA"
-    - " &bLeft players &7{ffa-left-players}/{ffa-max-players}"
+    - " &bLeft Players &7{ffa-left-players}/{ffa-max-players}"
     - ""
   in-party-teams-match:
     - "&3Opponent"

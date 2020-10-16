@@ -683,7 +683,7 @@ public class InventoryManager {
                         : "")
                         + (arena == null ? "" : " en la arena " + arena.getName()) + ". "
                         + CC.GREEN + "[Aceptar]",
-                CC.GREEN + "Clic para aceptar",
+                CC.GREEN + "Click para aceptar",
                 "/accept " + player.getName() + " " + kit.getName());
 
         if (partyDuel) {

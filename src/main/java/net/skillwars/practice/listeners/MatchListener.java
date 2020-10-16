@@ -54,8 +54,8 @@ public class MatchListener implements Listener {
 
         Set<Player> matchPlayers = new HashSet<>();
 
-        CustomLocation locationA = match.getStandaloneArena() != null ? match.getStandaloneArena().getA() : match.getArena().getA();
-        CustomLocation locationB = match.getStandaloneArena() != null ? match.getStandaloneArena().getB() : match.getArena().getB();
+        CustomLocation locationA = match.getArena() != null ? match.getStandaloneArena().getA() : match.getArena().getA();
+        CustomLocation locationB = match.getArena() != null ? match.getStandaloneArena().getB() : match.getArena().getB();
         List<Location> locs = Circle.getCircle(MathUtil.getMiddle(locationA.toBukkitLocation(), locationB.toBukkitLocation()), kit.isSumo() ? 2 : 10,
                 match.getTeams().get(0).getAlivePlayers().size());
 

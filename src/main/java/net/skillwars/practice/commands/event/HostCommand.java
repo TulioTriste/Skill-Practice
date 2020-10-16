@@ -93,10 +93,10 @@ public class HostCommand extends Command {
         this.plugin.getEventManager().setName(eventName);
         event.join(player);
         String toSend =ChatColor.translateAlternateColorCodes('&',"&7(&9&lEvent&7) &3" + event.getName() + "&b hosteado por &r" + Nucleus.getInstance().getChat().getPlayerPrefix(event.getHost()) + event.getHost().getName() + " &bcomenzará en &l" + event.getCountdownTask().getTimeUntilStart() + "&b." +
-                " &7(&b" + event.getPlayers().size() + " &7/&b " + event.getLimit() + "&7) &f!Clic para entrar!");
+                " &7(&b" + event.getPlayers().size() + " &7/&b " + event.getLimit() + "&7) &f!Click para entrar!");
 
         Clickable message = new Clickable(toSend,
-                Style.GREEN + "Clic para entrar al evento.",
+                Style.GREEN + "Click para entrar al evento.",
                 "/join " + event.getName());
         this.plugin.getServer().getOnlinePlayers().stream().filter(other -> !event.getPlayers().containsKey(other)).forEach(online -> {
             online.sendMessage(" ");

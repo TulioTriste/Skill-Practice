@@ -162,7 +162,7 @@ public class PartyManager {
         Party party = plugin.getPartyManager().getParty(player.getUniqueId());
 
         List<String> membersLimitLore = new ArrayList<>(CC.translate(Arrays.asList("&7&m------------------------",
-                "&fDa clic izquierdo o derecho",
+                "&fDa click izquierdo o derecho",
                 "&fpara que puedas insertar la",
                 "&fcantidad de miembros en tu Party",
                 "",
