@@ -52,7 +52,7 @@ public enum ProfileOptionsItem {
         if (this == DUEL_REQUESTS || this == PARTY_INVITES || this == ALLOW_SPECTATORS || this == TOGGLE_SCOREBOARD) {
 
             if (state == ProfileOptionsItemState.ENABLED) {
-                return "Habilitdado";
+                return "Habilitado";
             } else if (state == ProfileOptionsItemState.DISABLED) {
                 return "Deshabilitado";
             }
