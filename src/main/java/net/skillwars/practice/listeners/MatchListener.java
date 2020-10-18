@@ -188,7 +188,7 @@ public class MatchListener implements Listener {
 
                 NameTagHandler.removeHealthDisplay(player);
 
-                event.getWinningTeam().players().forEach(other -> {
+                event.getLosingTeam().players().forEach(other -> {
                     NameTagHandler.removeFromTeams(other, player);
                     NameTagHandler.removeFromTeams(player, other);
                 });
@@ -231,9 +231,9 @@ public class MatchListener implements Listener {
                 for (UUID uuid : otherTeam.getAlivePlayers()){
                     Player teamplayer = this.plugin.getServer().getPlayer(uuid);
 
+                    NameTagHandler.removeHealthDisplay(teamplayer);
                     NameTagHandler.removeFromTeams(player, teamplayer);
                     NameTagHandler.removeFromTeams(teamplayer, player);
-                    NameTagHandler.removeHealthDisplay(teamplayer);
                 }
                 for (UUID uuid : team.getAlivePlayers()){
                     Player teamplayer = this.plugin.getServer().getPlayer(uuid);

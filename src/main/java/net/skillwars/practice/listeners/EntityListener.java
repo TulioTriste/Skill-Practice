@@ -145,9 +145,9 @@ public class EntityListener implements Listener {
             }
 
             if (isEventDamager && eventDamager instanceof NoDebuffLiteEvent
-                    && ((NoDebuffLiteEvent) eventDamager).getPlayer(damager).getState() != NoDebuffLitePlayer.MiniNoDebuffState.FIGHTING
+                    && ((NoDebuffLiteEvent) eventDamager).getPlayer(damager).getState() != NoDebuffLitePlayer.NoDebuffLiteState.FIGHTING
                     || isEventEntity &&  eventDamager instanceof NoDebuffLiteEvent
-                    && ((NoDebuffLiteEvent) eventEntity).getPlayer(entity).getState() != NoDebuffLitePlayer.MiniNoDebuffState.FIGHTING) {
+                    && ((NoDebuffLiteEvent) eventEntity).getPlayer(entity).getState() != NoDebuffLitePlayer.NoDebuffLiteState.FIGHTING) {
                 e.setCancelled(true);
                 return;
             }

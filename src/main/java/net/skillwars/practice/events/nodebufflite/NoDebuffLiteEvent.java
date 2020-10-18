@@ -70,7 +70,7 @@ public class NoDebuffLiteEvent extends PracticeEvent<NoDebuffLitePlayer> {
                 return;
             }
 
-            if(data.getState() == NoDebuffLitePlayer.MiniNoDebuffState.FIGHTING || data.getState() == NoDebuffLitePlayer.MiniNoDebuffState.PREPARING) {
+            if(data.getState() == NoDebuffLitePlayer.NoDebuffLiteState.FIGHTING || data.getState() == NoDebuffLitePlayer.NoDebuffLiteState.PREPARING) {
 
                 NoDebuffLitePlayer killerData = data.getFighting();
                 Player killer = getPlugin().getServer().getPlayer(killerData.getUuid());
@@ -85,8 +85,8 @@ public class NoDebuffLiteEvent extends PracticeEvent<NoDebuffLitePlayer> {
                     playerData.setSumoEventLosses(playerData.getSumoEventLosses() + 1);
                 }
 
-                data.setState(NoDebuffLitePlayer.MiniNoDebuffState.ELIMINATED);
-                killerData.setState(NoDebuffLitePlayer.MiniNoDebuffState.WAITING);
+                data.setState(NoDebuffLitePlayer.NoDebuffLiteState.ELIMINATED);
+                killerData.setState(NoDebuffLitePlayer.NoDebuffLiteState.WAITING);
 
                 PlayerUtil.clearPlayer(player);
                 new BukkitRunnable(){
@@ -111,8 +111,8 @@ public class NoDebuffLiteEvent extends PracticeEvent<NoDebuffLitePlayer> {
 
                 sendMessage(ChatColor.RED + player.getName() + ChatColor.GRAY + " ha sido eliminado" + (killer == null ? "." : " por " + ChatColor.GREEN + killer.getName()));
 
-                if (this.getByState(NoDebuffLitePlayer.MiniNoDebuffState.WAITING).size() == 1) {
-                    Player winner = Bukkit.getPlayer(this.getByState(NoDebuffLitePlayer.MiniNoDebuffState.WAITING).get(0));
+                if (this.getByState(NoDebuffLitePlayer.NoDebuffLiteState.WAITING).size() == 1) {
+                    Player winner = Bukkit.getPlayer(this.getByState(NoDebuffLitePlayer.NoDebuffLiteState.WAITING).get(0));
 
                     PlayerData winnerData = Practice.getInstance().getPlayerManager().getPlayerData(winner.getUniqueId());
                     winnerData.setSumoEventWins(winnerData.getSumoEventWins() + 1);
@@ -136,8 +136,8 @@ public class NoDebuffLiteEvent extends PracticeEvent<NoDebuffLitePlayer> {
 
     private void selectPlayers() {
 
-        if (this.getByState(NoDebuffLitePlayer.MiniNoDebuffState.WAITING).size() == 1) {
-            Player winner = Bukkit.getPlayer(this.getByState(NoDebuffLitePlayer.MiniNoDebuffState.WAITING).get(0));
+        if (this.getByState(NoDebuffLitePlayer.NoDebuffLiteState.WAITING).size() == 1) {
+            Player winner = Bukkit.getPlayer(this.getByState(NoDebuffLitePlayer.NoDebuffLiteState.WAITING).get(0));
 
             PlayerData winnerData = Practice.getInstance().getPlayerManager().getPlayerData(winner.getUniqueId());
             //winnerData.setSumoEventWins(winnerData.getSumoEventWins() + 1);
@@ -216,22 +216,22 @@ public class NoDebuffLiteEvent extends PracticeEvent<NoDebuffLitePlayer> {
 
     private Player getRandomPlayer() {
 
-        if(getByState(NoDebuffLitePlayer.MiniNoDebuffState.WAITING).isEmpty()) {
+        if(getByState(NoDebuffLitePlayer.NoDebuffLiteState.WAITING).isEmpty()) {
             return null;
         }
 
-        List<UUID> waiting = getByState(NoDebuffLitePlayer.MiniNoDebuffState.WAITING);
+        List<UUID> waiting = getByState(NoDebuffLitePlayer.NoDebuffLiteState.WAITING);
 
         Collections.shuffle(waiting);
 
         UUID uuid = waiting.get(ThreadLocalRandom.current().nextInt(waiting.size()));
 
-        getPlayer(uuid).setState(NoDebuffLitePlayer.MiniNoDebuffState.PREPARING);
+        getPlayer(uuid).setState(NoDebuffLitePlayer.NoDebuffLiteState.PREPARING);
 
         return getPlugin().getServer().getPlayer(uuid);
     }
 
-    public List<UUID> getByState(NoDebuffLitePlayer.MiniNoDebuffState state) {
+    public List<UUID> getByState(NoDebuffLitePlayer.NoDebuffLiteState state) {
         return players.values().stream().filter(player -> player.getState() == state).map(NoDebuffLitePlayer::getUuid).collect(Collectors.toList());
     }
 
@@ -266,8 +266,8 @@ public class NoDebuffLiteEvent extends PracticeEvent<NoDebuffLitePlayer> {
                 PlayerUtil.sendMessage(ChatColor.AQUA + "La pelea iniciara en " + ChatColor.GREEN + 1 + ChatColor.AQUA + "...", player, other);
             } else if (time == 87) {
                 PlayerUtil.sendMessage(ChatColor.GREEN + "La pelea ha iniciado, buena suerte!", player, other);
-                this.otherSumo.setState(NoDebuffLitePlayer.MiniNoDebuffState.FIGHTING);
-                this.playerSumo.setState(NoDebuffLitePlayer.MiniNoDebuffState.FIGHTING);
+                this.otherSumo.setState(NoDebuffLitePlayer.NoDebuffLiteState.FIGHTING);
+                this.playerSumo.setState(NoDebuffLitePlayer.NoDebuffLiteState.FIGHTING);
             } else if (time <= 0) {
                 List<Player> players = Arrays.asList(player, other);
                 Player winner = players.get(ThreadLocalRandom.current().nextInt(players.size()));

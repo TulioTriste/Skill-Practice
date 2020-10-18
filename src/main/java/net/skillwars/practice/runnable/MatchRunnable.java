@@ -36,14 +36,18 @@ public class MatchRunnable extends BukkitRunnable {
                     Kit kit = match.getKit();
 
                     match.getTeams().forEach(team -> team.alivePlayers().forEach(player -> {
-                        if(kit.isSumo() || match.getKit().isSpleef()){
+                        if (kit.isSumo() || match.getKit().isSpleef()){
                             PlayerUtil.allowMovement(player);
                         }
-                        if(kit.getName().contains("Gapple")){
+                        if (kit.getName().contains("Gapple")){
                             player.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, Integer.MAX_VALUE, 1));
                             player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, Integer.MAX_VALUE, 1));
-                        }else if(kit.getName().contains("Combo")){
+                        } else if (kit.getName().contains("Combo")){
                             player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, Integer.MAX_VALUE, 1));
+                        } else if (kit.getName().contains("OnePunch")) {
+                            player.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, Integer.MAX_VALUE, 99));
+                        } else if (kit.getName().contains("Archer")) {
+                            player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, Integer.MAX_VALUE, 2));
                         }
                     }));
                 } else {

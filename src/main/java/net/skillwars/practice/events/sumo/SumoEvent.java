@@ -3,6 +3,7 @@ package net.skillwars.practice.events.sumo;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import me.joeleoli.nucleus.Nucleus;
+import net.minecraft.server.v1_8_R3.EntityPlayer;
 import net.skillwars.practice.Practice;
 import net.skillwars.practice.events.EventCountdownTask;
 import net.skillwars.practice.events.PracticeEvent;
@@ -16,9 +17,11 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
+import pt.foxspigot.jar.knockback.KnockbackProfile;
 
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
@@ -83,6 +86,13 @@ public class SumoEvent extends PracticeEvent<SumoPlayer> {
                 data.getFightTask().cancel();
                 killerData.getFightTask().cancel();
 
+                CraftPlayer player1Cp = (CraftPlayer) player;
+                EntityPlayer player1Ep = player1Cp.getHandle();
+                CraftPlayer player2Cp = (CraftPlayer) killer;
+                EntityPlayer player2Ep = player2Cp.getHandle();
+                KnockbackProfile profile4 = new KnockbackProfile("default");
+                player1Ep.setKnockback(profile4);
+                player2Ep.setKnockback(profile4);
 
                 PlayerData playerData = this.getPlugin().getPlayerManager().getPlayerData(player.getUniqueId());
 
@@ -152,6 +162,14 @@ public class SumoEvent extends PracticeEvent<SumoPlayer> {
             selectPlayers();
             return;
         }
+
+        CraftPlayer player1Cp = (CraftPlayer) picked1;
+        EntityPlayer player1Ep = player1Cp.getHandle();
+        CraftPlayer player2Cp = (CraftPlayer) picked2;
+        EntityPlayer player2Ep = player2Cp.getHandle();
+        KnockbackProfile profile4 = new KnockbackProfile("sumo");
+        player1Ep.setKnockback(profile4);
+        player2Ep.setKnockback(profile4);
 
         sendMessage(ChatColor.DARK_AQUA.toString() + ChatColor.BOLD + "Sumo Event " + ChatColor.GRAY + "Seleccionando jugadores randoms...");
 

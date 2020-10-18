@@ -16,6 +16,9 @@ lobby:
   in-event:
     - "&3&lEvent &b({event})"
     - "{sumo}"
+    - "{ffa}"
+    - "{nodebufflite}"
+    - "{teamfights}"
   event-in-lobby:
     - "&bEvent&7: &f{event}"
   in-event-sumo-lines:
@@ -43,6 +46,36 @@ lobby:
     - "&bState&7: &f{state}"
   in-event-ffa-fighting-lines:
     - ""
+  in-event-nodebufflite-lines:
+    - "&bPlayers&7: &f{players}&7/&f{limit}"
+    - "{starting}"
+    - "{state}"
+    - "{fight}"
+  in-event-nodebufflite-starting-lines:
+    - "&bStarting&7: &f{time}s"
+  in-event-nodebufflite-state-lines:
+    - "&bState&7: &f{state}"
+  in-event-nodebufflite-fighting-lines:
+    - ""
+    - "   &b{firstplayer} &7({firstping})"
+    - "       &dVS"
+    - "   &b{secondplayer} &7({secondping})"
+  in-event-teamfights-lines:
+    - "&bPlayers&7: &f{players}&7/&f{limit}"
+    - "{starting}"
+    - "{state}"
+    - "{fight}"
+  in-event-teamfights-starting-lines:
+    - "&bStarting&7: &f{time}s"
+  in-event-teamfights-state-lines:
+    - "&bState&7: &f{state}"
+  in-event-teamfights-fighting-lines:
+    - ""
+    - "&9&lBLUE"
+    - " &f{blueLeft}/{blueMax}"
+    - ""
+    - "&c&lRED"
+    - " &f{redLeft}/{redMax}"
   in-tournament:
     - ""
     - "&3&lTournament &7({size}v{size})"

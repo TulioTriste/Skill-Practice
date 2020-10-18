@@ -342,7 +342,5 @@ public class PlayerManager {
 				.equals(plugin.getSpawnManager().getSpawnLocation().toBukkitLocation().getWorld().getName())){
 			player.teleport(plugin.getSpawnManager().getSpawnLocation().toBukkitLocation());
 		}
-           
-
     }
 }

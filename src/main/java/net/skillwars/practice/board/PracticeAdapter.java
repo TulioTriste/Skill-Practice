@@ -8,8 +8,12 @@ import net.skillwars.practice.events.EventState;
 import net.skillwars.practice.events.PracticeEvent;
 import net.skillwars.practice.events.ffa.FFAEvent;
 import net.skillwars.practice.events.ffa.FFAPlayer;
+import net.skillwars.practice.events.nodebufflite.NoDebuffLiteEvent;
+import net.skillwars.practice.events.nodebufflite.NoDebuffLitePlayer;
 import net.skillwars.practice.events.sumo.SumoEvent;
 import net.skillwars.practice.events.sumo.SumoPlayer;
+import net.skillwars.practice.events.teamfights.TeamFightEvent;
+import net.skillwars.practice.events.teamfights.TeamFightPlayer;
 import net.skillwars.practice.file.Config;
 import net.skillwars.practice.match.Match;
 import net.skillwars.practice.match.MatchTeam;
@@ -29,6 +33,7 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class PracticeAdapter implements FrameAdapter {
 
@@ -116,7 +121,6 @@ public class PracticeAdapter implements FrameAdapter {
 				}
 				double tps = Bukkit.spigot().getTPS()[1];
 				if (player.isOp() || player.hasPermission("*")) {
-					lines.add("");
 					lines.add(Color.translate("&c» &fTPS: &b" + formatTps(tps)));
 				}
 				continue;
@@ -271,6 +275,101 @@ public class PracticeAdapter implements FrameAdapter {
 												List<String> players = new ArrayList<>(ffaEvent.getFighting());
 												linessb3 = linessb3.replace("{leftPlayers}", String.valueOf(players.size()))
 												.replace("{maxPlayers}", String.valueOf(ffaEvent.getPlayers().size()));
+												lines.add(Color.translate(linessb3));
+											}
+										}
+										continue;
+									}
+									lines.add(Color.translate(linessb2));
+								}
+							}
+							continue;
+						}
+						else if (linessb.contains("{nodebufflite}")) {
+							if (event instanceof NoDebuffLiteEvent) {
+								NoDebuffLiteEvent ndlEvent = (NoDebuffLiteEvent) event;
+								int playingNDL = ndlEvent.getByState(NoDebuffLitePlayer.NoDebuffLiteState.WAITING).size() + ndlEvent.getByState(NoDebuffLitePlayer.NoDebuffLiteState.WAITING).size() + ndlEvent.getByState(NoDebuffLitePlayer.NoDebuffLiteState.PREPARING).size();
+								int limitNDL = ndlEvent.getLimit();
+								for (String linessb2 : config.getConfig().getStringList("lobby.in-event-nodebufflite-lines")) {
+									linessb2 = linessb2.replace("{players}", String.valueOf(playingNDL))
+											.replace("{limit}", String.valueOf(limitNDL));
+									if (linessb2.contains("{starting}")) {
+										int countdown = ndlEvent.getCountdownTask().getTimeUntilStart();
+										if (countdown > 0 && countdown <= 60) {
+											for (String linessb3 : config.getConfig().getStringList("lobby.in-event-nodebufflite-starting-lines")) {
+												linessb3 = linessb3.replace("{time}", String.valueOf(countdown));
+												lines.add(Color.translate(linessb3));
+											}
+										}
+										continue;
+									}
+									if (linessb2.contains("{state}")) {
+										if (ndlEvent.getPlayer(player) != null) {
+											NoDebuffLitePlayer ndlPlayer = ndlEvent.getPlayer(player);
+											for (String linessb3 : config.getConfig().getStringList("lobby.in-event-nodebufflite-state-lines")) {
+												linessb3 = linessb3.replace("{state}", StringUtils.capitalize(ndlPlayer.getState().name().toLowerCase()));
+												lines.add(Color.translate(linessb3));
+											}
+										}
+										continue;
+									}
+									if (linessb2.contains("{fight}")) {
+										if (ndlEvent.getState().equals(EventState.STARTED)) {
+											for (String linessb3 : config.getConfig().getStringList("lobby.in-event-nodebufflite-fighting-lines")) {
+												List<String> players = new ArrayList<>(ndlEvent.getFighting());
+												Player firstPlayer = Bukkit.getPlayer(players.get(0));
+												Player secondPlayer = Bukkit.getPlayer(players.get(1));
+												linessb3 = linessb3.replace("{firstplayer}", firstPlayer.getName())
+														.replace("{firstping}", String.valueOf(PlayerUtil.getPing(firstPlayer)))
+														.replace("{secondplayer}", secondPlayer.getName())
+														.replace("{secondping}", String.valueOf(PlayerUtil.getPing(secondPlayer)));
+												lines.add(Color.translate(linessb3));
+											}
+										}
+										continue;
+									}
+									lines.add(Color.translate(linessb2));
+								}
+							}
+							continue;
+						}
+						else if (linessb.contains("{teamfights}")) {
+							if (event instanceof TeamFightEvent) {
+								TeamFightEvent teamfightEvent = (TeamFightEvent) event;
+								int playingTeamFight = teamfightEvent.getByState(TeamFightPlayer.TeamFightState.WAITING).size() + teamfightEvent.getByState(TeamFightPlayer.TeamFightState.WAITING).size() + teamfightEvent.getByState(TeamFightPlayer.TeamFightState.PREPARING).size();
+								int limitTeamFight = teamfightEvent.getLimit();
+								for (String linessb2 : config.getConfig().getStringList("lobby.in-event-teamfights-lines")) {
+									linessb2 = linessb2.replace("{players}", String.valueOf(playingTeamFight))
+											.replace("{limit}", String.valueOf(limitTeamFight));
+									if (linessb2.contains("{starting}")) {
+										int countdown = teamfightEvent.getCountdownTask().getTimeUntilStart();
+										if (countdown > 0 && countdown <= 60) {
+											for (String linessb3 : config.getConfig().getStringList("lobby.in-event-teamfights-starting-lines")) {
+												linessb3 = linessb3.replace("{time}", String.valueOf(countdown));
+												lines.add(Color.translate(linessb3));
+											}
+										}
+										continue;
+									}
+									if (linessb2.contains("{state}")) {
+										if (teamfightEvent.getPlayer(player) != null) {
+											TeamFightPlayer teamfightPlayer = teamfightEvent.getPlayer(player);
+											for (String linessb3 : config.getConfig().getStringList("lobby.in-event-teamfights-state-lines")) {
+												linessb3 = linessb3.replace("{state}", StringUtils.capitalize(teamfightPlayer.getState().name().toLowerCase()));
+												lines.add(Color.translate(linessb3));
+											}
+										}
+										continue;
+									}
+									if (linessb2.contains("{fight}")) {
+										if (teamfightEvent.getState().equals(EventState.STARTED)) {
+											for (String linessb3 : config.getConfig().getStringList("lobby.in-event-teamfights-fighting-lines")) {
+												List<UUID> bluePlayers = new ArrayList<>(teamfightEvent.getBlueTeam());
+												List<UUID> redPlayers = new ArrayList<>(teamfightEvent.getRedTeam());
+												linessb3 = linessb3.replace("{blueLeft}", String.valueOf(bluePlayers.size()))
+												.replace("{blueMax}", String.valueOf(teamfightEvent.getBlueFighting().size()))
+												.replace("{redLeft}", String.valueOf(redPlayers.size()))
+												.replace("{redMax}", String.valueOf(teamfightEvent.getRedFighting().size()));
 												lines.add(Color.translate(linessb3));
 											}
 										}

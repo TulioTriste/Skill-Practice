@@ -13,7 +13,7 @@ import java.util.UUID;
 @Getter
 public class NoDebuffLitePlayer extends EventPlayer {
 
-    private MiniNoDebuffState state = MiniNoDebuffState.WAITING;
+    private NoDebuffLiteState state = NoDebuffLiteState.WAITING;
     private BukkitTask fightTask;
     private NoDebuffLitePlayer fighting;
 
@@ -21,7 +21,7 @@ public class NoDebuffLitePlayer extends EventPlayer {
         super(uuid, event);
     }
 
-    public enum MiniNoDebuffState{
+    public enum NoDebuffLiteState{
         WAITING, PREPARING, FIGHTING, ELIMINATED
     }
 }

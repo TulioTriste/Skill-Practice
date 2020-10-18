@@ -36,6 +36,8 @@ public class TeamFightEvent extends PracticeEvent<TeamFightPlayer> {
 
 	@Getter UUID streakPlayer = null;
 	@Getter List<UUID> fighting = new ArrayList<>();
+	@Getter List<UUID> redFighting = new ArrayList<>();
+	@Getter List<UUID> blueFighting = new ArrayList<>();
 
 	@Getter private TeamFightGameTask gameTask = null;
 	private TeamFightCountdownTask countdownTask = new TeamFightCountdownTask(this);
@@ -64,6 +66,8 @@ public class TeamFightEvent extends PracticeEvent<TeamFightPlayer> {
 		this.gameTask = new TeamFightGameTask();
 		this.gameTask.runTaskTimerAsynchronously(getPlugin(), 0, 20L);
 		this.fighting.clear();
+		this.redFighting.clear();
+		this.blueFighting.clear();
 		this.redTeam.clear();
 		this.blueTeam.clear();
 		this.generateTeams();
@@ -107,6 +111,8 @@ public class TeamFightEvent extends PracticeEvent<TeamFightPlayer> {
 				});
 
 				this.fighting.remove(player.getUniqueId());
+				this.redFighting.remove(player.getUniqueId());
+				this.blueFighting.remove(player.getUniqueId());
 				this.redTeam.remove(player.getUniqueId());
 				this.blueTeam.remove(player.getUniqueId());
 			}
@@ -133,6 +139,8 @@ public class TeamFightEvent extends PracticeEvent<TeamFightPlayer> {
 					for (UUID winner : winnerTeam) {
 						winnerJoiner.add(player.getName());
 						this.fighting.remove(player.getUniqueId());
+						this.redFighting.remove(player.getUniqueId());
+						this.blueFighting.remove(player.getUniqueId());
 					}
 				}
 
@@ -145,6 +153,8 @@ public class TeamFightEvent extends PracticeEvent<TeamFightPlayer> {
 
 	private void prepareNextMatch() {
 		this.fighting.clear();
+		this.redFighting.clear();
+		this.blueFighting.clear();
 
 		List<TeamFightPlayer> redPlayers = new ArrayList<>();
 		for (UUID reds : redTeam) {
@@ -165,6 +175,8 @@ public class TeamFightEvent extends PracticeEvent<TeamFightPlayer> {
 
 		this.fighting.addAll(redTeam);
 		this.fighting.addAll(blueTeam);
+		this.redFighting.addAll(redTeam);
+		this.blueFighting.addAll(blueTeam);
 
 		for (UUID uuidPicked : fighting) {
 			Player picked = Bukkit.getPlayer(uuidPicked);
