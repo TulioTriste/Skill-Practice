@@ -29,7 +29,7 @@ public class ItemManager {
                 null,
                 ItemUtil.createItem(Material.NETHER_STAR, CC.YELLOW + "Estadisticas"),
                 null,
-                ItemUtil.createItem(Material.EMPTY_MAP, CC.GREEN + "Events"),
+                ItemUtil.createItem(Material.PAPER, CC.GREEN + "Eventos"),
                 ItemUtil.createItem(Material.NAME_TAG, CC.PRIMARY + "Crear Party"),
                 ItemUtil.createItem(Material.BOOK, CC.GOLD + "Editar Kits"),
         };
@@ -102,12 +102,12 @@ public class ItemManager {
         this.partyItems = new ItemStack[]{
                 ItemUtil.createItem(Material.IRON_SWORD, CC.YELLOW + "Join 2v2 UnRanked Queue"),
                 ItemUtil.createItem(Material.DIAMOND_SWORD, CC.GREEN + "Join 2v2 Ranked Queue"),
-                ItemUtil.createItem(Material.BONE, CC.YELLOW + "Settings"),
+                null,
                 null,
                 ItemUtil.createItem(Material.DIAMOND_AXE, CC.AQUA + "Start Party Event"),
                 ItemUtil.createItem(Material.IRON_AXE, CC.PRIMARY + "Fight Other Party"),
                 null,
-                null,
+                ItemUtil.createItem(Material.BONE, CC.YELLOW + "Settings"),
                 ItemUtil.createItem(Material.REDSTONE, CC.RED + "Leave Party")
         };
         this.defaultBook = ItemUtil.createItem(Material.ENCHANTED_BOOK, CC.PRIMARY + "Default Kit");

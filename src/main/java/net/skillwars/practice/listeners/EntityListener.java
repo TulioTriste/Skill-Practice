@@ -90,152 +90,153 @@ public class EntityListener implements Listener {
         PlayerData entityData = this.plugin.getPlayerManager().getPlayerData(entity.getUniqueId());
         PracticeEvent eventEntity = this.plugin.getEventManager().getEventPlaying(entity);
 
-        Player damager = (Player) e.getDamager();
-
-        PlayerData damagerData = this.plugin.getPlayerManager().getPlayerData(damager.getUniqueId());
-
-        if(entityData == null || damagerData == null) {
-            e.setCancelled(true);
-            return;
-        }
-
-        boolean isEventEntity = this.plugin.getEventManager().getEventPlaying(entity) != null;
-        boolean isEventDamager = this.plugin.getEventManager().getEventPlaying(damager) != null;
-
-        PracticeEvent eventDamager = this.plugin.getEventManager().getEventPlaying(damager);
-        PracticeEvent event = this.plugin.getEventManager().getEventPlaying(entity);
-
-        if (isEventEntity && isEventDamager && eventDamager instanceof TeamFightEvent && event instanceof TeamFightEvent) {
-            TeamFightEvent eventt = (TeamFightEvent) event;
-            if (eventt.getBlueTeam().contains(entity.getUniqueId())) {
-                if (eventt.getBlueTeam().contains(damager.getUniqueId())) {
-                    e.setCancelled(true);
-                }
-            }
-            else if (eventt.getRedTeam().contains(entity.getUniqueId())) {
-                if (eventt.getRedTeam().contains(damager.getUniqueId())) {
-                    e.setCancelled(true);
-                }
-            }
-        }
-
-        if(damagerData.getPlayerState() == PlayerState.SPECTATING || this.plugin.getEventManager().getSpectators().containsKey(damager.getUniqueId())) {
-            e.setCancelled(true);
-            return;
-        }
-
-        if((!entity.canSee(damager) && damager.canSee(entity)) || damager.getGameMode() == GameMode.SPECTATOR) {
-            e.setCancelled(true);
-            return;
-        }
-
-        if (isEventDamager && eventDamager instanceof TeamFightEvent && ((TeamFightEvent) eventDamager).getPlayer(damager).getState() != TeamFightPlayer.TeamFightState.FIGHTING || isEventEntity &&  eventDamager instanceof TeamFightEvent && ((TeamFightEvent) eventEntity).getPlayer(entity).getState() != TeamFightPlayer.TeamFightState.FIGHTING  || !isEventDamager && damagerData.getPlayerState() != PlayerState.FIGHTING || !isEventEntity && entityData.getPlayerState() != PlayerState.FIGHTING) {
-            e.setCancelled(true);
-            return;
-        }
-
-        if (isEventDamager && eventDamager instanceof SumoEvent && ((SumoEvent) eventDamager).getPlayer(damager).getState() != SumoPlayer.SumoState.FIGHTING || isEventEntity &&  eventDamager instanceof SumoEvent && ((SumoEvent) eventEntity).getPlayer(entity).getState() != SumoPlayer.SumoState.FIGHTING  || !isEventDamager && damagerData.getPlayerState() != PlayerState.FIGHTING || !isEventEntity && entityData.getPlayerState() != PlayerState.FIGHTING) {
-            e.setCancelled(true);
-            return;
-        }
-
-        if (isEventDamager && eventDamager instanceof FFAEvent && ((FFAEvent) eventDamager).getPlayer(damager).getState() != FFAPlayer.FFAState.FIGHTING || isEventEntity &&  eventDamager instanceof FFAEvent && ((FFAEvent) eventEntity).getPlayer(entity).getState() != FFAPlayer.FFAState.FIGHTING || !isEventDamager && damagerData.getPlayerState() != PlayerState.FIGHTING || !isEventEntity && entityData.getPlayerState() != PlayerState.FIGHTING) {
-            e.setCancelled(true);
-            return;
-        }
-
-        if (isEventDamager && eventDamager instanceof NoDebuffLiteEvent
-                && ((NoDebuffLiteEvent) eventDamager).getPlayer(damager).getState() != NoDebuffLitePlayer.MiniNoDebuffState.FIGHTING
-                || isEventEntity &&  eventDamager instanceof NoDebuffLiteEvent
-                && ((NoDebuffLiteEvent) eventEntity).getPlayer(entity).getState() != NoDebuffLitePlayer.MiniNoDebuffState.FIGHTING) {
-            e.setCancelled(true);
-            return;
-        }
-
-        if(entityData.getPlayerState() == PlayerState.EVENT
-                && eventEntity instanceof SumoEvent
-                || damagerData.getPlayerState() == PlayerState.EVENT
-                && eventDamager instanceof SumoEvent) {
-            e.setDamage(0.0D);
-            return;
-        }
-
-        if(entityData.getPlayerState() == PlayerState.EVENT &&
-                eventEntity instanceof TeamFightEvent
-                || damagerData.getPlayerState() == PlayerState.EVENT
-                && eventDamager instanceof TeamFightEvent) {
-            return;
-        }
-
-        if(entityData.getPlayerState() == PlayerState.EVENT &&
-                eventEntity instanceof NoDebuffLiteEvent
-                || damagerData.getPlayerState() == PlayerState.EVENT
-                && eventDamager instanceof NoDebuffLiteEvent) {
-            return;
-        }
-
-        if(entityData.getPlayerState() == PlayerState.EVENT &&
-                eventEntity instanceof FFAEvent
-                || damagerData.getPlayerState() == PlayerState.EVENT
-                && eventDamager instanceof FFAEvent) {
-            return;
-        }
-
-        Match match = this.plugin.getMatchManager().getMatch(entityData);
-
-        if(match == null) {
-            e.setDamage(0.0D);
-            return;
-        }
-
-        if (damagerData.getTeamID() == entityData.getTeamID() && !match.isFFA()) {
-            e.setCancelled(true);
-            return;
-        }
-
-        if(match.getKit().isParkour()) {
-            e.setCancelled(true);
-            return;
-        }
-
-        if (match.getKit().isSpleef() || match.getKit().isSumo()) {
-            e.setDamage(0.0D);
-        }
-
         if (e.getDamager() instanceof Player) {
-            new BukkitRunnable() {
-                @Override
-                public void run() {
-                    if (match.getKit().isCombo()) {
-                        entity.setNoDamageTicks(3);
-                    }else{
-                        entity.setNoDamageTicks(20);
+            Player damager = (Player) e.getDamager();
+            PlayerData damagerData = this.plugin.getPlayerManager().getPlayerData(damager.getUniqueId());
+
+            if(entityData == null || damagerData == null) {
+                e.setCancelled(true);
+                return;
+            }
+
+            boolean isEventEntity = this.plugin.getEventManager().getEventPlaying(entity) != null;
+            boolean isEventDamager = this.plugin.getEventManager().getEventPlaying(damager) != null;
+
+            PracticeEvent eventDamager = this.plugin.getEventManager().getEventPlaying(damager);
+            PracticeEvent event = this.plugin.getEventManager().getEventPlaying(entity);
+
+            if (isEventEntity && isEventDamager && eventDamager instanceof TeamFightEvent && event instanceof TeamFightEvent) {
+                TeamFightEvent eventt = (TeamFightEvent) event;
+                if (eventt.getBlueTeam().contains(entity.getUniqueId())) {
+                    if (eventt.getBlueTeam().contains(damager.getUniqueId())) {
+                        e.setCancelled(true);
                     }
                 }
-            }.runTaskLater(Practice.getInstance(), 1L);
-            damagerData.setCombo(damagerData.getCombo() + 1);
-            damagerData.setHits(damagerData.getHits() + 1);
-
-            if (damagerData.getCombo() > damagerData.getLongestCombo()) {
-                damagerData.setLongestCombo(damagerData.getCombo());
+                else if (eventt.getRedTeam().contains(entity.getUniqueId())) {
+                    if (eventt.getRedTeam().contains(damager.getUniqueId())) {
+                        e.setCancelled(true);
+                    }
+                }
             }
 
-            entityData.setCombo(0);
-
-            if (match.getKit().isSpleef()) {
+            if(damagerData.getPlayerState() == PlayerState.SPECTATING || this.plugin.getEventManager().getSpectators().containsKey(damager.getUniqueId())) {
                 e.setCancelled(true);
+                return;
             }
-        } else if (e.getDamager() instanceof Arrow) {
-            Arrow arrow = (Arrow) e.getDamager();
 
-            if (arrow.getShooter() instanceof Player) {
-                Player shooter = (Player) arrow.getShooter();
+            if((!entity.canSee(damager) && damager.canSee(entity)) || damager.getGameMode() == GameMode.SPECTATOR) {
+                e.setCancelled(true);
+                return;
+            }
 
-                if (!entity.getName().equals(shooter.getName())) {
-                    double health = Math.ceil(entity.getHealth() - e.getFinalDamage()) / 2.0D;
+            if (isEventDamager && eventDamager instanceof TeamFightEvent && ((TeamFightEvent) eventDamager).getPlayer(damager).getState() != TeamFightPlayer.TeamFightState.FIGHTING || isEventEntity &&  eventDamager instanceof TeamFightEvent && ((TeamFightEvent) eventEntity).getPlayer(entity).getState() != TeamFightPlayer.TeamFightState.FIGHTING  || !isEventDamager && damagerData.getPlayerState() != PlayerState.FIGHTING || !isEventEntity && entityData.getPlayerState() != PlayerState.FIGHTING) {
+                e.setCancelled(true);
+                return;
+            }
 
-                    if (health > 0.0D) {
-                        shooter.sendMessage(ChatColor.YELLOW + "[*] " + ChatColor.GREEN + entity.getName() + " has been shot." + ChatColor.DARK_GRAY + " (" + ChatColor.RED + health + "❤" + ChatColor.DARK_GRAY  + ")");
+            if (isEventDamager && eventDamager instanceof SumoEvent && ((SumoEvent) eventDamager).getPlayer(damager).getState() != SumoPlayer.SumoState.FIGHTING || isEventEntity &&  eventDamager instanceof SumoEvent && ((SumoEvent) eventEntity).getPlayer(entity).getState() != SumoPlayer.SumoState.FIGHTING  || !isEventDamager && damagerData.getPlayerState() != PlayerState.FIGHTING || !isEventEntity && entityData.getPlayerState() != PlayerState.FIGHTING) {
+                e.setCancelled(true);
+                return;
+            }
+
+            if (isEventDamager && eventDamager instanceof FFAEvent && ((FFAEvent) eventDamager).getPlayer(damager).getState() != FFAPlayer.FFAState.FIGHTING || isEventEntity &&  eventDamager instanceof FFAEvent && ((FFAEvent) eventEntity).getPlayer(entity).getState() != FFAPlayer.FFAState.FIGHTING || !isEventDamager && damagerData.getPlayerState() != PlayerState.FIGHTING || !isEventEntity && entityData.getPlayerState() != PlayerState.FIGHTING) {
+                e.setCancelled(true);
+                return;
+            }
+
+            if (isEventDamager && eventDamager instanceof NoDebuffLiteEvent
+                    && ((NoDebuffLiteEvent) eventDamager).getPlayer(damager).getState() != NoDebuffLitePlayer.MiniNoDebuffState.FIGHTING
+                    || isEventEntity &&  eventDamager instanceof NoDebuffLiteEvent
+                    && ((NoDebuffLiteEvent) eventEntity).getPlayer(entity).getState() != NoDebuffLitePlayer.MiniNoDebuffState.FIGHTING) {
+                e.setCancelled(true);
+                return;
+            }
+
+            if(entityData.getPlayerState() == PlayerState.EVENT
+                    && eventEntity instanceof SumoEvent
+                    || damagerData.getPlayerState() == PlayerState.EVENT
+                    && eventDamager instanceof SumoEvent) {
+                e.setDamage(0.0D);
+                return;
+            }
+
+            if(entityData.getPlayerState() == PlayerState.EVENT &&
+                    eventEntity instanceof TeamFightEvent
+                    || damagerData.getPlayerState() == PlayerState.EVENT
+                    && eventDamager instanceof TeamFightEvent) {
+                return;
+            }
+
+            if(entityData.getPlayerState() == PlayerState.EVENT &&
+                    eventEntity instanceof NoDebuffLiteEvent
+                    || damagerData.getPlayerState() == PlayerState.EVENT
+                    && eventDamager instanceof NoDebuffLiteEvent) {
+                return;
+            }
+
+            if(entityData.getPlayerState() == PlayerState.EVENT &&
+                    eventEntity instanceof FFAEvent
+                    || damagerData.getPlayerState() == PlayerState.EVENT
+                    && eventDamager instanceof FFAEvent) {
+                return;
+            }
+
+            Match match = this.plugin.getMatchManager().getMatch(entityData);
+
+            if(match == null) {
+                e.setDamage(0.0D);
+                return;
+            }
+
+            if (damagerData.getTeamID() == entityData.getTeamID() && !match.isFFA()) {
+                e.setCancelled(true);
+                return;
+            }
+
+            if(match.getKit().isParkour()) {
+                e.setCancelled(true);
+                return;
+            }
+
+            if (match.getKit().isSpleef() || match.getKit().isSumo()) {
+                e.setDamage(0.0D);
+            }
+
+            if (e.getDamager() instanceof Player) {
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        if (match.getKit().isCombo()) {
+                            entity.setNoDamageTicks(3);
+                        }else{
+                            entity.setNoDamageTicks(20);
+                        }
+                    }
+                }.runTaskLater(Practice.getInstance(), 1L);
+                damagerData.setCombo(damagerData.getCombo() + 1);
+                damagerData.setHits(damagerData.getHits() + 1);
+
+                if (damagerData.getCombo() > damagerData.getLongestCombo()) {
+                    damagerData.setLongestCombo(damagerData.getCombo());
+                }
+
+                entityData.setCombo(0);
+
+                if (match.getKit().isSpleef()) {
+                    e.setCancelled(true);
+                }
+            } else if (e.getDamager() instanceof Arrow) {
+                Arrow arrow = (Arrow) e.getDamager();
+
+                if (arrow.getShooter() instanceof Player) {
+                    Player shooter = (Player) arrow.getShooter();
+
+                    if (!entity.getName().equals(shooter.getName())) {
+                        double health = Math.ceil(entity.getHealth() - e.getFinalDamage()) / 2.0D;
+
+                        if (health > 0.0D) {
+                            shooter.sendMessage(ChatColor.GREEN + entity.getName() + " ha sido disparado." + ChatColor.DARK_GRAY + " (" + ChatColor.RED + health + "❤" + ChatColor.DARK_GRAY  + ")");
+                        }
                     }
                 }
             }

@@ -2,6 +2,7 @@ package net.skillwars.practice.events.ffa;
 
 import lombok.Getter;
 import me.joeleoli.nucleus.Nucleus;
+import me.joeleoli.nucleus.nametag.NameTagHandler;
 import net.skillwars.practice.Practice;
 import net.skillwars.practice.events.EventCountdownTask;
 import net.skillwars.practice.events.PracticeEvent;
@@ -20,7 +21,7 @@ import java.util.stream.Collectors;
 
 public class FFAEvent extends PracticeEvent<FFAPlayer> {
 
-    private Map<UUID, FFAPlayer> players = new HashMap<>();
+    public Map<UUID, FFAPlayer> players = new HashMap<>();
 
     @Getter HashSet<String> fighting = new HashSet<>();
     private FFACountdownTask countdownTask = new FFACountdownTask(this);
@@ -82,11 +83,7 @@ public class FFAEvent extends PracticeEvent<FFAPlayer> {
                     PlayerData winnerData = Practice.getInstance().getPlayerManager().getPlayerData(winner.getUniqueId());
                     winnerData.setSumoEventWins(winnerData.getSumoEventWins() + 1);
 
-                    String winnerChat = CC.translate(Nucleus.getInstance().getChat().getPlayerPrefix(winner) + winner.getName());
-
-                    Bukkit.broadcastMessage("");
-                    Bukkit.broadcastMessage(ChatColor.DARK_AQUA.toString() + ChatColor.BOLD + "FFA Event " + ChatColor.AQUA.toString() + "Ganador: " + winnerChat);
-                    Bukkit.broadcastMessage("");
+                    Bukkit.broadcastMessage(CC.translate("&e[Evento] &fGanador: &a" + winner.getName()));
 
                     this.fighting.clear();
                     end();
@@ -114,6 +111,12 @@ public class FFAEvent extends PracticeEvent<FFAPlayer> {
                 data.setFighting(data);
                 data.setState(FFAPlayer.FFAState.FIGHTING);
                 this.fighting.add(online.getName());
+
+                for (String other : fighting) {
+                    Player otherPlayer = Bukkit.getPlayer(other);
+                    NameTagHandler.removeFromTeams(online, otherPlayer);
+                    NameTagHandler.addToTeam(online, otherPlayer, ChatColor.RED, false);
+                }
 
                 online.teleport(Practice.getInstance().getSpawnManager().getFFALocation().toBukkitLocation());
                 online.getInventory().setContents(kit.getContents());

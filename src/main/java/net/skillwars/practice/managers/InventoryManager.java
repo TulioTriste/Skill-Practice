@@ -33,23 +33,23 @@ public class InventoryManager {
 
     private final Practice plugin = Practice.getInstance();
 
-    @Getter private final InventoryUI unrankedInventory = new InventoryUI(CC.PRIMARY + "Select an UnRanked Ladder", true, 2);
+    @Getter private final InventoryUI unrankedInventory = new InventoryUI(CC.YELLOW + "Select an UnRanked Ladder", true, 2);
 
-    @Getter private final InventoryUI rankedInventory = new InventoryUI(CC.PRIMARY + "Select a Ranked Ladder", true, 2);
+    @Getter private final InventoryUI rankedInventory = new InventoryUI(CC.YELLOW + "Select a Ranked Ladder", true, 2);
 
-    @Getter private final InventoryUI editorInventory = new InventoryUI(CC.PRIMARY + "Select an Editable Ladder", true, 2);
+    @Getter private final InventoryUI editorInventory = new InventoryUI(CC.YELLOW + "Select an Editable Ladder", true, 2);
 
-    @Getter private final InventoryUI duelInventory = new InventoryUI(CC.PRIMARY + "Select a Duel Ladder", true, 2);
+    @Getter private final InventoryUI duelInventory = new InventoryUI(CC.YELLOW + "Select a Duel Ladder", true, 2);
 
-    @Getter private final InventoryUI partySplitInventory = new InventoryUI(CC.PRIMARY + "Select a Party Split Kit", true, 2);
+    @Getter private final InventoryUI partySplitInventory = new InventoryUI(CC.YELLOW + "Select a Party Split Kit", true, 2);
 
-    @Getter private final InventoryUI partyFFAInventory = new InventoryUI(CC.PRIMARY + "Select a Party FFA Kit", true, 2);
+    @Getter private final InventoryUI partyFFAInventory = new InventoryUI(CC.YELLOW + "Select a Party FFA Kit", true, 2);
 
     //@Getter private final InventoryUI redroverInventory = new InventoryUI(ChatColor.RED + "Select a Redrover Kit", true, 2);
 
-    @Getter private final InventoryUI partyEventInventory = new InventoryUI(CC.PRIMARY + "Select an Event", true, 1);
+    @Getter private final InventoryUI partyEventInventory = new InventoryUI(CC.YELLOW + "Select an Event", true, 1);
 
-    @Getter private final InventoryUI partyInventory = new InventoryUI(CC.PRIMARY + "Duel a Party", true, 6);
+    @Getter private final InventoryUI partyInventory = new InventoryUI(CC.YELLOW + "Duel a Party", true, 6);
 
     private final Map<String, InventoryUI> duelMapInventories = new HashMap<>();
     private final Map<String, InventoryUI> partyFFAMapInventories = new HashMap<>();
@@ -291,8 +291,8 @@ public class InventoryManager {
 
         return ItemUtil.reloreItem(itemStack,
         		"",
-        		CC.GRAY + " » " + CC.PRIMARY + "En Queue: " + CC.WHITE + queueSize,
-                CC.GRAY + " » " + CC.PRIMARY + "En Pelea: " + CC.WHITE + inGameSize);
+        		CC.PRIMARY + " » " + CC.SECONDARY + "En Queue: " + CC.WHITE + queueSize,
+                CC.PRIMARY + " » " + CC.SECONDARY + "En Pelea: " + CC.WHITE + inGameSize);
     }
 
     private void addToQueue(Player player, PlayerData playerData, Kit kit, Party party, QueueType queueType) {
@@ -497,7 +497,7 @@ public class InventoryManager {
             this.plugin.getEditorManager().addRenamingKit(player.getUniqueId(), kitMap.get(kitIndex));
 
             player.closeInventory();
-            player.sendMessage(CC.PRIMARY + "Inserta un nombre para este kit (los colores de chat tambien son aplicables).");
+            player.sendMessage(CC.SECONDARY + "Inserta un nombre para este kit (los colores de chat tambien son aplicables).");
         }
     }
 

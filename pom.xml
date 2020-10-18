@@ -91,6 +91,13 @@
 			<version>3.12.7</version>
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+			<groupId>me.joansiitoh.datas</groupId>
+			<artifactId>GlobalBridge</artifactId>
+			<version>0.0.1</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/libs/GlobalBridge.jar</systemPath>
+		</dependency>
 	</dependencies>
 
 	<build>

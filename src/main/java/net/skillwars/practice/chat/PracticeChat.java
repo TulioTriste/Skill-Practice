@@ -1,14 +1,17 @@
 package net.skillwars.practice.chat;
 
+import me.joansiitoh.datas.PlayerData;
 import me.joeleoli.nucleus.Nucleus;
 import me.joeleoli.nucleus.chat.ChatFormat;
 import me.joeleoli.nucleus.player.NucleusPlayer;
 import me.joeleoli.nucleus.util.Style;
 import net.skillwars.practice.Practice;
 import net.skillwars.practice.kit.PlayerKit;
+import net.skillwars.practice.listeners.InventoryListener;
 import net.skillwars.practice.party.Party;
 import net.skillwars.practice.util.CC;
 
+import org.apache.commons.lang3.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -37,7 +40,7 @@ public class PracticeChat implements ChatFormat {
         if (kitRenaming != null) {
             kitRenaming.setDisplayName(ChatColor.translateAlternateColorCodes('&', message));
             sender.sendMessage(
-                    CC.PRIMARY + "Set kit " + CC.SECONDARY + kitRenaming.getIndex() + CC.PRIMARY + "'s name to "
+                    CC.WHITE + "Set kit " + CC.SECONDARY + kitRenaming.getIndex() + CC.WHITE + "'s name to "
                             + CC.SECONDARY + kitRenaming.getDisplayName());
 
             this.plugin.getEditorManager().removeRenamingKit(sender.getUniqueId());
@@ -45,20 +48,76 @@ public class PracticeChat implements ChatFormat {
             return null;
         }
 
+        if (InventoryListener.setPlayersLimit.get(sender.getName()) != null) {
+            if (!StringUtils.isNumeric(message)) {
+                sender.sendMessage(CC.translate("&cPorfavor inserte Numeros validos."));
+                return null;
+            }
+            int number = Integer.parseInt(message);
+            if (number < 1 || number > 100) {
+                sender.sendMessage(CC.translate("&cInserte un numero entre 1 y 100"));
+                return null;
+            }
+            party.setLimit(number);
+            InventoryListener.setPlayersLimit.remove(sender.getName());
+            sender.sendMessage(CC.translate("&aLa Party se ha limitado a " + number + " miembros."));
+            return null;
+        }
+
         NucleusPlayer profile = NucleusPlayer.getByUuid(sender.getUniqueId());
+        PlayerData playerData = PlayerData.getPlayer(sender.getUniqueId());
+        String tag = playerData.getData("TAG") != null ? " " + playerData.getData("TAG").toString() : "";
+        String color = playerData.getData("COLOR") != null ? ChatColor.valueOf(playerData.getData("COLOR").toString()).toString() : ChatColor.WHITE.toString();
         return Style.GRAY
                 + Style.translate(Nucleus.getInstance().getChat().getPlayerPrefix(sender))
                 + sender.getDisplayName()
-                + Style.GRAY + ": " + Style.WHITE
+                + Style.translate(tag)
+                + Style.GRAY + ": " + color
                 + (sender.hasPermission("nucleus.chat.color") ? Style.translate(message) : message);
     }
 
 	@Override
 	public String consoleFormat(Player sender, String message) {
-		return Style.GRAY
+        PlayerKit kitRenaming = this.plugin.getEditorManager().getRenamingKit(sender.getUniqueId());
+
+        if (kitRenaming != null) {
+            kitRenaming.setDisplayName(ChatColor.translateAlternateColorCodes('&', message));
+            sender.sendMessage(
+                    CC.WHITE + "Set kit " + CC.SECONDARY + kitRenaming.getIndex() + CC.WHITE + "'s name to "
+                            + CC.SECONDARY + kitRenaming.getDisplayName());
+
+            this.plugin.getEditorManager().removeRenamingKit(sender.getUniqueId());
+
+            return null;
+        }
+
+        Party party = this.plugin.getPartyManager().getParty(sender.getUniqueId());
+
+        if (InventoryListener.setPlayersLimit.get(sender.getName()) != null) {
+            if (!StringUtils.isNumeric(message)) {
+                sender.sendMessage(CC.translate("&cPorfavor inserte Numeros validos."));
+                return null;
+            }
+            int number = Integer.parseInt(message);
+            if (number < 1 || number > 100) {
+                sender.sendMessage(CC.translate("&cInserte un numero entre 1 y 100"));
+                return null;
+            }
+            party.setLimit(number);
+            InventoryListener.setPlayersLimit.remove(sender.getName());
+            sender.sendMessage(CC.translate("&aLa Party se ha limitado a " + number + " miembros."));
+            return null;
+        }
+
+        NucleusPlayer profile = NucleusPlayer.getByUuid(sender.getUniqueId());
+        PlayerData playerData = PlayerData.getPlayer(sender.getUniqueId());
+        String tag = playerData.getData("TAG") != null ? " " + playerData.getData("TAG").toString() : "";
+        String color = playerData.getData("COLOR") != null ? ChatColor.valueOf(playerData.getData("COLOR").toString()).toString() : ChatColor.WHITE.toString();
+        return Style.GRAY
                 + Style.translate(Nucleus.getInstance().getChat().getPlayerPrefix(sender))
                 + sender.getDisplayName()
-                + Style.GRAY + ": " + Style.WHITE
+                + Style.translate(tag)
+                + Style.GRAY + ": " + color
                 + (sender.hasPermission("nucleus.chat.color") ? Style.translate(message) : message);
 	}
 }

@@ -32,28 +32,29 @@ public class ChatListener implements Listener {
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOW)
     public void onAsyncPlayerChat(AsyncPlayerChatEvent event) {
-        event.setCancelled(true);
-
         final Player player = event.getPlayer();
 
-        if (this.plugin.getPartyManager().getParty(player.getUniqueId()) != null
+        /*if (this.plugin.getPartyManager().getParty(player.getUniqueId()) != null
                 && InventoryListener.setPlayersLimit.containsKey(player.getName())) {
             String message = event.getMessage();
             Party party = this.plugin.getPartyManager().getParty(player.getUniqueId());
             if (!StringUtils.isNumeric(message)) {
                 player.sendMessage(CC.translate("&cPorfavor inserte Numeros validos."));
+                event.setCancelled(true);
                 return;
             }
             int number = Integer.parseInt(message);
             if (number < 1 || number > 100) {
                 player.sendMessage(CC.translate("&cInserte un numero entre 1 y 100"));
+                event.setCancelled(true);
                 return;
             }
             party.setLimit(number);
             InventoryListener.setPlayersLimit.remove(player.getName());
             player.sendMessage(CC.translate("&aLa Party se ha limitado a " + number + " miembros."));
+            event.setCancelled(true);
             return;
-        }
+        }*/
 
         if (Nucleus.getInstance().getChatManager().isChatMuted() && !player.hasPermission("nucleus.staff")) {
             player.sendMessage(Style.RED + "Public chat is currently muted.");
@@ -84,9 +85,11 @@ public class ChatListener implements Listener {
 
             if (receiverData.getSettings().getBoolean(DefinedSetting.GlobalPlayerSetting.RECEIVE_GLOBAL_MESSAGES) &&
                     !receiverData.isIgnored(player.getUniqueId())) {
-                receiver.sendMessage(
+                /*receiver.sendMessage(
                         Nucleus.getInstance().getChatManager().getChatFormat()
-                                .format(event.getPlayer(), receiver, message));
+                                .format(event.getPlayer(), receiver, message));*/
+                event.setFormat(Nucleus.getInstance().getChatManager().getChatFormat()
+                        .format(event.getPlayer(), receiver, message));
             }
         }
 

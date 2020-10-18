@@ -1,5 +1,6 @@
 package net.skillwars.practice.listeners;
 
+import lombok.Getter;
 import me.joeleoli.nucleus.menu.Menu;
 import net.skillwars.practice.Practice;
 import net.skillwars.practice.party.Party;
@@ -9,17 +10,12 @@ import net.skillwars.practice.player.PlayerState;
 import net.skillwars.practice.util.CC;
 import net.skillwars.practice.util.ItemBuilder;
 import net.skillwars.practice.util.ItemUtil;
-import net.skillwars.practice.util.StringUtil;
-import net.skillwars.practice.util.inventory.InventoryUI;
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
@@ -75,8 +71,8 @@ public class InventoryListener implements Listener {
                                 "&fAbrir la Party para todo el publico",
                                 "&fpara que cualquiera pueda unirse",
                                 "",
-                                (party.isOpen() ? "&a\u2713 " : "  ") + "&fEnabled",
-                                (party.isOpen() ? "  " : "&c\u2718 ") + "&fDisabled",
+                                (party.isOpen() ? "&a\u2713 " : "  ") + "&fHabilitado",
+                                (party.isOpen() ? "  " : "&c\u2718 ") + "&fDesabilitado",
                                 "&7&m------------------------")));
                         ItemStack membersLimit = new ItemBuilder(ItemUtil.createItem(Material.PAPER, CC.translate("&b&lEditar limite de Miembros"))).lore(membersItemLores).build();
 
@@ -86,18 +82,17 @@ public class InventoryListener implements Listener {
                     }
                     break;
                 case PAPER:
-                    if (!setPlayersLimit.containsKey(player.getName())) {
+                    if (party.getLeader().equals(player.getUniqueId()) && player.hasPermission("practice.party.editlimit")) {
                         setPlayersLimit.put(player.getName(), true);
+                        player.sendMessage(CC.translate("&aInserte un numero!"));
+                        player.closeInventory();
+                    } else if (!player.hasPermission("practice.party.editlimit")) {
+                        player.sendMessage(CC.translate("&cNo tienes el permiso para editar el limite de miembros."));
+                    } else if (!party.getLeader().equals(player.getUniqueId())) {
+                        player.sendMessage(CC.translate("&cNo eres el Leader para hacer esta accion."));
                     }
-                    player.sendMessage(CC.translate("&aInserte un numero!"));
-                    player.closeInventory();
                     break;
             }
         }
-    }
-
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
-    public void onWriteChat(AsyncPlayerChatEvent event) {
-        Player player = event.getPlayer();
     }
 }

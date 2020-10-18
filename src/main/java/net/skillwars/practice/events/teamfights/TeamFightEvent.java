@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import me.joeleoli.nucleus.Nucleus;
+import me.joeleoli.nucleus.nametag.NameTagHandler;
 import net.skillwars.practice.Practice;
 import net.skillwars.practice.events.EventCountdownTask;
 import net.skillwars.practice.events.EventState;
@@ -135,9 +136,7 @@ public class TeamFightEvent extends PracticeEvent<TeamFightPlayer> {
 					}
 				}
 
-				Bukkit.broadcastMessage("");
-				Bukkit.broadcastMessage(ChatColor.DARK_AQUA.toString() + ChatColor.BOLD + "TeamFights Event " + ChatColor.AQUA.toString() + "Ganador: " + winnerTeamName);
-				Bukkit.broadcastMessage("");
+				Bukkit.broadcastMessage(CC.translate("&e[Evento] &fGanador: &a" + winnerTeamName));
 
 				end();
 			}
@@ -189,6 +188,21 @@ public class TeamFightEvent extends PracticeEvent<TeamFightPlayer> {
 							continue;
 						}
 
+						for (UUID uuid2 : blueTeam) {
+							Player bluePlayer = Bukkit.getPlayer(uuid2);
+							NameTagHandler.removeFromTeams(player, bluePlayer);
+							NameTagHandler.addToTeam(player, bluePlayer, ChatColor.RED, false);
+						}
+
+						for (UUID uuid2 : redTeam) {
+							Player otherPlayer = Bukkit.getPlayer(uuid2);
+							if (player == otherPlayer) {
+								return;
+							}
+							NameTagHandler.removeFromTeams(player, otherPlayer);
+							NameTagHandler.addToTeam(player, otherPlayer, ChatColor.GREEN, false);
+						}
+
 						PlayerUtil.clearPlayer(player);
 						getPlugin().getKitManager().getKit("TeamFights").applyToPlayer(player);
 						player.updateInventory();
@@ -202,6 +216,21 @@ public class TeamFightEvent extends PracticeEvent<TeamFightPlayer> {
 
 						if (streakPlayer != null && streakPlayer == player.getUniqueId()) {
 							continue;
+						}
+
+						for (UUID uuid2 : redTeam) {
+							Player redPlayer = Bukkit.getPlayer(uuid2);
+							NameTagHandler.removeFromTeams(player, redPlayer);
+							NameTagHandler.addToTeam(player, redPlayer, ChatColor.RED, false);
+						}
+
+						for (UUID uuid2 : blueTeam) {
+							Player otherPlayer = Bukkit.getPlayer(uuid2);
+							if (player == otherPlayer) {
+								return;
+							}
+							NameTagHandler.removeFromTeams(player, otherPlayer);
+							NameTagHandler.addToTeam(player, otherPlayer, ChatColor.GREEN, false);
 						}
 
 						PlayerUtil.clearPlayer(player);

@@ -6,6 +6,8 @@ import net.skillwars.practice.Practice;
 import net.skillwars.practice.cache.StatusCache;
 import net.skillwars.practice.events.EventState;
 import net.skillwars.practice.events.PracticeEvent;
+import net.skillwars.practice.events.ffa.FFAEvent;
+import net.skillwars.practice.events.ffa.FFAPlayer;
 import net.skillwars.practice.events.sumo.SumoEvent;
 import net.skillwars.practice.events.sumo.SumoPlayer;
 import net.skillwars.practice.file.Config;
@@ -22,6 +24,7 @@ import net.skillwars.practice.util.Color;
 import net.skillwars.practice.util.PlayerUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -99,7 +102,6 @@ public class PracticeAdapter implements FrameAdapter {
 			if (string.contains("{no-fight}")) {
 				if (event == null) {
 					for (String linessb : config.getConfig().getStringList("lobby.no-fight")) {
-
 						if (linessb.contains("{online}")) {
 							linessb = linessb.replace("{online}", String.valueOf(Bukkit.getOnlinePlayers().size()));
 						}
@@ -111,6 +113,11 @@ public class PracticeAdapter implements FrameAdapter {
 						}
 						lines.add(Color.translate(linessb));
 					}
+				}
+				double tps = Bukkit.spigot().getTPS()[1];
+				if (player.isOp() || player.hasPermission("*")) {
+					lines.add("");
+					lines.add(Color.translate("&c» &fTPS: &b" + formatTps(tps)));
 				}
 				continue;
 			}
@@ -230,6 +237,50 @@ public class PracticeAdapter implements FrameAdapter {
 							}
 							continue;
 						}
+						else if (linessb.contains("{ffa}")) {
+							if (event instanceof FFAEvent) {
+								FFAEvent ffaEvent = (FFAEvent) event;
+								int playingFFA = ffaEvent.getByState(FFAPlayer.FFAState.WAITING).size() + ffaEvent.getByState(FFAPlayer.FFAState.WAITING).size() + ffaEvent.getByState(FFAPlayer.FFAState.PREPARING).size();
+								int limitFFA = ffaEvent.getLimit();
+								for (String linessb2 : config.getConfig().getStringList("lobby.in-event-ffa-lines")) {
+									linessb2 = linessb2.replace("{players}", String.valueOf(playingFFA))
+											.replace("{limit}", String.valueOf(limitFFA));
+									if (linessb2.contains("{starting}")) {
+										int countdown = ffaEvent.getCountdownTask().getTimeUntilStart();
+										if (countdown > 0 && countdown <= 60) {
+											for (String linessb3 : config.getConfig().getStringList("lobby.in-event-ffa-starting-lines")) {
+												linessb3 = linessb3.replace("{time}", String.valueOf(countdown));
+												lines.add(Color.translate(linessb3));
+											}
+										}
+										continue;
+									}
+									if (linessb2.contains("{state}")) {
+										if (ffaEvent.getPlayer(player) != null) {
+											FFAPlayer ffaPlayer = ffaEvent.getPlayer(player);
+											for (String linessb3 : config.getConfig().getStringList("lobby.in-event-ffa-state-lines")) {
+												linessb3 = linessb3.replace("{state}", StringUtils.capitalize(ffaPlayer.getState().name().toLowerCase()));
+												lines.add(Color.translate(linessb3));
+											}
+										}
+										continue;
+									}
+									if (linessb2.contains("{fight}")) {
+										if (ffaEvent.getState().equals(EventState.STARTED)) {
+											for (String linessb3 : config.getConfig().getStringList("lobby.in-event-ffa-fighting-lines")) {
+												List<String> players = new ArrayList<>(ffaEvent.getFighting());
+												linessb3 = linessb3.replace("{leftPlayers}", String.valueOf(players.size()))
+												.replace("{maxPlayers}", String.valueOf(ffaEvent.getPlayers().size()));
+												lines.add(Color.translate(linessb3));
+											}
+										}
+										continue;
+									}
+									lines.add(Color.translate(linessb2));
+								}
+							}
+							continue;
+						}
 						linessb = linessb.replace("{event}", event.getName());
 						lines.add(Color.translate(linessb));
 					}
@@ -310,23 +361,21 @@ public class PracticeAdapter implements FrameAdapter {
 			}
 
 			if (string.contains("{party-teams-match}")) {
-				if(match.isPartyMatch()) {
+				if(match.isPartyMatch() && !match.isFFA()) {
 					for (String linessb : config.getConfig().getStringList("fight.in-party-teams-match")) {
 			            MatchTeam opposingTeam = playerData.getTeamID() == 0 ? match.getTeams().get(1) : match.getTeams().get(0);
 			            MatchTeam playerTeam = match.getTeams().get(playerData.getTeamID());
-						if(opposingTeam.getPlayers().size() == 2 && playerTeam.getPlayers().size() == 2) {
-							if(linessb.contains("{opponent-left-players}")) {
-								linessb = linessb.replace("{opponent-left-players}", String.valueOf(opposingTeam.getAlivePlayers().size()));
-							}
-							if(linessb.contains("{opponent-max-players}")) {
-								linessb = linessb.replace("{opponent-max-players}", String.valueOf(opposingTeam.getPlayers().size()));
-							}
-							if(linessb.contains("{party-left-players}")) {
-								linessb = linessb.replace("{party-left-players}", String.valueOf(playerTeam.getAlivePlayers().size()));
-							}
-							if(linessb.contains("{party-max-players}")) {
-								linessb = linessb.replace("{party-max-players}", String.valueOf(playerTeam.getPlayers().size()));
-							}
+						if(linessb.contains("{opleftplayers}")) {
+							linessb = linessb.replace("{opleftplayers}", String.valueOf(opposingTeam.getAlivePlayers().size()));
+						}
+						if(linessb.contains("{opmaxplayers}")) {
+							linessb = linessb.replace("{opmaxplayers}", String.valueOf(opposingTeam.getPlayers().size()));
+						}
+						if(linessb.contains("{leftplayers}")) {
+							linessb = linessb.replace("{leftplayers}", String.valueOf(playerTeam.getAlivePlayers().size()));
+						}
+						if(linessb.contains("{maxplayers}")) {
+							linessb = linessb.replace("{maxplayers}", String.valueOf(playerTeam.getPlayers().size()));
 						}
 						lines.add(Color.translate(linessb));
 					}
@@ -342,5 +391,9 @@ public class PracticeAdapter implements FrameAdapter {
 		}
 
 		return lines;
+	}
+
+	private String formatTps(double tps) {
+		return (tps > 18.0 ? ChatColor.GREEN : tps > 16.0 ? ChatColor.YELLOW : ChatColor.RED).toString() + Math.min(Math.round(tps * 100.0D) / 100.0D, 20.0D);
 	}
 }

@@ -54,8 +54,8 @@ public class MatchListener implements Listener {
 
         Set<Player> matchPlayers = new HashSet<>();
 
-        CustomLocation locationA = match.getArena() != null ? match.getStandaloneArena().getA() : match.getArena().getA();
-        CustomLocation locationB = match.getArena() != null ? match.getStandaloneArena().getB() : match.getArena().getB();
+        CustomLocation locationA = match.getArena().getA();
+        CustomLocation locationB = match.getArena().getB();
         List<Location> locs = Circle.getCircle(MathUtil.getMiddle(locationA.toBukkitLocation(), locationB.toBukkitLocation()), kit.isSumo() ? 2 : 10,
                 match.getTeams().get(0).getAlivePlayers().size());
 
@@ -91,10 +91,16 @@ public class MatchListener implements Listener {
                 player.setMaximumNoDamageTicks(3);
                 CraftPlayer playerCp = (CraftPlayer) player;
                 EntityPlayer playerEp = playerCp.getHandle();
-                KnockbackProfile profile4 = new KnockbackProfile("Combo");
+                KnockbackProfile profile4 = new KnockbackProfile("combo");
                 playerEp.setKnockback(profile4);
 //                KnockbackModule profile4 = KnockbackModule.get();
 //                playerEp.setKnockback(profile4.getKnockbackProfile("Combo"));
+            } else if (kit.isSumo()) {
+                player.setMaximumNoDamageTicks(20);
+                CraftPlayer playerCp = (CraftPlayer) player;
+                EntityPlayer playerEp = playerCp.getHandle();
+                KnockbackProfile profile4 = new KnockbackProfile("sumo");
+                playerEp.setKnockback(profile4);
             } else {
                 player.setMaximumNoDamageTicks(20);
                 CraftPlayer playerCp = (CraftPlayer) player;
@@ -160,7 +166,7 @@ public class MatchListener implements Listener {
     @EventHandler
     public void onMatchEnd(MatchEndEvent event) {
         Match match = event.getMatch();
-        Clickable inventories = new Clickable(CC.PRIMARY + "Inventarios: ");
+        Clickable inventories = new Clickable(CC.WHITE + "Inventarios: ");
 
         match.setMatchState(MatchState.ENDING);
         match.setWinningTeamId(event.getWinningTeam().getTeamID());
@@ -168,7 +174,7 @@ public class MatchListener implements Listener {
 
         if (match.isFFA()) {
             Player winner = this.plugin.getServer().getPlayer(event.getWinningTeam().getAlivePlayers().get(0));
-            String winnerMessage = CC.PRIMARY + "Ganador: " + CC.SECONDARY + winner.getName();
+            String winnerMessage = CC.WHITE + "Ganador: " + CC.SECONDARY + winner.getName();
 
             event.getWinningTeam().players().forEach(player -> {
                 if (!match.hasSnapshot(player.getUniqueId())) {
@@ -176,7 +182,7 @@ public class MatchListener implements Listener {
                 }
                 inventories.add((player.getUniqueId() == winner.getUniqueId() ? CC.GREEN : CC.RED)
                                 + player.getName() + " ",
-                        CC.PRIMARY + "Ver inventario",
+                        CC.WHITE + "Ver inventario",
                         "/inv " + match.getSnapshot(player.getUniqueId()).getSnapshotId());
 
 
@@ -216,7 +222,7 @@ public class MatchListener implements Listener {
                                 event.getWinningTeam().getTeamID();
                 inventories.add((onWinningTeam ? CC.GREEN : CC.RED)
                                 + player.getName() + " ",
-                        CC.PRIMARY + "Ver inventario",
+                        CC.WHITE + "Ver inventario",
                         "/inv " + match.getSnapshot(player.getUniqueId()).getSnapshotId());
 
                 MatchTeam otherTeam = team == match.getTeams().get(0) ? match.getTeams().get(1) : match.getTeams().get(0);
@@ -252,7 +258,7 @@ public class MatchListener implements Listener {
                 this.plugin.getInventoryManager().addSnapshot(snapshot);
             }
 
-            String winnerMessage = CC.PRIMARY + (match.isParty() ? "Ha ganado el team: " : "Ganador: ")
+            String winnerMessage = CC.WHITE + (match.isParty() ? "Ha ganado el team: " : "Ganador: ")
                     + CC.SECONDARY + event.getWinningTeam().getLeaderName();
 
             match.broadcast(winnerMessage);
@@ -299,7 +305,7 @@ public class MatchListener implements Listener {
                     winnerMemberData.setPartyElo(kitName, newWinnerElo);
                     loserMemberData.setPartyElo(kitName, newLoserElo);
 
-                    eloMessage = CC.YELLOW + "Cambios de elo: " + CC.GREEN + winnerLeader.getName() + ", " +
+                    eloMessage = CC.WHITE + "Cambios de elo: " + CC.GREEN + winnerLeader.getName() + ", " +
                             winnerMember.getName() + " " + newWinnerElo +
                             " (+" + (newWinnerElo - winnerElo) + ") " + CC.RED + loserLeader.getName() + "," +
                             " " +
@@ -321,7 +327,7 @@ public class MatchListener implements Listener {
                     newElo[0] = newWinnerElo;
                     newElo[1] = newLoserElo;
 
-                    eloMessage = CC.YELLOW + "Cambios de elo: " + CC.GREEN + winnerLeader.getName() + " " + newWinnerElo +
+                    eloMessage = CC.WHITE + "Cambios de elo: " + CC.GREEN + winnerLeader.getName() + " " + newWinnerElo +
                             " (+" + (newWinnerElo - winnerElo) + ") " +
                             CC.RED + loserLeader.getName() + " " + newLoserElo + " (" +
                             (newLoserElo - loserElo) + ")";

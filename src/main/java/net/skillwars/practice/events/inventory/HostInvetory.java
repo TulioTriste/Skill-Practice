@@ -55,8 +55,8 @@ public class HostInvetory extends Menu {
                 return new ItemBuilder(type)
                         .name(Style.translate(name))
                         .lore(Style.translateLines(Arrays.asList(
-                                "&eTo host this event",
-                                "&eYou can purchase rank at",
+                                "&ePara hostear este evento",
+                                "&enecesitas comprar rango en",
                                 "&astore.skillwars.us"
                         )))
                         .durability(data)

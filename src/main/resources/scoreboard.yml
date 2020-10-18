@@ -32,6 +32,17 @@ lobby:
     - "   &b{firstplayer} &7({firstping})"
     - "       &dVS"
     - "   &b{secondplayer} &7({secondping})"
+  in-event-ffa-lines:
+    - "&bPlayers&7: &f{players}&7/&f{limit}"
+    - "{starting}"
+    - "{state}"
+    - "{fight}"
+  in-event-ffa-starting-lines:
+    - "&bStarting&7: &f{time}s"
+  in-event-ffa-state-lines:
+    - "&bState&7: &f{state}"
+  in-event-ffa-fighting-lines:
+    - ""
   in-tournament:
     - ""
     - "&3&lTournament &7({size}v{size})"

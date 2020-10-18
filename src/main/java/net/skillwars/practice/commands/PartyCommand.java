@@ -122,13 +122,13 @@ public class PartyCommand extends Command {
                     } else {
                         this.plugin.getPartyManager().createPartyInvite(player.getUniqueId(), target.getUniqueId());
 
-                        Clickable partyInvite = new Clickable(Nucleus.getInstance().getChat().getPlayerPrefix((Player) sender) + sender.getName() + CC.SECONDARY + " te ha invitado a su party! " + CC.GRAY + "[Clic para aceptar]",
+                        Clickable partyInvite = new Clickable(CC.translate(Nucleus.getInstance().getChat().getPlayerPrefix((Player) sender) + sender.getName() + CC.SECONDARY + " te ha invitado a su party! " + CC.GRAY + "[Clic para aceptar]"),
                                 CC.GRAY + "Clic para aceptar",
                                 "/party accept " + sender.getName());
 
                         partyInvite.sendToPlayer(target);
 
-                        party.broadcast(Nucleus.getInstance().getChat().getPlayerPrefix(target) + target.getName() + CC.SECONDARY + " ha sido invitado a la party.");
+                        party.broadcast(CC.translate(Nucleus.getInstance().getChat().getPlayerPrefix(target) + target.getName() + CC.SECONDARY + " ha sido invitado a la party."));
 
                     }
                 }
@@ -243,7 +243,7 @@ public class PartyCommand extends Command {
                     party.setOpen(!party.isOpen());
 
                     if(party.isOpen()){
-                        if(player.hasPermission("party.annunce")){
+                        if(player.hasPermission("party.announce")){
                             party.setBroadcastTask(new BukkitRunnable(){
                                 @Override
                                 public void run() {

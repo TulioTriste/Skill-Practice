@@ -31,7 +31,7 @@ public class EnderpearlTimer extends PlayerTimer implements Listener {
 			return;
 		}
 
-		player.sendMessage(ChatColor.RED + "(!) You can use Enderpearls again.");
+		player.sendMessage(ChatColor.RED + "Ya puedes usar la Enderpearl.");
 
 	}
 

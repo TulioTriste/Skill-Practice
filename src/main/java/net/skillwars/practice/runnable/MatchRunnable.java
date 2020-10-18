@@ -28,7 +28,7 @@ public class MatchRunnable extends BukkitRunnable {
             case STARTING:
                 if (this.match.decrementCountdown() == 0) {
                     this.match.setMatchState(MatchState.FIGHTING);
-                    this.match.broadcastWithSound(CC.PRIMARY + "La pelea ha comenzado!", Sound.FIREWORK_BLAST);
+                    this.match.broadcastWithSound(CC.GREEN + "La pelea ha comenzado!", Sound.FIREWORK_BLAST);
                     if (this.match.isRedrover()) {
                         this.plugin.getMatchManager().pickPlayer(this.match);
                     }
@@ -47,8 +47,8 @@ public class MatchRunnable extends BukkitRunnable {
                         }
                     }));
                 } else {
-                    this.match.broadcastWithSound(CC.PRIMARY + "La pelea empieza en " + CC.SECONDARY
-                            + this.match.getCountdown() + CC.PRIMARY + " segundo(s)...", Sound.CLICK);
+                    this.match.broadcastWithSound(CC.WHITE + "La pelea empieza en " + CC.SECONDARY
+                            + this.match.getCountdown() + CC.WHITE + " segundo(s)...", Sound.CLICK);
                 }
                 break;
             case SWITCHING:

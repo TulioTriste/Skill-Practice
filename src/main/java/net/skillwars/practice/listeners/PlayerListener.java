@@ -339,7 +339,7 @@ public class PlayerListener implements Listener {
 
                             player.openInventory(this.plugin.getInventoryManager().getUnrankedInventory().getCurrentPage());
                             break;
-                        case EMPTY_MAP:
+                        case PAPER:
                             new HostInvetory().openMenu(player);
                             event.setCancelled(true);
                             break;
@@ -357,11 +357,6 @@ public class PlayerListener implements Listener {
                                 this.plugin.getServer().dispatchCommand(player, "accept " + rematcher.getName());
                             } else {
                                 this.plugin.getServer().dispatchCommand(player, "duel " + rematcher.getName());
-                            }
-                            break;
-                        case PAPER:
-                            if (this.plugin.getMatchManager().isRematching(player.getUniqueId())) {
-                                this.plugin.getServer().dispatchCommand(player, "inv " + this.plugin.getMatchManager().getRematcherInventory(player.getUniqueId()));
                             }
                             break;
                         case NAME_TAG:

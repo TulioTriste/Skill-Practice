@@ -116,9 +116,7 @@ public class NoDebuffLiteEvent extends PracticeEvent<NoDebuffLitePlayer> {
 
                     PlayerData winnerData = Practice.getInstance().getPlayerManager().getPlayerData(winner.getUniqueId());
                     winnerData.setSumoEventWins(winnerData.getSumoEventWins() + 1);
-
-                    String announce = ChatColor.YELLOW + "(Event) " + ChatColor.GREEN.toString() + "Winner: " + winner.getName();
-                    Bukkit.broadcastMessage(announce);
+                    Bukkit.broadcastMessage(CC.translate("&e[Evento] &fGanador: &a" + winner.getName()));
 
                     this.fighting.clear();
                     end();
@@ -143,11 +141,8 @@ public class NoDebuffLiteEvent extends PracticeEvent<NoDebuffLitePlayer> {
 
             PlayerData winnerData = Practice.getInstance().getPlayerManager().getPlayerData(winner.getUniqueId());
             //winnerData.setSumoEventWins(winnerData.getSumoEventWins() + 1);
-            String winnerChat = CC.translate(Nucleus.getInstance().getChat().getPlayerPrefix(winner) + winner.getName());
 
-            Bukkit.broadcastMessage("");
-            Bukkit.broadcastMessage(ChatColor.DARK_AQUA.toString() + ChatColor.BOLD + "NoDebuffLite Event " + ChatColor.AQUA.toString() + "Ganador: " + winnerChat);
-            Bukkit.broadcastMessage("");
+            Bukkit.broadcastMessage(CC.translate("&e[Evento] &fGanador: &a" + winner.getName()));
 
             this.fighting.clear();
             end();

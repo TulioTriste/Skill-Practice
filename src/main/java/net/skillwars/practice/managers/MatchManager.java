@@ -130,26 +130,26 @@ public class MatchManager {
             return;
         }
 
-        String deathMessage = CC.SECONDARY + player.getName() + CC.PRIMARY + " ha " +
-                (killer != null ? "sido asesinado por " + CC.SECONDARY + killer.getName() + CC.PRIMARY :
+        String deathMessage = CC.SECONDARY + player.getName() + CC.WHITE + " ha " +
+                (killer != null ? "sido asesinado por " + CC.SECONDARY + killer.getName() + CC.WHITE :
                         "muerto") + "!";
 
         match.broadcast(deathMessage);
 
         if (match.isRedrover()) {
             if (match.getMatchState() != MatchState.SWITCHING) {
-                Clickable inventories = new Clickable(CC.PRIMARY + "Inventarios: ");
+                Clickable inventories = new Clickable(CC.WHITE + "Inventarios: ");
                 if (killer != null) {
                     InventorySnapshot snapshot = new InventorySnapshot(killer, match);
                     this.plugin.getInventoryManager().addSnapshot(snapshot);
                     inventories.add(CC.GREEN + killer.getName() + " ",
-                            CC.PRIMARY + "Ver inventario",
+                            CC.WHITE + "Ver inventario",
                             "/inv " + snapshot.getSnapshotId());
                 }
                 InventorySnapshot snapshot = new InventorySnapshot(player, match);
                 this.plugin.getInventoryManager().addSnapshot(snapshot);
                 inventories.add(CC.RED + player.getName() + " ",
-                        CC.PRIMARY + "Ver inventario",
+                        CC.WHITE + "Ver inventario",
                         "/inv " + snapshot.getSnapshotId());
                 match.broadcast(inventories);
                 match.setMatchState(MatchState.SWITCHING);
