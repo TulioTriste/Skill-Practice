@@ -46,29 +46,32 @@ public class KitCommand extends Command {
             return true;
         }
         if(args.length == 0) {
+            sender.sendMessage(ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "--------------------------------");
+            sender.sendMessage(ChatColor.AQUA.toString() + ChatColor.BOLD + "Kit Help");
             sender.sendMessage("");
-            sender.sendMessage(ChatColor.GOLD.toString() + ChatColor.BOLD + "Kit Help");
+            sender.sendMessage(ChatColor.AQUA + "Obligatorios");
+            sender.sendMessage(ChatColor.WHITE + "/kit create <kitname>");
+            sender.sendMessage(ChatColor.WHITE + "/kit enable <kitname>");
+            sender.sendMessage(ChatColor.WHITE + "/kit icon <kitname>");
+            sender.sendMessage(ChatColor.WHITE + "/kit setinv <kitname>");
+            sender.sendMessage(ChatColor.WHITE + "/kit seteditable <kitname>");
             sender.sendMessage("");
-            sender.sendMessage(ChatColor.RED + "/kit create <name>");
-            sender.sendMessage(ChatColor.RED + "/kit delete <name>");
-            sender.sendMessage(ChatColor.RED + "/kit enable <name>");
-            sender.sendMessage(ChatColor.RED + "/kit disable <name>");
-            sender.sendMessage(ChatColor.RED + "/kit combo <name>");
-            sender.sendMessage(ChatColor.RED + "/kit build <name>");
-            sender.sendMessage(ChatColor.RED + "/kit sumo <name>");
-            sender.sendMessage(ChatColor.RED + "/kit spleef <name>");
-            sender.sendMessage(ChatColor.RED + "/kit parkour <name>");
-            sender.sendMessage(ChatColor.RED + "/kit ranked <name>");
-            sender.sendMessage(ChatColor.RED + "/kit whitelistarena <name>");
-            sender.sendMessage(ChatColor.RED + "/kit icon <name>");
-            sender.sendMessage(ChatColor.RED + "/kit setinv <name>");
-            sender.sendMessage(ChatColor.RED + "/kit getinv <name>");
-            sender.sendMessage(ChatColor.RED + "/kit excludearena <name>");
-            sender.sendMessage(ChatColor.RED + "/kit excludearenafromallkitsbut <name>");
-            sender.sendMessage(ChatColor.RED + "/kit seteditable <name>");
-            sender.sendMessage(ChatColor.RED + "/kit seteditinv <name>");
-            sender.sendMessage(ChatColor.RED + "/kit geteditinv <name>");
-            sender.sendMessage("");
+            sender.sendMessage(ChatColor.AQUA + "Opcionales");
+            sender.sendMessage(ChatColor.WHITE + "/kit delete <kitname>");
+            sender.sendMessage(ChatColor.WHITE + "/kit disable <kitname>");
+            sender.sendMessage(ChatColor.WHITE + "/kit ranked <kitname>");
+            sender.sendMessage(ChatColor.WHITE + "/kit combo <kitname>");
+            sender.sendMessage(ChatColor.WHITE + "/kit build <kitname>");
+            sender.sendMessage(ChatColor.WHITE + "/kit sumo <kitname>");
+            sender.sendMessage(ChatColor.WHITE + "/kit spleef <kitname>");
+            sender.sendMessage(ChatColor.WHITE + "/kit parkour <kitname>");
+            sender.sendMessage(ChatColor.WHITE + "/kit whitelistarena <kitname> <arenaname>");
+            sender.sendMessage(ChatColor.WHITE + "/kit getinv <kitname>");
+            sender.sendMessage(ChatColor.WHITE + "/kit excludearena <kitname> <arenaname>");
+            sender.sendMessage(ChatColor.WHITE + "/kit excludearenafromallkitsbut <kitname>");
+            sender.sendMessage(ChatColor.WHITE + "/kit seteditinv <kitname>");
+            sender.sendMessage(ChatColor.WHITE + "/kit geteditinv <kitname>");
+            sender.sendMessage(ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "--------------------------------");
             return true;
         }
         if (args.length < 2) {

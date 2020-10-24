@@ -118,7 +118,7 @@ public class WorldListener implements Listener {
         }
     }
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void onBlockPlace(BlockPlaceEvent event) {
         Player player = event.getPlayer();
 
@@ -137,6 +137,7 @@ public class WorldListener implements Listener {
                 double minZ = match.getArena().getMin().getZ();
                 double maxX = match.getArena().getMax().getX();
                 double maxZ = match.getArena().getMax().getZ();
+
                 if (minX > maxX) {
                     double lastMinX = minX;
                     minX = maxX;
@@ -148,6 +149,7 @@ public class WorldListener implements Listener {
                     minZ = maxZ;
                     maxZ = lastMinZ;
                 }
+
                 if (player.getLocation().getX() >= minX && player.getLocation().getX() <= maxX
                         && player.getLocation().getZ() >= minZ && player.getLocation().getZ() <= maxZ) {
                     if ((player.getLocation().getY() - match.getArena().getA().getY()) < 5.0D) {

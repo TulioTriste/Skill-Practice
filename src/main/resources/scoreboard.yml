@@ -117,3 +117,6 @@ fight:
     - "{party-teams-match}"
     - "&bDuration&7: &f{duration}"
     - "&7&m-----------------------"
+spectate:
+  lines:
+    - ""

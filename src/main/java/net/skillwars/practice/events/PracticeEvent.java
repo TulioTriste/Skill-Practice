@@ -77,7 +77,7 @@ public abstract class PracticeEvent<K extends EventPlayer> {
             other.showPlayer(player);
             player.showPlayer(other);
         }
-        this.sendMessage(ChatColor.translateAlternateColorCodes('&', Nucleus.getInstance().getChat().getPlayerPrefix(player) + player.getName() + " &eha entrado al evento." +
+        this.sendMessage(ChatColor.translateAlternateColorCodes('&', Practice.getInstance().getChat().getPlayerPrefix(player) + player.getName() + " &eha entrado al evento." +
                 " &7(" + this.getPlayers().size() + " player" + ((this.getPlayers().size() == 1) ? "" : "s") + ")"));
     }
 

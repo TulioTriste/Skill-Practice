@@ -38,20 +38,20 @@ public class ArenaCommand extends Command {
             return true;
         }
         if(args.length == 0) {
+            sender.sendMessage(ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "--------------------------------");
+            sender.sendMessage(ChatColor.AQUA.toString() + ChatColor.BOLD + "Arena Help");
             sender.sendMessage("");
-            sender.sendMessage(ChatColor.GOLD.toString() + ChatColor.BOLD + "Arena Help");
-            sender.sendMessage("");
-            sender.sendMessage(ChatColor.RED + "/arena create <name> - Create Arena");
-            sender.sendMessage(ChatColor.RED + "/arena delete <name> - Delete Arena");
-            sender.sendMessage(ChatColor.RED + "/arena a <name> - Set a first Arena Location");
-            sender.sendMessage(ChatColor.RED + "/arena b <name> - Set a second Arena Location");
-            sender.sendMessage(ChatColor.RED + "/arena min <name> - Set a min Cuboid");
-            sender.sendMessage(ChatColor.RED + "/arena max <name> - Set a max Cuboid");
-            sender.sendMessage(ChatColor.RED + "/arena enable <name> - Enable Arena");
-            sender.sendMessage(ChatColor.RED + "/arena disable <name> - Disable Arena");
-            sender.sendMessage(ChatColor.RED + "/arena generate <name> - Generate a Arenas");
-            sender.sendMessage(ChatColor.RED + "/arena save <name> - Save Arena");
-            sender.sendMessage("");
+            sender.sendMessage(ChatColor.WHITE + "/arena create <name> - Create Arena");
+            sender.sendMessage(ChatColor.WHITE + "/arena delete <name> - Delete Arena");
+            sender.sendMessage(ChatColor.WHITE + "/arena a <name> - Set a first Arena Location");
+            sender.sendMessage(ChatColor.WHITE + "/arena b <name> - Set a second Arena Location");
+            sender.sendMessage(ChatColor.WHITE + "/arena min <name> - Set a min Cuboid");
+            sender.sendMessage(ChatColor.WHITE + "/arena max <name> - Set a max Cuboid");
+            sender.sendMessage(ChatColor.WHITE + "/arena enable <name> - Enable Arena");
+            sender.sendMessage(ChatColor.WHITE + "/arena disable <name> - Disable Arena");
+            sender.sendMessage(ChatColor.WHITE + "/arena generate <name> - Generate a Arenas");
+            sender.sendMessage(ChatColor.WHITE + "/arena save <name> - Save Arena");
+            sender.sendMessage(ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "--------------------------------");
         	return true;
         }
         if (args.length < 2) {

@@ -75,7 +75,7 @@ public class FFAEvent extends PracticeEvent<FFAPlayer> {
 
                 player.spigot().respawn();
 
-                sendMessage(ChatColor.YELLOW + "(Event) " + ChatColor.RED + player.getName() + ChatColor.GRAY + " has been eliminated.");
+                sendMessage(ChatColor.RED + player.getName() + ChatColor.GRAY + " has been eliminated.");
 
                 if (this.getByState(FFAPlayer.FFAState.FIGHTING).size() == 1) {
                     Player winner = Bukkit.getPlayer(this.getByState(FFAPlayer.FFAState.FIGHTING).get(0));
@@ -93,7 +93,6 @@ public class FFAEvent extends PracticeEvent<FFAPlayer> {
     }
 
     private void selectPlayers() {
-
         sendMessage(ChatColor.YELLOW + "(Event) " + ChatColor.GRAY + "Teletransportando jugadores...");
 
         this.fighting.clear();
@@ -119,8 +118,7 @@ public class FFAEvent extends PracticeEvent<FFAPlayer> {
                 }
 
                 online.teleport(Practice.getInstance().getSpawnManager().getFFALocation().toBukkitLocation());
-                online.getInventory().setContents(kit.getContents());
-                online.getInventory().setArmorContents(kit.getArmor());
+                kit.applyToPlayer(online);
                 online.updateInventory();
             }
         }

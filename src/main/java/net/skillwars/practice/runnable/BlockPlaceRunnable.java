@@ -44,7 +44,7 @@ public abstract class BlockPlaceRunnable extends BukkitRunnable {
             return;
         }
 
-        TaskManager.IMP.async(() -> {
+        /*TaskManager.IMP.async(() -> {
 
             EditSession editSession = new EditSessionBuilder(this.world.getName())
                     .fastmode(true)
@@ -64,7 +64,13 @@ public abstract class BlockPlaceRunnable extends BukkitRunnable {
 
             TaskManager.IMP.task(this.blocks::clear);
 
-        });
+        });*/
+
+        for (Map.Entry<Location, Block> entry : this.blocks.entrySet()) {
+//            entry.setBlock(new Vector(entry.getKey().getBlockX(), entry.getKey().getBlockY(), entry.getKey().getZ()), new BaseBlock(entry.getValue().getTypeId(), entry.getValue().getData()));
+            entry.getKey().getBlock().setType(entry.getValue().getType());
+        }
+        this.blocks.clear();
     }
 
     public abstract void finish();

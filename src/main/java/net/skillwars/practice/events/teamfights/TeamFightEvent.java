@@ -4,26 +4,24 @@ import com.google.common.collect.Lists;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import me.joeleoli.nucleus.Nucleus;
 import me.joeleoli.nucleus.nametag.NameTagHandler;
 import net.skillwars.practice.Practice;
 import net.skillwars.practice.events.EventCountdownTask;
 import net.skillwars.practice.events.EventState;
 import net.skillwars.practice.events.PracticeEvent;
-import net.skillwars.practice.events.nodebufflite.NoDebuffLitePlayer;
 import net.skillwars.practice.player.PlayerData;
 import net.skillwars.practice.util.CC;
 import net.skillwars.practice.util.CustomLocation;
 import net.skillwars.practice.util.PlayerUtil;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.*;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -34,7 +32,6 @@ public class TeamFightEvent extends PracticeEvent<TeamFightPlayer> {
 	@Getter private List<UUID> blueTeam = new ArrayList<>();
 	@Getter private List<UUID> redTeam = new ArrayList<>();
 
-	@Getter UUID streakPlayer = null;
 	@Getter List<UUID> fighting = new ArrayList<>();
 	@Getter List<UUID> redFighting = new ArrayList<>();
 	@Getter List<UUID> blueFighting = new ArrayList<>();
@@ -117,62 +114,56 @@ public class TeamFightEvent extends PracticeEvent<TeamFightPlayer> {
 				this.blueTeam.remove(player.getUniqueId());
 			}
 
-			if (this.blueTeam.size() == 0 || this.redTeam.size() == 0) {
+			for (UUID uuid : this.fighting) {
+				Player uuidPlayer = Bukkit.getPlayer(uuid);
+				NameTagHandler.removeFromTeams(uuidPlayer, player);
+			}
 
-				if (this.getState().equals(EventState.STARTED)) {
-					gameTask.cancel();
-				}
+			if (!data.getState().equals(TeamFightPlayer.TeamFightState.WAITING)) {
+				if (this.blueTeam.size() == 0 || this.redTeam.size() == 0) {
 
-				List<UUID> winnerTeam = getWinningTeam();
-				String winnerTeamName = ChatColor.WHITE.toString() + ChatColor.BOLD + "Tie";
-
-				if(this.redTeam.size() > this.blueTeam.size()) {
-					winnerTeamName = ChatColor.RED.toString() + ChatColor.BOLD + "RED";
-				} else if(this.blueTeam.size() > redTeam.size()) {
-					winnerTeamName = ChatColor.BLUE.toString() + ChatColor.BOLD + "BLUE";
-				}
-
-				StringJoiner winnerJoiner = new StringJoiner(", ");
-
-				if(winnerTeam != null && winnerTeam.size() > 0) {
-
-					for (UUID winner : winnerTeam) {
-						winnerJoiner.add(player.getName());
-						this.fighting.remove(player.getUniqueId());
-						this.redFighting.remove(player.getUniqueId());
-						this.blueFighting.remove(player.getUniqueId());
+					if (this.getState().equals(EventState.STARTED)) {
+						gameTask.cancel();
 					}
+
+					List<UUID> winnerTeam = getWinningTeam();
+					String winnerTeamName = ChatColor.WHITE.toString() + ChatColor.BOLD + "Tie";
+
+					if (this.redTeam.size() > this.blueTeam.size()) {
+						winnerTeamName = ChatColor.RED.toString() + ChatColor.BOLD + "RED";
+					} else if (this.blueTeam.size() > redTeam.size()) {
+						winnerTeamName = ChatColor.BLUE.toString() + ChatColor.BOLD + "BLUE";
+					}
+
+					StringJoiner winnerJoiner = new StringJoiner(", ");
+
+					if (winnerTeam != null && winnerTeam.size() > 0) {
+
+						for (UUID winner : winnerTeam) {
+							winnerJoiner.add(player.getName());
+							this.fighting.remove(player.getUniqueId());
+							this.redFighting.remove(player.getUniqueId());
+							this.blueFighting.remove(player.getUniqueId());
+						}
+					}
+
+					for (UUID reds : redTeam) {
+						Player red = Bukkit.getPlayer(reds);
+						for (UUID blues : blueTeam) {
+							Player blue = Bukkit.getPlayer(blues);
+							NameTagHandler.removeFromTeams(red, blue);
+							NameTagHandler.removeFromTeams(blue, red);
+						}
+					}
+
+					Bukkit.broadcastMessage(CC.translate("&e[Evento] &fGanador: &a" + winnerTeamName));
+					end();
 				}
-
-				Bukkit.broadcastMessage(CC.translate("&e[Evento] &fGanador: &a" + winnerTeamName));
-
-				end();
 			}
 		};
 	}
 
 	private void prepareNextMatch() {
-		this.fighting.clear();
-		this.redFighting.clear();
-		this.blueFighting.clear();
-
-		List<TeamFightPlayer> redPlayers = new ArrayList<>();
-		for (UUID reds : redTeam) {
-			redPlayers.add(getPlayer(reds));
-		}
-		List<TeamFightPlayer> bluePlayers = new ArrayList<>();
-		for (UUID blues : blueTeam) {
-			bluePlayers.add(getPlayer(blues));
-		}
-
-		/*if(this.fighting.size() == 1 && this.redTeam.contains(this.fighting.get(0))) {
-			redPlayer = getPlayer(this.fighting.get(0));
-			this.streakPlayer = redPlayer.getUuid();
-		} else if(this.fighting.size() == 1 && this.blueTeam.contains(this.fighting.get(0))) {
-			bluePlayer = getPlayer(this.fighting.get(0));
-			this.streakPlayer = bluePlayer.getUuid();
-		}*/
-
 		this.fighting.addAll(redTeam);
 		this.fighting.addAll(blueTeam);
 		this.redFighting.addAll(redTeam);
@@ -192,80 +183,48 @@ public class TeamFightEvent extends PracticeEvent<TeamFightPlayer> {
 				@Override
 				public void run() {
 
-					for (UUID uuid : redTeam) {
-
-						Player player = Bukkit.getPlayer(uuid);
-
-						if (streakPlayer != null && streakPlayer == player.getUniqueId()) {
-							continue;
-						}
+					if (redTeam.contains(uuidPicked)) {
 
 						for (UUID uuid2 : blueTeam) {
 							Player bluePlayer = Bukkit.getPlayer(uuid2);
-							NameTagHandler.removeFromTeams(player, bluePlayer);
-							NameTagHandler.addToTeam(player, bluePlayer, ChatColor.RED, false);
-						}
-
-						for (UUID uuid2 : redTeam) {
-							Player otherPlayer = Bukkit.getPlayer(uuid2);
-							if (player == otherPlayer) {
-								return;
-							}
-							NameTagHandler.removeFromTeams(player, otherPlayer);
-							NameTagHandler.addToTeam(player, otherPlayer, ChatColor.GREEN, false);
-						}
-
-						PlayerUtil.clearPlayer(player);
-						getPlugin().getKitManager().getKit("TeamFights").applyToPlayer(player);
-						player.updateInventory();
-
-						player.teleport(Practice.getInstance().getSpawnManager().getTeamFightsFirst().toBukkitLocation());
-					}
-
-					for (UUID uuid : blueTeam) {
-
-						Player player = Bukkit.getPlayer(uuid);
-
-						if (streakPlayer != null && streakPlayer == player.getUniqueId()) {
-							continue;
+							NameTagHandler.removeFromTeams(picked, bluePlayer);
+							NameTagHandler.addToTeam(picked, bluePlayer, ChatColor.RED, false);
 						}
 
 						for (UUID uuid2 : redTeam) {
 							Player redPlayer = Bukkit.getPlayer(uuid2);
-							NameTagHandler.removeFromTeams(player, redPlayer);
-							NameTagHandler.addToTeam(player, redPlayer, ChatColor.RED, false);
+							NameTagHandler.removeFromTeams(picked, redPlayer);
+							NameTagHandler.addToTeam(picked, redPlayer, ChatColor.GREEN, false);
 						}
 
-						for (UUID uuid2 : blueTeam) {
-							Player otherPlayer = Bukkit.getPlayer(uuid2);
-							if (player == otherPlayer) {
-								return;
-							}
-							NameTagHandler.removeFromTeams(player, otherPlayer);
-							NameTagHandler.addToTeam(player, otherPlayer, ChatColor.GREEN, false);
+						PlayerUtil.clearPlayer(picked);
+						getPlugin().getKitManager().getKit("TeamFights").applyToPlayer(picked);
+						picked.updateInventory();
+
+						picked.teleport(Practice.getInstance().getSpawnManager().getTeamFightsFirst().toBukkitLocation());
+						picked.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, Integer.MAX_VALUE, 1));
+						picked.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, Integer.MAX_VALUE, 1));
+					}
+
+					if (blueTeam.contains(uuidPicked)) {
+
+						for (UUID uuid2 : redTeam) {
+							Player redPlayer = Bukkit.getPlayer(uuid2);
+							NameTagHandler.removeFromTeams(picked, redPlayer);
+							NameTagHandler.addToTeam(picked, redPlayer, ChatColor.RED, false);
 						}
 
-						PlayerUtil.clearPlayer(player);
-						getPlugin().getKitManager().getKit("TeamFights").applyToPlayer(player);
-						player.updateInventory();
+						PlayerUtil.clearPlayer(picked);
+						getPlugin().getKitManager().getKit("TeamFights").applyToPlayer(picked);
+						picked.updateInventory();
 
-						player.teleport(Practice.getInstance().getSpawnManager().getTeamFightsSecond().toBukkitLocation());
+						picked.teleport(Practice.getInstance().getSpawnManager().getTeamFightsSecond().toBukkitLocation());
+						picked.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, Integer.MAX_VALUE, 1));
+						picked.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, Integer.MAX_VALUE, 1));
 					}
 				}
 			});
 		}
-
-		/*Player picked1 = getPlugin().getServer().getPlayer(redPlayer.getUuid());
-		Player picked2 = getPlugin().getServer().getPlayer(bluePlayer.getUuid());
-
-		redPlayer.setState(TeamFightPlayer.TeamFightState.PREPARING);
-		bluePlayer.setState(TeamFightPlayer.TeamFightState.PREPARING);
-
-		redPlayer.setFightPlayer(bluePlayer);
-		bluePlayer.setFightPlayer(redPlayer);
-
-		redPlayer.setFightTask(task);
-		bluePlayer.setFightTask(task);*/
 	}
 
 	private void generateTeams() {

@@ -1,5 +1,7 @@
 package net.skillwars.practice.listeners;
 
+import lombok.Getter;
+import me.joansiitoh.datas.events.NickUpdateEvent;
 import me.joeleoli.nucleus.nametag.NameTagHandler;
 import net.skillwars.practice.Practice;
 import net.skillwars.practice.event.match.MatchEndEvent;
@@ -17,8 +19,11 @@ import net.skillwars.practice.util.*;
 import net.minecraft.server.v1_8_R3.EntityPlayer;
 
 import net.skillwars.practice.util.*;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -29,7 +34,13 @@ import pt.foxspigot.jar.knockback.KnockbackProfile;
 import java.util.*;
 
 public class MatchListener implements Listener {
+
     private final Practice plugin = Practice.getInstance();
+    public static Map<UUID, Map<Location, Block>> blocks;
+
+    static {
+        blocks = new HashMap<>();
+    }
 
     @EventHandler
     public void onMatchStart(MatchStartEvent event) {
@@ -50,6 +61,22 @@ public class MatchListener implements Listener {
             }
             match.setStandaloneArena(match.getArena().getAvailableArena());
             this.plugin.getArenaManager().setArenaMatchUUID(match.getStandaloneArena(), match.getMatchId());
+        }
+
+        if (kit.isBuild()) {
+            if (match.getArena().getAvailableArenas().size() <= 0) {
+                match.broadcast(ChatColor.RED + "No hay arenas disponibles.");
+                this.plugin.getMatchManager().removeMatch(match);
+                match.getTeams().forEach(team -> team.getAlivePlayers().forEach(uuid -> {
+                    Player player = Bukkit.getPlayer(uuid);
+                    this.plugin.getPlayerManager().sendToSpawnAndResetNoTP(player);
+                }));
+                return;
+            }
+            match.setStandaloneArena(match.getArena().getAvailableArena());
+            this.plugin.getArenaManager().setArenaMatchUUID(match.getStandaloneArena(), match.getMatchId());
+            blocks.put(match.getMatchId(), this.blocksFromTwoPoints(match.getArena().getMin().toBukkitLocation(),
+                    match.getArena().getMax().toBukkitLocation()));
         }
 
         Set<Player> matchPlayers = new HashSet<>();
@@ -125,6 +152,7 @@ public class MatchListener implements Listener {
                     Player teamplayer = this.plugin.getServer().getPlayer(uuid);
                     NameTagHandler.removeFromTeams(player, teamplayer);
                     NameTagHandler.addToTeam(player, teamplayer, ChatColor.RED, kit.isBuild());
+                    Bukkit.getServer().getPluginManager().callEvent(new NickUpdateEvent(teamplayer));
                 }
             }else{
                 MatchTeam otherteam = team == match.getTeams().get(0) ? match.getTeams().get(1) : match.getTeams().get(0);
@@ -132,12 +160,14 @@ public class MatchListener implements Listener {
                     Player member = this.plugin.getServer().getPlayer(memberUUID);
                     NameTagHandler.removeFromTeams(player, member);
                     NameTagHandler.addToTeam(player, member, ChatColor.GREEN, kit.isBuild());
+                    Bukkit.getServer().getPluginManager().callEvent(new NickUpdateEvent(member));
 
                 }
                 for (UUID enemyUUID : otherteam.getAlivePlayers()){
                     Player enemy = this.plugin.getServer().getPlayer(enemyUUID);
                     NameTagHandler.removeFromTeams(player, enemy);
                     NameTagHandler.addToTeam(player, enemy, ChatColor.RED, kit.isBuild());
+                    Bukkit.getServer().getPluginManager().callEvent(new NickUpdateEvent(enemy));
                 }
             }
 
@@ -158,7 +188,6 @@ public class MatchListener implements Listener {
                 player.showPlayer(other);
             }
         }
-
 
         new MatchRunnable(match).runTaskTimer(this.plugin, 20L, 20L);
     }
@@ -345,5 +374,29 @@ public class MatchListener implements Listener {
             }
             this.plugin.getMatchManager().saveRematches(match);
         }
+    }
+
+    public Map<Location, Block> blocksFromTwoPoints(Location loc1, Location loc2) {
+        Map<Location, Block> blocks = new HashMap<>();
+
+        int topBlockX = (loc1.getBlockX() < loc2.getBlockX() ? loc2.getBlockX() : loc1.getBlockX());
+        int bottomBlockX = (loc1.getBlockX() > loc2.getBlockX() ? loc2.getBlockX() : loc1.getBlockX());
+
+        int topBlockY = (loc1.getBlockY() < loc2.getBlockY() ? loc2.getBlockY() : loc1.getBlockY());
+        int bottomBlockY = (loc1.getBlockY() > loc2.getBlockY() ? loc2.getBlockY() : loc1.getBlockY());
+
+        int topBlockZ = (loc1.getBlockZ() < loc2.getBlockZ() ? loc2.getBlockZ() : loc1.getBlockZ());
+        int bottomBlockZ = (loc1.getBlockZ() > loc2.getBlockZ() ? loc2.getBlockZ() : loc1.getBlockZ());
+
+        for (int x = bottomBlockX; x <= topBlockX; x++) {
+            for (int z = bottomBlockZ; z <= topBlockZ; z++) {
+                for (int y = bottomBlockY; y <= topBlockY; y++) {
+                    Block block = loc1.getWorld().getBlockAt(x, y, z);
+                    blocks.put(new Location(loc1.getWorld(), x, y, z), block);
+                }
+            }
+        }
+
+        return blocks;
     }
 }

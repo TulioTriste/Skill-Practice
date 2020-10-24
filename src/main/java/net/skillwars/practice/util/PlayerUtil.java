@@ -1,4 +1,5 @@
 package net.skillwars.practice.util;
+
 import org.bukkit.*;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Firework;
@@ -9,8 +10,6 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
-
-import static net.skillwars.practice.util.Color.translate;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -32,7 +31,6 @@ public class PlayerUtil {
 	}
 
 	public static int getPing(Player player) {
-
 		return ((CraftPlayer)player).getHandle().ping;
 	}
 

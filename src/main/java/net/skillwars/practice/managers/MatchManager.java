@@ -281,7 +281,7 @@ public class MatchManager {
         if (targetMatch.getMatchState() != MatchState.ENDING) {
             if (!targetMatch.haveSpectated(player.getUniqueId())) {
 
-                String spectatorMessage = ChatColor.WHITE.toString() + ChatColor.BOLD + "* " + ChatColor.GREEN + player.getName() + ChatColor.GRAY + " is spectating your match.";
+                String spectatorMessage = ChatColor.AQUA + player.getName() + ChatColor.GRAY + " esta especteando esta pelea.";
 
                 if(!player.hasPermission("practice.staff")) {
                     targetMatch.broadcast(spectatorMessage);

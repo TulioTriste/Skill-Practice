@@ -122,13 +122,13 @@ public class PartyCommand extends Command {
                     } else {
                         this.plugin.getPartyManager().createPartyInvite(player.getUniqueId(), target.getUniqueId());
 
-                        Clickable partyInvite = new Clickable(CC.translate(Nucleus.getInstance().getChat().getPlayerPrefix((Player) sender) + sender.getName() + CC.SECONDARY + " te ha invitado a su party! " + CC.GRAY + "[Clic para aceptar]"),
+                        Clickable partyInvite = new Clickable(CC.translate(Practice.getInstance().getChat().getPlayerPrefix((Player) sender) + sender.getName() + CC.SECONDARY + " te ha invitado a su party! " + CC.GRAY + "[Clic para aceptar]"),
                                 CC.GRAY + "Clic para aceptar",
                                 "/party accept " + sender.getName());
 
                         partyInvite.sendToPlayer(target);
 
-                        party.broadcast(CC.translate(Nucleus.getInstance().getChat().getPlayerPrefix(target) + target.getName() + CC.SECONDARY + " ha sido invitado a la party."));
+                        party.broadcast(CC.translate(Practice.getInstance().getChat().getPlayerPrefix(target) + target.getName() + CC.SECONDARY + " ha sido invitado a la party."));
 
                     }
                 }
@@ -252,7 +252,7 @@ public class PartyCommand extends Command {
                                         Player leader = Bukkit.getPlayer(party.getLeader());
 
                                         if (otherParty == null) {
-                                            Clickable partyPublic = new Clickable(Color.translate(Nucleus.getInstance().getChat().getPlayerPrefix(leader) + leader.getName() +
+                                            Clickable partyPublic = new Clickable(Color.translate(Practice.getInstance().getChat().getPlayerPrefix(leader) + leader.getName() +
                                                     " &besta hosteando una party publica! &7" + "[Clic para entrar]"),
                                                     CC.GRAY + "Clic para entrar",
                                                     "/party join " + leader.getName());

@@ -31,14 +31,14 @@ public class SpawnsCommand extends Command {
         }
         if (args.length == 0) {
             sender.sendMessage(Style.translate("&7&m--------------------------------"));
-            sender.sendMessage(Style.translate("&3&lSet Spawn Locations Help"));
+            sender.sendMessage(Style.translate("&b&lSet Spawn Locations Help"));
             sender.sendMessage(Style.translate(""));
-            sender.sendMessage(Style.translate("&c/" + alias + " spawnlocation/spawnmin/spawnmax"));
-            sender.sendMessage(Style.translate("&c/" + alias + " editorlocation/editormin/editormax"));
-            sender.sendMessage(Style.translate("&c/" + alias + " sumolocation/sumofirst/sumosecond/sumomin/sumomax"));
-            sender.sendMessage(Style.translate("&c/" + alias + " tournamentlocation/tournamentfirst/tournamentsecond/tournamentmin/tournamentmax"));
-            sender.sendMessage(Style.translate("&c/" + alias + " ffalocation/ffamin/ffamax"));
-            sender.sendMessage(Style.translate("&c/" + alias + " teamfightslocation/teamfightsfirst/teamfightssecond/teamfightsmin/teamfightsmax"));
+            sender.sendMessage(Style.translate("&f/" + alias + " spawnlocation/spawnmin/spawnmax"));
+            sender.sendMessage(Style.translate("&f/" + alias + " editorlocation/editormin/editormax"));
+            sender.sendMessage(Style.translate("&f/" + alias + " sumolocation/sumofirst/sumosecond/sumomin/sumomax"));
+            sender.sendMessage(Style.translate("&f/" + alias + " tournamentlocation/tournamentfirst/tournamentsecond/tournamentmin/tournamentmax"));
+            sender.sendMessage(Style.translate("&f/" + alias + " ffalocation/ffamin/ffamax"));
+            sender.sendMessage(Style.translate("&f/" + alias + " teamfightslocation/teamfightsfirst/teamfightssecond/teamfightsmin/teamfightsmax"));
             sender.sendMessage(Style.translate("&7&m--------------------------------"));
             return true;
         }

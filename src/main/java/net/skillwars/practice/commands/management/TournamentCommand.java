@@ -23,8 +23,22 @@ public class TournamentCommand extends Command {
     private static String[] HELP_REGULAR_MESSAGE;
 
     static {
-        HELP_ADMIN_MESSAGE = new String[]{ChatColor.DARK_GRAY.toString() + ChatColor.STRIKETHROUGH + "----------------------------------------------------", ChatColor.RED + "Tournament Commands:", ChatColor.GOLD + "(*) /tournament start " + ChatColor.GRAY + "- Start a Tournament", ChatColor.GOLD + "(*) /tournament stop " + ChatColor.GRAY + "- Stop a Tournament", ChatColor.GOLD + "(*) /tournament alert " + ChatColor.GRAY + "- Alert a Tournament", ChatColor.DARK_GRAY.toString() + ChatColor.STRIKETHROUGH + "----------------------------------------------------"};
-        HELP_REGULAR_MESSAGE = new String[]{ChatColor.DARK_GRAY.toString() + ChatColor.STRIKETHROUGH + "----------------------------------------------------", ChatColor.RED + "Tournament Commands:", ChatColor.GOLD + "(*) /join <id> " + ChatColor.GRAY + "- Join a Tournament", ChatColor.GOLD + "(*) /leave " + ChatColor.GRAY + "- Leave a Tournament", ChatColor.GOLD + "(*) /status " + ChatColor.GRAY + "- Status of a Tournament", ChatColor.DARK_GRAY.toString() + ChatColor.STRIKETHROUGH + "----------------------------------------------------"};
+        HELP_ADMIN_MESSAGE = new String[] {
+                CC.GRAY + CC.STRIKE_THROUGH + "----------------------------------------------------",
+                CC.AQUA + CC.BOLD + "Tournament Commands",
+                "",
+                CC.GRAY + " -" + CC.WHITE + " /tournament start " + CC.AQUA + "- Start a Tournament",
+                CC.GRAY + " -" + CC.WHITE + " /tournament stop " + CC.AQUA + "- Stop a Tournament",
+                CC.GRAY + " -" + CC.WHITE + " /tournament alert " + CC.AQUA + "- Alert a Tournament",
+                CC.GRAY + CC.STRIKE_THROUGH + "----------------------------------------------------"};
+        HELP_REGULAR_MESSAGE = new String[] {
+                CC.GRAY + CC.STRIKE_THROUGH + "----------------------------------------------------",
+                CC.AQUA + CC.BOLD + "Tournament Commands",
+                "",
+                CC.GRAY + " -" + CC.WHITE + " /join <id> " + ChatColor.AQUA + "- Join a Tournament",
+                CC.GRAY + " -" + CC.WHITE + " /leave " + ChatColor.AQUA + "- Leave a Tournament",
+                CC.GRAY + " -" + CC.WHITE + " /status " + ChatColor.AQUA + "- Status of a Tournament",
+                CC.DARK_GRAY + CC.STRIKE_THROUGH + "----------------------------------------------------"};
     }
 
     private Practice plugin;
@@ -59,31 +73,31 @@ public class TournamentCommand extends Command {
                         int size = Integer.parseInt(args[4]);
                         String kitName = args[2];
                         if (size % teamSize != 0) {
-                            commandSender.sendMessage(ChatColor.RED + "Tournament size & team sizes are invalid. Please try again.");
+                            commandSender.sendMessage(ChatColor.RED + "Tournament maximo de players & tamaño de teams es invalido. Porfavor vuelve a intentarlo.");
                             return true;
                         }
                         if (this.plugin.getTournamentManager().getTournament(id) != null) {
-                            commandSender.sendMessage(ChatColor.RED + "This tournament already exists.");
+                            commandSender.sendMessage(ChatColor.RED + "Este Tournament ya existe.");
                             return true;
                         }
                         Kit kit = this.plugin.getKitManager().getKit(kitName);
                         if (kit == null) {
-                            commandSender.sendMessage(ChatColor.RED + "That kit does not exist.");
+                            commandSender.sendMessage(ChatColor.RED + "Este kit no existe.");
                             return true;
                         }
                         this.plugin.getTournamentManager().createTournament(commandSender, id, teamSize, size, kitName);
                     }
                     catch (NumberFormatException e) {
-                        commandSender.sendMessage(ChatColor.RED + "Usage: /tournament start <id> <kit> <team size> <tournament size>");
+                        commandSender.sendMessage(ChatColor.RED + "Usa: /tournament start <id> <kit> <team size> <tournament size>");
                     }
                     break;
                 }
-                commandSender.sendMessage(ChatColor.RED + "Usage: /tournament start <id> <kit> <team size> <tournament size>");
+                commandSender.sendMessage(ChatColor.RED + "Usa: /tournament start <id> <kit> <team size> <tournament size>");
                 break;
             }
             case "stop": {
 				if (!player.hasPermission("practice.admin")) {
-					player.sendMessage(ChatColor.RED + "You do not have permission to use that command.");
+					player.sendMessage(ChatColor.RED + "No tienes permisos para ejecutar este comando.");
 					return true;
 				}
                 if (args.length == 2) {
@@ -91,28 +105,28 @@ public class TournamentCommand extends Command {
                     Tournament tournament = this.plugin.getTournamentManager().getTournament(id);
                     if (tournament != null) {
                         this.plugin.getTournamentManager().removeTournament(id);
-                        commandSender.sendMessage(ChatColor.RED + "Successfully removed tournament " + id + ".");
+                        commandSender.sendMessage(ChatColor.RED + "Se ha removido correctamente el Tournament " + id + ".");
                     }
                     else {
-                        commandSender.sendMessage(ChatColor.RED + "This tournament does not exist.");
+                        commandSender.sendMessage(ChatColor.RED + "Este Tournament no existe.");
                     }
                     break;
                 }
-                commandSender.sendMessage(ChatColor.RED + "Usage: /tournament stop <id>");
+                commandSender.sendMessage(ChatColor.RED + "Usa: /tournament stop <id>");
                 break;
             }
             case "alert": {
 				if (!player.hasPermission("practice.admin")) {
-					player.sendMessage(ChatColor.RED + "You do not have permission to use that command.");
+					player.sendMessage(ChatColor.RED + "No tienes permisos para ejecutar esto.");
 					return true;
 				}
                 if (args.length == 2) {
                     int id = Integer.parseInt(args[1]);
                     Tournament tournament = this.plugin.getTournamentManager().getTournament(id);
                     if (tournament != null) {
-                        String toSend = "\n" + ChatColor.YELLOW + "(Tournament) " + ChatColor.GREEN + " " +
-                                tournament.getKitName() + " (" + tournament.getTeamSize() + "v" + tournament.getTeamSize() + ")" +
-                                " is starting soon. " + ChatColor.GRAY + "[Click to Join]" + "\n ";
+                        String toSend = CC.RED + "[Torneo] " + CC.AQUA + " " +
+                                tournament.getKitName() + CC.GRAY + " (" + tournament.getTeamSize() + "v" + tournament.getTeamSize() + ")" +
+                                CC.WHITE + " comenzará pronto. " + CC.BLUE + "[Click para entrar]";
                         Clickable message = new Clickable(toSend, ChatColor.GRAY + "Click to join this tournament.",
                                 "/join " + id);
                         Bukkit.getServer().getOnlinePlayers().forEach(online -> {
@@ -123,7 +137,7 @@ public class TournamentCommand extends Command {
                     }
                     break;
                 }
-                commandSender.sendMessage(ChatColor.RED + "Usage: /tournament alert <id>");
+                commandSender.sendMessage(ChatColor.RED + "Usa: /tournament alert <id>");
                 break;
             }
             case "status":
@@ -154,10 +168,10 @@ public class TournamentCommand extends Command {
                             builder.append(CC.RED).append(" ").append(CC.RED).append("\n");
                             commandSender.sendMessage(builder.toString());
                         } else {
-                            commandSender.sendMessage(CC.RED + "This tournament does not exist!");
+                            commandSender.sendMessage(CC.RED + "Este Tournament no existe!");
                         }
                     } catch (NumberFormatException e) {
-                        commandSender.sendMessage(CC.RED + "This is not a number!");
+                        commandSender.sendMessage(CC.RED + "Este no es un numero!");
                     }
                 }
                 break;

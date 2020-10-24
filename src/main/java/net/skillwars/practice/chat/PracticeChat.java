@@ -1,10 +1,6 @@
 package net.skillwars.practice.chat;
 
 import me.joansiitoh.datas.PlayerData;
-import me.joeleoli.nucleus.Nucleus;
-import me.joeleoli.nucleus.chat.ChatFormat;
-import me.joeleoli.nucleus.player.NucleusPlayer;
-import me.joeleoli.nucleus.util.Style;
 import net.skillwars.practice.Practice;
 import net.skillwars.practice.kit.PlayerKit;
 import net.skillwars.practice.listeners.InventoryListener;
@@ -64,16 +60,15 @@ public class PracticeChat implements ChatFormat {
             return null;
         }
 
-        NucleusPlayer profile = NucleusPlayer.getByUuid(sender.getUniqueId());
         PlayerData playerData = PlayerData.getPlayer(sender.getUniqueId());
         String tag = playerData.getData("TAG") != null ? " " + playerData.getData("TAG").toString() : "";
         String color = playerData.getData("COLOR") != null ? ChatColor.valueOf(playerData.getData("COLOR").toString()).toString() : ChatColor.WHITE.toString();
-        return Style.GRAY
-                + Style.translate(Nucleus.getInstance().getChat().getPlayerPrefix(sender))
+        return CC.GRAY
+                + CC.translate(Practice.getInstance().getChat().getPlayerPrefix(sender))
                 + sender.getDisplayName()
-                + Style.translate(tag)
-                + Style.GRAY + ": " + color
-                + (sender.hasPermission("nucleus.chat.color") ? Style.translate(message) : message);
+                + CC.translate(tag)
+                + CC.GRAY + ": " + color
+                + (sender.hasPermission("nucleus.chat.color") ? CC.translate(message) : message);
     }
 
 	@Override
@@ -109,15 +104,14 @@ public class PracticeChat implements ChatFormat {
             return null;
         }
 
-        NucleusPlayer profile = NucleusPlayer.getByUuid(sender.getUniqueId());
         PlayerData playerData = PlayerData.getPlayer(sender.getUniqueId());
         String tag = playerData.getData("TAG") != null ? " " + playerData.getData("TAG").toString() : "";
         String color = playerData.getData("COLOR") != null ? ChatColor.valueOf(playerData.getData("COLOR").toString()).toString() : ChatColor.WHITE.toString();
-        return Style.GRAY
-                + Style.translate(Nucleus.getInstance().getChat().getPlayerPrefix(sender))
+        return CC.GRAY
+                + CC.translate(Practice.getInstance().getChat().getPlayerPrefix(sender))
                 + sender.getDisplayName()
-                + Style.translate(tag)
-                + Style.GRAY + ": " + color
-                + (sender.hasPermission("nucleus.chat.color") ? Style.translate(message) : message);
+                + CC.translate(tag)
+                + CC.GRAY + ": " + color
+                + (sender.hasPermission("nucleus.chat.color") ? CC.translate(message) : message);
 	}
 }

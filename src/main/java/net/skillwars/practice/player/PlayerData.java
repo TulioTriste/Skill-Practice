@@ -45,26 +45,8 @@ public class PlayerData{
     @Getter private int combo;
     @Getter private int hits;
 
-    @Getter private int oitcEventKills;
-    @Getter private int oitcEventDeaths;
-    @Getter private int oitcEventWins;
-    @Getter private int oitcEventLosses;
-
     @Getter private int sumoEventWins;
     @Getter private int sumoEventLosses;
-
-    @Getter private int tntrunEventWins;
-    @Getter private int tntrunEventLosses;
-
-
-    @Getter private int spleffEventWins;
-    @Getter private int spleffEventLosses;
-
-    @Getter private int parkourEventWins;
-    @Getter private int parkourEventLosses;
-
-    @Getter private int redroverEventWins;
-    @Getter private int redroverEventLosses;
 
     @Getter private int unrankedWins;
 
@@ -112,7 +94,7 @@ public class PlayerData{
         int i = 0;
         int count = 0;
 
-        for(Kit kit : Practice.getInstance().getKitManager().getKits()) {
+        for (Kit kit : Practice.getInstance().getKitManager().getKits()) {
 
             switch (type.toUpperCase()) {
                 case "ELO":

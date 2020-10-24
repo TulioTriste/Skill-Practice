@@ -24,7 +24,7 @@ public class FFACountdownTask extends EventCountdownTask {
 
     @Override
     public void onCancel() {
-        getEvent().sendMessage(ChatColor.RED + "Not enough players. Event has been cancelled");
+        getEvent().sendMessage(ChatColor.RED + "No hay suficiente players. El Evento ha sido cancelado");
         getEvent().end();
         this.getEvent().getPlugin().getEventManager().setCooldown(0L);
     }

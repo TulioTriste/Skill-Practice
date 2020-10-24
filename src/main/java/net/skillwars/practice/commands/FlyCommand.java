@@ -39,9 +39,9 @@ public class FlyCommand extends Command {
         }
         player.setAllowFlight(!player.getAllowFlight());
         if (player.getAllowFlight()) {
-            player.sendMessage(CC.SECONDARY + "Tu modo de vuelo ha sido &aactivado.");
+            player.sendMessage(CC.SECONDARY + "Tu modo de vuelo ha sido " + CC.GREEN + "activado.");
         } else {
-            player.sendMessage(CC.SECONDARY + "Tu modo de vuelo ha sido &cdesactivado.");
+            player.sendMessage(CC.SECONDARY + "Tu modo de vuelo ha sido " + CC.RED + "desactivado.");
         }
         return true;
     }

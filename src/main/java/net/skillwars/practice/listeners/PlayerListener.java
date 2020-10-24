@@ -38,6 +38,11 @@ import java.util.*;
 public class PlayerListener implements Listener {
 
     private final Practice plugin = Practice.getInstance();
+    public static Map<Player, Long> playerCooldown;
+
+    static {
+        playerCooldown = new HashMap<>();
+    }
 
     @EventHandler
     public void onPlayerInteractSoup(final PlayerInteractEvent event) {
@@ -415,10 +420,14 @@ public class PlayerListener implements Listener {
                     PracticeEvent practiceEvent = this.plugin.getEventManager().getEventPlaying(player);
 
                     if (item.getType() == Material.NETHER_STAR) {
-                        if (practiceEvent != null) {
-                            practiceEvent.leave(player);
+                        if (practiceEvent.getHost().equals(player) && practiceEvent.getState().equals(EventState.STARTED)) {
+                            player.sendMessage(CC.translate("&cNo puedes salir debido a que eres el Hoster."));
                         } else {
-                            this.plugin.getPlayerManager().sendToSpawnAndReset(player);
+                            if (practiceEvent != null) {
+                                practiceEvent.leave(player);
+                            } else {
+                                this.plugin.getPlayerManager().sendToSpawnAndReset(player);
+                            }
                         }
                     }
                     break;

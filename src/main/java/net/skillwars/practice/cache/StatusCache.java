@@ -14,6 +14,9 @@ public class StatusCache extends Thread {
 
     private int fighting;
     private int queueing;
+    private int event;
+    private int editing;
+    private int spectating;
 
     public StatusCache() {
         instance = this;
@@ -24,6 +27,9 @@ public class StatusCache extends Thread {
         while (true) {
             int fighting = 0;
             int queueing = 0;
+            int event = 0;
+            int editing = 0;
+            int spectating = 0;
 
             for (PlayerData playerData : Practice.getInstance().getPlayerManager().getAllData()) {
                 if (playerData.getPlayerState() == PlayerState.FIGHTING) {
@@ -33,10 +39,25 @@ public class StatusCache extends Thread {
                 if (playerData.getPlayerState() == PlayerState.QUEUE) {
                     queueing++;
                 }
+
+                if (playerData.getPlayerState() == PlayerState.EVENT) {
+                    event++;
+                }
+
+                if (playerData.getPlayerState() == PlayerState.EDITING) {
+                    editing++;
+                }
+
+                if (playerData.getPlayerState() == PlayerState.SPECTATING) {
+
+                }
             }
 
             this.fighting = fighting;
             this.queueing = queueing;
+            this.event = event;
+            this.editing = editing;
+            this.spectating = spectating;
 
             try {
                 Thread.sleep(500L);

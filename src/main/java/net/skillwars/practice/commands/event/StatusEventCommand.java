@@ -21,7 +21,7 @@ public class StatusEventCommand extends Command {
     public StatusEventCommand() {
         super("status");
         this.plugin = Practice.getInstance();
-        this.setDescription("Show an event or tournament status.");
+        this.setDescription("Ver el status de los eventos y tournaments.");
         this.setUsage(ChatColor.RED + "Usage: /status");
     }
 

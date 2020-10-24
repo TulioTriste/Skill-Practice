@@ -4,9 +4,11 @@ import me.joeleoli.frame.Frame;
 import me.joeleoli.nucleus.Nucleus;
 import me.joeleoli.nucleus.command.CommandHandler;
 import me.joeleoli.nucleus.config.FileConfig;
+import net.milkbowl.vault.chat.Chat;
 import net.skillwars.practice.arena.Arena;
 import net.skillwars.practice.board.PracticeAdapter;
 import net.skillwars.practice.cache.StatusCache;
+import net.skillwars.practice.chat.ChatManager;
 import net.skillwars.practice.chat.PracticeChat;
 import net.skillwars.practice.commands.FlyCommand;
 import net.skillwars.practice.commands.InvCommand;
@@ -51,6 +53,7 @@ import org.bukkit.generator.ChunkGenerator;
 import java.util.*;
 
 import lombok.Getter;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import pt.foxspigot.jar.FoxSpigot;
 
@@ -61,6 +64,8 @@ public class Practice extends JavaPlugin {
     private static Practice instance;
 
     private FileConfig mainConfig;
+
+    private Chat chat;
 
     private InventoryManager inventoryManager;
     private EditorManager editorManager;
@@ -77,10 +82,10 @@ public class Practice extends JavaPlugin {
     private ChunkManager chunkManager;
     private TimerManager timerManager;
     private LeaderboardManager leaderboardManager;
+    private ChatManager chatManager;
 
     @Override
     public void onDisable() {
-
         matchManager.getMatches().forEach((uuid, match)->{
             if (match.getKit().isBuild() || match.getKit().isSpleef()) {
                 for (Location location : match.getPlacedBlockLocations()) {
@@ -117,20 +122,12 @@ public class Practice extends JavaPlugin {
 
         FoxSpigot.INSTANCE.addMovementHandler(new CustomMovementHandler());
 
+        this.chatManager = new ChatManager();
+        this.loadVault();
+
         registerCommands();
         registerListeners();
         registerManagers();
-        
-        /*if(Bukkit.getWorld("arenas") == null) {
-        	WorldCreator creator = new WorldCreator("arenas");
-        	creator.generator(new ChunkGenerator() {
-        	    @Override
-        	    public byte[] generate(World world, Random random, int x, int z) {
-        	        return new byte[32768]; //Empty byte array
-        	    }
-        	});
-        	Bukkit.createWorld(creator);
-        }*/
         
         if(Bukkit.getWorld("events") == null) {
         	WorldCreator creator = new WorldCreator("events");
@@ -151,8 +148,7 @@ public class Practice extends JavaPlugin {
         new StatusCache().start();
         new Frame(this, new PracticeAdapter());
 
-        Nucleus.getInstance().getChatManager().setChatFormat(new PracticeChat());
-
+        this.chatManager.setChatFormat(new PracticeChat());
     }
 
     private void registerCommands() {
@@ -229,5 +225,13 @@ public class Practice extends JavaPlugin {
 
     private void registerCommand(Command cmd, String fallbackPrefix) {
         MinecraftServer.getServer().server.getCommandMap().register(cmd.getName(), fallbackPrefix, cmd);
+    }
+
+    private boolean loadVault() {
+        RegisteredServiceProvider<Chat> provider = getServer().getServicesManager().getRegistration(Chat.class);
+        if(provider != null) {
+            chat = provider.getProvider();
+        }
+        return (chat != null);
     }
 }

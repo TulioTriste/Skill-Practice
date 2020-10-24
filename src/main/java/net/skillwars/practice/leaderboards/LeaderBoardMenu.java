@@ -65,18 +65,16 @@ public class LeaderBoardMenu extends Menu{
 
         @Override
         public ItemStack getButtonItem(Player player){
-
             List<PlayerData> playerDataList2 =  Practice.getInstance().getLeaderboardManager().getListByKit(kit);
-
             List<String> lore = Lists.newArrayList();
 
             int pos = 1;
 
-            for(PlayerData playerData : playerDataList2){
+            for (PlayerData playerData : playerDataList2) {
                 OfflinePlayer player1 = Bukkit.getOfflinePlayer(playerData.getUniqueId());
-                if(pos == 1 || pos == 2 || pos == 3){
+                if (pos == 1 || pos == 2 || pos == 3) {
                     lore.add(Style.DARK_AQUA + pos + " " + Style.GRAY + player1.getName() + ": " + Style.RESET + playerData.getElo(kit.getName()));
-                }else{
+                } else {
                     lore.add(Style.GRAY + pos + " " + player1.getName() + ": " + Style.RESET + playerData.getElo(kit.getName()));
                 }
                 pos++;

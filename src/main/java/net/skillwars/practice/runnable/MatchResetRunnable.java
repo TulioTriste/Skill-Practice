@@ -2,12 +2,17 @@ package net.skillwars.practice.runnable;
 
 import lombok.RequiredArgsConstructor;
 import net.skillwars.practice.Practice;
+import net.skillwars.practice.listeners.MatchListener;
 import net.skillwars.practice.match.Match;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.scheduler.BukkitRunnable;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @RequiredArgsConstructor
 public class MatchResetRunnable extends BukkitRunnable {
@@ -20,13 +25,8 @@ public class MatchResetRunnable extends BukkitRunnable {
         int count = 0;
 
         if (this.match.getKit().isBuild()) {
-            for (Location location : this.match.getPlacedBlockLocations()) {
-                if (++count <= 15) {
-                    location.getBlock().setType(Material.AIR);
-                    this.match.removePlacedBlockLocation(location);
-                } else {
-                    break;
-                }
+            for (Location location : MatchListener.blocks.get(this.match.getMatchId()).keySet()) {
+                location.getBlock().setType(MatchListener.blocks.get(this.match.getMatchId()).get(location).getType());
             }
         } else {
             for (BlockState blockState : this.match.getOriginalBlockChanges()) {

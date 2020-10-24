@@ -1,6 +1,7 @@
 package net.skillwars.practice.listeners;
 
 import net.skillwars.practice.Practice;
+import net.skillwars.practice.events.EventState;
 import net.skillwars.practice.events.ffa.FFAEvent;
 import net.skillwars.practice.events.ffa.FFAPlayer;
 import net.skillwars.practice.events.nodebufflite.NoDebuffLitePlayer;
@@ -56,13 +57,20 @@ public class EntityListener implements Listener {
                     PracticeEvent event = this.plugin.getEventManager().getEventPlaying(player);
 
                     if(event != null) {
-
-                        if(event instanceof SumoEvent) {
+                        if (event instanceof SumoEvent) {
                             SumoEvent sumoEvent = (SumoEvent) event;
                             SumoPlayer sumoPlayer = sumoEvent.getPlayer(player);
 
                             if (sumoPlayer != null && sumoPlayer.getState() == SumoPlayer.SumoState.FIGHTING) {
                                 e.setCancelled(false);
+                            }
+                        }
+                        else if (event instanceof TeamFightEvent) {
+                            TeamFightEvent tfEvent = (TeamFightEvent) event;
+                            TeamFightPlayer tfPlayer = tfEvent.getPlayer(player);
+
+                            if (tfEvent.getState().equals(EventState.WAITING) && !tfPlayer.getState().equals(TeamFightPlayer.TeamFightState.FIGHTING)) {
+                                e.setCancelled(true);
                             }
                         }
                     }

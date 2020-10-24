@@ -1,6 +1,7 @@
 package net.skillwars.practice.board;
 
 import com.google.common.collect.Lists;
+import me.joansiitoh.datas.GlobalBridge;
 import me.joeleoli.frame.FrameAdapter;
 import net.skillwars.practice.Practice;
 import net.skillwars.practice.cache.StatusCache;
@@ -64,15 +65,15 @@ public class PracticeAdapter implements FrameAdapter {
 		case EDITING:
 		case FFA:
 		case SPAWN:
+			return this.getLobbyBoard(player, false);
 		case EVENT:
 		case SPECTATING:
-			return this.getLobbyBoard(player, false);
+			return this.getSpectateBoard(player);
 		case QUEUE:
 			return this.getLobbyBoard(player, true);
 		case FIGHTING:
 			return this.getGameBoard(player);
 		}
-
 		return null;
 	}
 
@@ -120,7 +121,7 @@ public class PracticeAdapter implements FrameAdapter {
 					}
 				}
 				double tps = Bukkit.spigot().getTPS()[1];
-				if (player.isOp() || player.hasPermission("*")) {
+				if (player.isOp() || player.hasPermission("*") || player.hasPermission("practice.tps")) {
 					lines.add(Color.translate("&c» &fTPS: &b" + formatTps(tps)));
 				}
 				continue;
@@ -244,7 +245,7 @@ public class PracticeAdapter implements FrameAdapter {
 						else if (linessb.contains("{ffa}")) {
 							if (event instanceof FFAEvent) {
 								FFAEvent ffaEvent = (FFAEvent) event;
-								int playingFFA = ffaEvent.getByState(FFAPlayer.FFAState.WAITING).size() + ffaEvent.getByState(FFAPlayer.FFAState.WAITING).size() + ffaEvent.getByState(FFAPlayer.FFAState.PREPARING).size();
+								int playingFFA = ffaEvent.getByState(FFAPlayer.FFAState.WAITING).size() + ffaEvent.getByState(FFAPlayer.FFAState.FIGHTING).size() + ffaEvent.getByState(FFAPlayer.FFAState.PREPARING).size();
 								int limitFFA = ffaEvent.getLimit();
 								for (String linessb2 : config.getConfig().getStringList("lobby.in-event-ffa-lines")) {
 									linessb2 = linessb2.replace("{players}", String.valueOf(playingFFA))
@@ -288,7 +289,7 @@ public class PracticeAdapter implements FrameAdapter {
 						else if (linessb.contains("{nodebufflite}")) {
 							if (event instanceof NoDebuffLiteEvent) {
 								NoDebuffLiteEvent ndlEvent = (NoDebuffLiteEvent) event;
-								int playingNDL = ndlEvent.getByState(NoDebuffLitePlayer.NoDebuffLiteState.WAITING).size() + ndlEvent.getByState(NoDebuffLitePlayer.NoDebuffLiteState.WAITING).size() + ndlEvent.getByState(NoDebuffLitePlayer.NoDebuffLiteState.PREPARING).size();
+								int playingNDL = ndlEvent.getByState(NoDebuffLitePlayer.NoDebuffLiteState.WAITING).size() + ndlEvent.getByState(NoDebuffLitePlayer.NoDebuffLiteState.FIGHTING).size() + ndlEvent.getByState(NoDebuffLitePlayer.NoDebuffLiteState.PREPARING).size();
 								int limitNDL = ndlEvent.getLimit();
 								for (String linessb2 : config.getConfig().getStringList("lobby.in-event-nodebufflite-lines")) {
 									linessb2 = linessb2.replace("{players}", String.valueOf(playingNDL))
@@ -336,7 +337,7 @@ public class PracticeAdapter implements FrameAdapter {
 						else if (linessb.contains("{teamfights}")) {
 							if (event instanceof TeamFightEvent) {
 								TeamFightEvent teamfightEvent = (TeamFightEvent) event;
-								int playingTeamFight = teamfightEvent.getByState(TeamFightPlayer.TeamFightState.WAITING).size() + teamfightEvent.getByState(TeamFightPlayer.TeamFightState.WAITING).size() + teamfightEvent.getByState(TeamFightPlayer.TeamFightState.PREPARING).size();
+								int playingTeamFight = teamfightEvent.getByState(TeamFightPlayer.TeamFightState.WAITING).size() + teamfightEvent.getByState(TeamFightPlayer.TeamFightState.FIGHTING).size() + teamfightEvent.getByState(TeamFightPlayer.TeamFightState.PREPARING).size();
 								int limitTeamFight = teamfightEvent.getLimit();
 								for (String linessb2 : config.getConfig().getStringList("lobby.in-event-teamfights-lines")) {
 									linessb2 = linessb2.replace("{players}", String.valueOf(playingTeamFight))
@@ -388,7 +389,8 @@ public class PracticeAdapter implements FrameAdapter {
 			}
 
 			if (string.contains("{tournament}")) {
-				if (playerData.getPlayerState() != PlayerState.EVENT && this.plugin.getTournamentManager().getTournaments().size() >= 1) {
+				if (playerData.getPlayerState() != PlayerState.EVENT && this.plugin.getTournamentManager().getTournaments().size() >= 1
+						&& !queuing && party == null) {
 					for (Tournament tournament : this.plugin.getTournamentManager().getTournaments().values()) {
 						for (String linessb : config.getConfig().getStringList("lobby.in-tournament")) {
 							if (linessb.contains("{countdown}")) {
@@ -431,11 +433,13 @@ public class PracticeAdapter implements FrameAdapter {
 						Player opponentPlayer = match.getTeams().get(0).getPlayers().get(0) == player.getUniqueId()
 								? this.plugin.getServer().getPlayer(match.getTeams().get(1).getPlayers().get(0))
 								: this.plugin.getServer().getPlayer(match.getTeams().get(0).getPlayers().get(0));
-						linessb = linessb.replace("{opponent}", opponentPlayer.getName())
-						.replace("{player}", player.getName())
-						.replace("{opponentPing}", String.valueOf(PlayerUtil.getPing(opponentPlayer)))
-						.replace("{playerPing}", String.valueOf(PlayerUtil.getPing(player)));
-						lines.add(Color.translate(linessb));
+						if (opponentPlayer != null) {
+							linessb = linessb.replace("{opponent}", opponentPlayer.getName())
+									.replace("{player}", player.getName())
+									.replace("{opponentPing}", String.valueOf(PlayerUtil.getPing(opponentPlayer)))
+									.replace("{playerPing}", String.valueOf(PlayerUtil.getPing(player)));
+							lines.add(Color.translate(linessb));
+						}
 					}
 				}
 				continue;
@@ -487,6 +491,26 @@ public class PracticeAdapter implements FrameAdapter {
 			}
 
 			lines.add(Color.translate(string));
+		}
+
+		return lines;
+	}
+
+	private List<String> getSpectateBoard(Player player) {
+		List<String> lines = Lists.newLinkedList();
+		PlayerData playerData = this.plugin.getPlayerManager().getPlayerData(player.getUniqueId());
+		me.joansiitoh.datas.PlayerData bridgeData = me.joansiitoh.datas.PlayerData.getPlayer(player.getUniqueId());
+		Match match = this.plugin.getMatchManager().getSpectatingMatch(player.getUniqueId());
+
+		if (match != null) {
+			for (String string : config.getConfig().getStringList("spectate.lines")) {
+				boolean staff = bridgeData.getData("STAFF") != null;
+				if (!match.isFFA() && !match.isPartyMatch()) {
+					if (staff) {
+						lines.add(CC.translate(string));
+					}
+				}
+			}
 		}
 
 		return lines;
