@@ -35,21 +35,17 @@ public class StatusCache extends Thread {
                 if (playerData.getPlayerState() == PlayerState.FIGHTING) {
                     fighting++;
                 }
-
                 if (playerData.getPlayerState() == PlayerState.QUEUE) {
                     queueing++;
                 }
-
                 if (playerData.getPlayerState() == PlayerState.EVENT) {
                     event++;
                 }
-
                 if (playerData.getPlayerState() == PlayerState.EDITING) {
                     editing++;
                 }
-
                 if (playerData.getPlayerState() == PlayerState.SPECTATING) {
-
+                    spectating++;
                 }
             }
 

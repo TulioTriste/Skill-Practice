@@ -17,6 +17,7 @@ public class ItemManager {
     private final ItemStack[] tournamentItems;
     private final ItemStack[] eventItems;
     private final ItemStack[] specItems;
+    private final ItemStack[] staffSpecItems;
     private final ItemStack[] partySpecItems;
 
     private final ItemStack defaultBook;
@@ -59,6 +60,17 @@ public class ItemManager {
                 null,
                 null,
                 null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                ItemUtil.createItem(Material.REDSTONE, CC.RED + "Leave Spectator Mode")
+        };
+        this.staffSpecItems = new ItemStack[]{
+                ItemUtil.createItem(Material.BOOK, CC.translate("&bVer inventario")),
+                ItemUtil.createItem(Material.PACKED_ICE, CC.translate("&bCongelador")),
+                ItemUtil.createItem(Material.SKULL, CC.translate("&bStaffs conectados")),
                 null,
                 null,
                 null,

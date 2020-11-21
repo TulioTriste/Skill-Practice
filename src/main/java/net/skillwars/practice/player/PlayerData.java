@@ -13,7 +13,7 @@ import net.skillwars.practice.settings.ProfileOptions;
 @Getter
 @Setter
 @RequiredArgsConstructor
-public class PlayerData{
+public class PlayerData {
 
     public static final int DEFAULT_ELO = 1000;
 
@@ -24,10 +24,13 @@ public class PlayerData{
     private final Map<String, Integer> rankedLosses = new HashMap<>();
     private final Map<String, Integer> rankedWins = new HashMap<>();
     private final Map<String, Integer> rankedElo = new HashMap<>();
+    private final Map<String, Integer> matchWins = new HashMap<>();
+    private final Map<String, Integer> matchLosses = new HashMap<>();
     private final Map<String, Integer> partyElo = new HashMap<>();
 
     @Getter private final UUID uniqueId;
 
+    @Getter private String country;
     @Getter private PlayerState playerState = PlayerState.LOADING;
     @Getter private ProfileOptions options = new ProfileOptions();
 
@@ -84,6 +87,22 @@ public class PlayerData{
 
     public void addPlayerKit(int index, PlayerKit playerKit) {
         this.getPlayerKits(playerKit.getName()).put(index, playerKit);
+    }
+
+    public int getMatchWins(String kitName) {
+        return this.matchWins.computeIfAbsent(kitName, k -> 0);
+    }
+
+    public void setMatchWins(String kitName, Integer amount) {
+        this.matchWins.put(kitName, amount);
+    }
+
+    public int getMatchLosses(String kitName) {
+        return this.matchLosses.computeIfAbsent(kitName, k -> 0);
+    }
+
+    public void setMatchLosses(String kitName, Integer amount) {
+        this.matchLosses.put(kitName, amount);
     }
 
     public Map<Integer, PlayerKit> getPlayerKits(String kitName) {

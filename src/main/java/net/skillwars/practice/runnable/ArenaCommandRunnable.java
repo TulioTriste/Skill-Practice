@@ -33,13 +33,15 @@ public class ArenaCommandRunnable implements Runnable {
                 double aZ = arena.getA().getZ() + this.getOffsetZ();
                 double bX = arena.getB().getX() + this.getOffsetX();
                 double bZ = arena.getB().getZ() + this.getOffsetZ();
+                double centerZ = arena.getCenter().getZ() + this.getOffsetZ();
 
                 CustomLocation min = new CustomLocation(arena.getMin().getWorld(), minX, arena.getMin().getY(), minZ);
                 CustomLocation max = new CustomLocation(arena.getMax().getWorld(), maxX, arena.getMax().getY(), maxZ);
                 CustomLocation a = new CustomLocation(arena.getA().getWorld(), aX, arena.getA().getY(), aZ);
                 CustomLocation b = new CustomLocation(arena.getB().getWorld(), bX, arena.getB().getY(), bZ);
+                CustomLocation center = new CustomLocation(arena.getB().getWorld(), bX, arena.getB().getY(), centerZ);
 
-                StandaloneArena standaloneArena = new StandaloneArena(a, b, min, max);
+                StandaloneArena standaloneArena = new StandaloneArena(a, b, center, min, max);
 
                 arena.addStandaloneArena(standaloneArena);
                 arena.addAvailableArena(standaloneArena);

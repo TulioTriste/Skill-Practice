@@ -1,21 +1,23 @@
 package net.skillwars.practice;
 
+import com.google.common.io.ByteArrayDataInput;
+import com.google.common.io.ByteStreams;
 import me.joeleoli.frame.Frame;
-import me.joeleoli.nucleus.Nucleus;
 import me.joeleoli.nucleus.command.CommandHandler;
 import me.joeleoli.nucleus.config.FileConfig;
+import me.joeleoli.nucleus.tablist.SevenTab;
 import net.milkbowl.vault.chat.Chat;
+import net.minecraft.server.v1_8_R3.MinecraftServer;
+import net.skillwars.practice.adapters.TablistAdapter;
 import net.skillwars.practice.arena.Arena;
-import net.skillwars.practice.board.PracticeAdapter;
+import net.skillwars.practice.adapters.PracticeAdapter;
 import net.skillwars.practice.cache.StatusCache;
 import net.skillwars.practice.chat.ChatManager;
 import net.skillwars.practice.chat.PracticeChat;
-import net.skillwars.practice.commands.FlyCommand;
-import net.skillwars.practice.commands.InvCommand;
-import net.skillwars.practice.commands.PartyCommand;
-import net.skillwars.practice.commands.StatsCommand;
+import net.skillwars.practice.commands.*;
 import net.skillwars.practice.commands.arena.param.ArenaParameterType;
 import net.skillwars.practice.commands.duel.AcceptCommand;
+import net.skillwars.practice.commands.duel.CancelRankedCommand;
 import net.skillwars.practice.commands.duel.DuelCommand;
 import net.skillwars.practice.commands.duel.SpectateCommand;
 import net.skillwars.practice.commands.elo.EloCommand;
@@ -39,7 +41,6 @@ import net.skillwars.practice.settings.ProfileOptionsListeners;
 import net.skillwars.practice.util.inventory.UIListener;
 import net.skillwars.practice.util.timer.TimerManager;
 import net.skillwars.practice.util.timer.impl.EnderpearlTimer;
-import net.minecraft.server.v1_8_R3.MinecraftServer;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -48,6 +49,7 @@ import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.bukkit.block.BlockState;
 import org.bukkit.command.Command;
+import org.bukkit.entity.Player;
 import org.bukkit.generator.ChunkGenerator;
 
 import java.util.*;
@@ -55,10 +57,11 @@ import java.util.*;
 import lombok.Getter;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.plugin.messaging.PluginMessageListener;
 import pt.foxspigot.jar.FoxSpigot;
 
 @Getter
-public class Practice extends JavaPlugin {
+public class Practice extends JavaPlugin implements PluginMessageListener {
 
     @Getter
     private static Practice instance;
@@ -119,8 +122,12 @@ public class Practice extends JavaPlugin {
         mainConfig = new FileConfig(this, "config.yml");
 
         new PracticeMongo();
+        new SevenTab(this, new TablistAdapter());
 
         FoxSpigot.INSTANCE.addMovementHandler(new CustomMovementHandler());
+
+        getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
+        getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", this);
 
         this.chatManager = new ChatManager();
         this.loadVault();
@@ -147,7 +154,6 @@ public class Practice extends JavaPlugin {
 
         new StatusCache().start();
         new Frame(this, new PracticeAdapter());
-
         this.chatManager.setChatFormat(new PracticeChat());
     }
 
@@ -182,7 +188,11 @@ public class Practice extends JavaPlugin {
                 new SettingsCommand(),
                 new EventsCommand(),
                 new EloCommand(),
-                new EloManagerCommand()
+                new EloManagerCommand(),
+                new PlayersCommand(),
+                new PlayerStatusCommand(),
+                new CancelRankedCommand(),
+                new HologramCommand()
         ).forEach(command -> registerCommand(command, getName()));
     }
 
@@ -233,5 +243,29 @@ public class Practice extends JavaPlugin {
             chat = provider.getProvider();
         }
         return (chat != null);
+    }
+
+    @Override
+    public void onPluginMessageReceived(String s, Player player, byte[] bytes) {
+        if (!s.equals("BungeeCord")) {
+            return;
+        }
+        ByteArrayDataInput in = ByteStreams.newDataInput(bytes);
+        String subchannel = in.readUTF();
+        /*switch(subchannel) {
+            case "SkillPracticeNotify": {
+                Short len = in.readShort();
+                byte[] msgBytes = Bytes.toArray(Collections.singleton(len.intValue()));
+                in.readFully(msgBytes);
+                String msgin = String.valueOf(new ByteArrayInputStream(msgBytes));
+                for (notificationsListener in notificationsListeners) {
+                    notificationsListener(suspiciousPlayerName, score, cheatType, cheatedServerName);
+                    notificationsListener(() -> {
+
+                    });
+                }
+            }
+            break;
+        }*/
     }
 }

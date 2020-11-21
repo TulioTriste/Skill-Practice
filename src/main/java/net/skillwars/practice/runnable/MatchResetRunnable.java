@@ -13,6 +13,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 public class MatchResetRunnable extends BukkitRunnable {
@@ -24,11 +25,16 @@ public class MatchResetRunnable extends BukkitRunnable {
     public void run() {
         int count = 0;
 
-        if (this.match.getKit().isBuild()) {
-            for (Location location : MatchListener.blocks.get(this.match.getMatchId()).keySet()) {
-                location.getBlock().setType(MatchListener.blocks.get(this.match.getMatchId()).get(location).getType());
+        /*if (this.match.getKit().isBuild()) {
+            for (UUID uuid : MatchListener.blocks.keySet()) {
+                if (uuid.equals(this.match.getMatchId())) {
+                    for (Location loc : MatchListener.blocks.get(uuid).keySet()) {
+                        loc.getBlock().setType(MatchListener.blocks.get(uuid).get(loc).getType());
+                    }
+                }
             }
-        } else {
+        } else */
+            {
             for (BlockState blockState : this.match.getOriginalBlockChanges()) {
                 if (++count <= 15) {
                     blockState.setType(blockState.getType());
@@ -44,7 +50,7 @@ public class MatchResetRunnable extends BukkitRunnable {
 
         if (count < 15) {
             this.match.getArena().addAvailableArena(this.match.getStandaloneArena());
-            this.plugin.getArenaManager().removeArenaMatchUUID(this.match.getStandaloneArena());
+            this.plugin.getArenaManager().removeArenaMatchUUID(this.match.getArena());
             this.cancel();
         }
     }

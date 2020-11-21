@@ -1,6 +1,7 @@
-package net.skillwars.practice.board;
+package net.skillwars.practice.adapters;
 
 import com.google.common.collect.Lists;
+import lombok.SneakyThrows;
 import me.joansiitoh.datas.GlobalBridge;
 import me.joeleoli.frame.FrameAdapter;
 import net.skillwars.practice.Practice;
@@ -32,8 +33,13 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.InetSocketAddress;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 public class PracticeAdapter implements FrameAdapter {
@@ -61,18 +67,23 @@ public class PracticeAdapter implements FrameAdapter {
 		}
 
 		switch (playerData.getPlayerState()) {
-		case LOADING:
-		case EDITING:
-		case FFA:
-		case SPAWN:
-			return this.getLobbyBoard(player, false);
-		case EVENT:
-		case SPECTATING:
-			return this.getSpectateBoard(player);
-		case QUEUE:
-			return this.getLobbyBoard(player, true);
-		case FIGHTING:
-			return this.getGameBoard(player);
+			case LOADING:
+			case EDITING:
+			case FFA:
+			case SPAWN:
+			case EVENT:
+			case SPECTATING:
+				if (this.plugin.getMatchManager().getSpectatorPlayer().containsKey(player.getUniqueId())) {
+					return this.getSpectateBoard(player);
+				}
+				return this.getLobbyBoard(player, false);
+			case QUEUE:
+				if (this.plugin.getMatchManager().getSpectatorPlayer().containsKey(player.getUniqueId())) {
+					return this.getSpectateBoard(player);
+				}
+				return this.getLobbyBoard(player, true);
+			case FIGHTING:
+				return this.getGameBoard(player);
 		}
 		return null;
 	}
@@ -91,14 +102,14 @@ public class PracticeAdapter implements FrameAdapter {
 		for (String string : config.getConfig().getStringList("lobby.lines")) {
 
 			if (string.contains("{lobby-event}")) {
-				if (event == null) {
+				if (event == null && this.plugin.getTournamentManager().getTournaments().size() < 1 || this.plugin.getTournamentManager().getTournaments() == null) {
 					for (String linessb : config.getConfig().getStringList("lobby.event-in-lobby")) {
 						int eventTime = (int) ((this.plugin.getEventManager().getCooldown() - System.currentTimeMillis()) / 1000);
-						if (eventTime >= 1L) {
-							linessb = linessb.replace("{event}", String.valueOf(eventTime));
-						} else {
-							linessb = linessb.replace("{event}", this.plugin.getEventManager().getName());
-						}
+
+						if (eventTime >= 1L) linessb = linessb.replace("{event}", String.valueOf(eventTime));
+
+						else linessb = linessb.replace("{event}", this.plugin.getEventManager().getName());
+
 						lines.add(Color.translate(linessb));
 					}
 				}
@@ -120,10 +131,10 @@ public class PracticeAdapter implements FrameAdapter {
 						lines.add(Color.translate(linessb));
 					}
 				}
-				double tps = Bukkit.spigot().getTPS()[1];
+				/*double tps = Bukkit.spigot().getTPS()[1];
 				if (player.isOp() || player.hasPermission("*") || player.hasPermission("practice.tps")) {
 					lines.add(Color.translate("&c» &fTPS: &b" + formatTps(tps)));
-				}
+				}*/
 				continue;
 			}
 
@@ -420,6 +431,80 @@ public class PracticeAdapter implements FrameAdapter {
 		return lines;
 	}
 
+	private List<String> getSpectateBoard(Player player) {
+		List<String> lines = Lists.newLinkedList();
+		Match match = plugin.getMatchManager().getMatchFromUUID(this.plugin.getMatchManager().getSpectatorPlayer().get(player.getUniqueId()));
+		Player firstLeader = Bukkit.getPlayer(match.getTeams().get(0).getLeader());
+		Player secondLeader = Bukkit.getPlayer(match.getTeams().get(1).getLeader());
+		if (!firstLeader.isOnline() || !secondLeader.isOnline()) {
+			return getGameBoard(player);
+		}
+		PlayerData firstData = this.plugin.getPlayerManager().getPlayerData(firstLeader.getUniqueId());
+		PlayerData secondData = this.plugin.getPlayerManager().getPlayerData(secondLeader.getUniqueId());
+
+		if (player.hasPermission("practice.staff")) {
+			for (String string : config.getConfig().getStringList("spectate.formats.staff")) {
+
+				if (string.contains("{firstLeader}")) {
+					string = string.replace("{firstLeader}", firstLeader.getName());
+				}
+
+				if (string.contains("{secondLeader}")) {
+					string = string.replace("{secondLeader}", secondLeader.getName());
+				}
+
+				if (string.contains("{firstLeaderCountry}")) {
+					string = string.replace("{firstLeaderCountry}", firstData.getCountry());
+				}
+
+				if (string.contains("{secondLeaderCountry}")) {
+					string = string.replace("{secondLeaderCountry}", secondData.getCountry());
+				}
+
+				if (string.contains("{ranked}")) {
+					string = string.replace("{ranked}", match.getType().isRanked() ? CC.translate("&aSí") : CC.translate("&cNo"));
+				}
+
+				lines.add(Color.translate(string));
+			}
+		} else {
+			for (String string : config.getConfig().getStringList("spectate.formats.staff")) {
+
+				if (string.contains("{firstLeader}")) {
+					string = string.replace("{firstLeader}", firstLeader.getName());
+				}
+
+				if (string.contains("{secondLeader}")) {
+					string = string.replace("{secondLeader}", secondLeader.getName());
+				}
+
+				if (string.contains("{firstCPS}")) {
+					string = string.replace("{firstCPS}", String.valueOf(GlobalBridge.getInstance().getDetectorListener().getClicks(firstLeader)));
+				}
+
+				if (string.contains("{secondCPS}")) {
+					string = string.replace("{secondCPS}", String.valueOf(GlobalBridge.getInstance().getDetectorListener().getClicks(secondLeader)));
+				}
+
+				if (string.contains("{firstPing}")) {
+					string = string.replace("{firstPing}", String.valueOf(PlayerUtil.getPing(firstLeader)));
+				}
+
+				if (string.contains("{secondPing}")) {
+					string = string.replace("{secondPing}", String.valueOf(PlayerUtil.getPing(secondLeader)));
+				}
+
+				if (string.contains("{kit}")) {
+					string = string.replace("{kit}", match.getKit().getName());
+				}
+
+				lines.add(Color.translate(string));
+			}
+		}
+
+		return lines;
+	}
+
 	private List<String> getGameBoard(Player player) {
 		List<String> lines = Lists.newLinkedList();
 		PlayerData playerData = plugin.getPlayerManager().getPlayerData(player.getUniqueId());
@@ -496,7 +581,7 @@ public class PracticeAdapter implements FrameAdapter {
 		return lines;
 	}
 
-	private List<String> getSpectateBoard(Player player) {
+	/*private List<String> getSpectateBoard(Player player) {
 		List<String> lines = Lists.newLinkedList();
 		PlayerData playerData = this.plugin.getPlayerManager().getPlayerData(player.getUniqueId());
 		me.joansiitoh.datas.PlayerData bridgeData = me.joansiitoh.datas.PlayerData.getPlayer(player.getUniqueId());
@@ -514,7 +599,7 @@ public class PracticeAdapter implements FrameAdapter {
 		}
 
 		return lines;
-	}
+	}*/
 
 	private String formatTps(double tps) {
 		return (tps > 18.0 ? ChatColor.GREEN : tps > 16.0 ? ChatColor.YELLOW : ChatColor.RED).toString() + Math.min(Math.round(tps * 100.0D) / 100.0D, 20.0D);

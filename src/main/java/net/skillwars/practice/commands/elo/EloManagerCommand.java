@@ -66,7 +66,7 @@ public class EloManagerCommand extends Command {
                 for (Kit kit : this.plugin.getKitManager().getKits()) {
                     this.plugin.getPlayerManager().getPlayerData(target.getUniqueId()).setElo(kit.getName(), elo);
                 }
-                sender.sendMessage(CC.translate("&aLe has colodado " + elo + " de ELO ha " + target.getName() + " en todos los kits."));
+                sender.sendMessage(CC.translate("&aLe has seteado " + elo + " de ELO ha " + target.getName() + " en todos los kits."));
                 return true;
             }
 
@@ -74,7 +74,7 @@ public class EloManagerCommand extends Command {
 
             if (kit != null) {
                 this.plugin.getPlayerManager().getPlayerData(target.getUniqueId()).setElo(kit.getName(), elo);
-                sender.sendMessage(CC.translate("&aLe has colodado " + elo + " de ELO ha " + target.getName() + " en " + kit.getName() + "."));
+                sender.sendMessage(CC.translate("&aLe has seteado " + elo + " de ELO ha " + target.getName() + " en " + kit.getName() + "."));
                 return true;
             }
             sender.sendMessage(CC.translate("&cEl kit '" + args[3] + "' no existe."));

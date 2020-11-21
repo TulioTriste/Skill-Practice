@@ -1,10 +1,5 @@
 package net.skillwars.practice.runnable;
 
-import com.boydti.fawe.util.EditSessionBuilder;
-import com.boydti.fawe.util.TaskManager;
-import com.sk89q.worldedit.EditSession;
-import com.sk89q.worldedit.Vector;
-import com.sk89q.worldedit.blocks.BaseBlock;
 import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.World;

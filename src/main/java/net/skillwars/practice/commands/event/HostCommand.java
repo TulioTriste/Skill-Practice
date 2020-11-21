@@ -1,7 +1,15 @@
 package net.skillwars.practice.commands.event;
 
+import com.google.common.collect.Iterables;
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.skillwars.practice.Practice;
+import net.skillwars.practice.util.CC;
+import net.skillwars.practice.util.JSONMessage;
 import org.apache.commons.lang.math.NumberUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -14,6 +22,8 @@ import net.skillwars.practice.events.PracticeEvent;
 import net.skillwars.practice.player.PlayerData;
 import net.skillwars.practice.player.PlayerState;
 import net.skillwars.practice.util.Clickable;
+
+import java.awt.*;
 
 public class HostCommand extends Command {
 
@@ -92,17 +102,34 @@ public class HostCommand extends Command {
         this.plugin.getEventManager().hostEvent(event, player);
         this.plugin.getEventManager().setName(eventName);
         event.join(player);
-        String toSend =ChatColor.translateAlternateColorCodes('&',"&b[Evento] &c" + event.getName() + "&e Ha sido hosteado por &r" + Practice.getInstance().getChat().getPlayerPrefix(event.getHost()) + event.getHost().getName() + " &ecomenzará en &c" + event.getCountdownTask().getTimeUntilStart() + "s" +
+        String toSend = ChatColor.translateAlternateColorCodes('&',"&b[Evento] &c" + event.getName() + "&e Ha sido hosteado por &r" + Practice.getInstance().getChat().getPlayerPrefix(event.getHost()) + event.getHost().getName() + " &ecomenzará en &c" + event.getCountdownTask().getTimeUntilStart() + "s" +
                 " &7(" + event.getPlayers().size() + "/" + event.getLimit() + ") &a[Click Aqui]");
 
         Clickable message = new Clickable(toSend,
                 Style.GREEN + "Click para entrar al evento.",
                 "/join " + event.getName());
+        hostEventBungeeMessage(event);
         this.plugin.getServer().getOnlinePlayers().stream().filter(other -> !event.getPlayers().containsKey(other)).forEach(online -> {
             online.sendMessage(" ");
             message.sendToPlayer(online);
             online.sendMessage(" ");
         });
         return true;
+    }
+
+    private void hostEventBungeeMessage(PracticeEvent event) {
+        ByteArrayDataOutput out = ByteStreams.newDataOutput();
+        out.writeUTF("MessageRaw");
+        out.writeUTF("ALL");
+        out.writeUTF(JSONMessage.create("§c[Practice] §fEl evento §b" + event.getName() + " §fha sido hosteado! §a[Click Aqui]")
+                .tooltip("§a¡Click Aqui!")
+                .runCommand("/practice").toString());
+
+        // If you don't care about the player
+        // Player player = Iterables.getFirst(Bukkit.getOnlinePlayers(), null);
+        // Else, specify them
+        Player player = Iterables.getFirst(Bukkit.getOnlinePlayers(), null);
+
+        player.sendPluginMessage(plugin, "BungeeCord", out.toByteArray());
     }
 }

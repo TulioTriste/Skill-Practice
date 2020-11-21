@@ -42,8 +42,10 @@ public class EloCommand extends Command {
         sender.sendMessage(CC.translate("&3&l" + target.getName() + "'s ELO"));
         sender.sendMessage(CC.translate(""));
         for (Kit kit : this.plugin.getKitManager().getKits()) {
-            int targetElo = this.plugin.getPlayerManager().getPlayerData(target.getUniqueId()).getElo(kit.getName());
-            sender.sendMessage(CC.translate("&b" + kit.getName() + "&7: &f" + targetElo));
+            if (kit.isRanked()) {
+                int targetElo = this.plugin.getPlayerManager().getPlayerData(target.getUniqueId()).getElo(kit.getName());
+                sender.sendMessage(CC.translate("&b" + kit.getName() + "&7: &f" + targetElo));
+            }
         }
         sender.sendMessage(CC.translate(""));
         return true;

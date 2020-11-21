@@ -75,7 +75,7 @@ public class FFAEvent extends PracticeEvent<FFAPlayer> {
 
                 player.spigot().respawn();
 
-                sendMessage(ChatColor.RED + player.getName() + ChatColor.GRAY + " has been eliminated.");
+                sendMessage(ChatColor.RED + player.getName() + ChatColor.GRAY + " ha sido eliminado");
 
                 if (this.getByState(FFAPlayer.FFAState.FIGHTING).size() == 1) {
                     Player winner = Bukkit.getPlayer(this.getByState(FFAPlayer.FFAState.FIGHTING).get(0));

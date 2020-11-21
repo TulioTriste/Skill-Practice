@@ -1,6 +1,5 @@
 package net.skillwars.practice.managers;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -60,10 +59,11 @@ public class KitManager {
             boolean build = kitSection.getBoolean(name + ".build");
             boolean spleef = kitSection.getBoolean(name + ".spleef");
             boolean parkour = kitSection.getBoolean(name + ".parkour");
+            boolean tnttag = kitSection.getBoolean(name + ".tnttag");
             boolean editable = kitSection.getBoolean(name + ".editable");
 
             Kit kit = new Kit(name, contents, armor, kitEditContents, icon, excludedArenas, arenaWhiteList, enabled,
-                    ranked, combo, sumo, build, spleef, parkour, editable);
+                    ranked, combo, sumo, build, spleef, parkour, tnttag, editable);
             this.kits.put(name, kit);
         });
     }
@@ -88,11 +88,13 @@ public class KitManager {
                 fileConfig.set("kits." + kitName + ".build", kit.isBuild());
                 fileConfig.set("kits." + kitName + ".spleef", kit.isSpleef());
                 fileConfig.set("kits." + kitName + ".parkour", kit.isParkour());
+                fileConfig.set("kits." + kitName + ".tnttag", kit.isTnttag());
                 fileConfig.set("kits." + kitName + ".editable", kit.isEditable());
             }
         });
 
         this.config.save();
+        this.config.reload();
     }
 
     public void deleteKit(String name) {

@@ -12,6 +12,10 @@ import net.skillwars.practice.events.nodebufflite.NoDebuffLiteEvent;
 import net.skillwars.practice.events.nodebufflite.NoDebuffLitePlayer;
 import net.skillwars.practice.events.sumo.SumoEvent;
 import net.skillwars.practice.events.sumo.SumoPlayer;
+import net.skillwars.practice.events.teamfights.TeamFightEvent;
+import net.skillwars.practice.events.teamfights.TeamFightPlayer;
+import net.skillwars.practice.events.tnttag.TNTTagEvent;
+import net.skillwars.practice.events.tnttag.TNTTagPlayer;
 import net.skillwars.practice.player.PlayerData;
 import net.skillwars.practice.player.PlayerState;
 import net.skillwars.practice.util.CustomLocation;
@@ -130,6 +134,24 @@ public abstract class PracticeEvent<K extends EventPlayer> {
             for (final FFAPlayer ffaPlayer : ffaEvent.getPlayers().values()) {
                 if (ffaPlayer.getFightTask() != null) {
                     ffaPlayer.getFightTask().cancel();
+                }
+            }
+        }
+
+        if (this instanceof TeamFightEvent) {
+            final TeamFightEvent tfEvent = (TeamFightEvent) this;
+            for (final TeamFightPlayer tfPlayer : tfEvent.getPlayers().values()) {
+                if (tfPlayer.getFightTask() != null) {
+                    tfPlayer.getFightTask().cancel();
+                }
+            }
+        }
+
+        if (this instanceof TNTTagEvent) {
+            final TNTTagEvent tnttagEvent = (TNTTagEvent) this;
+            for (final TNTTagPlayer tnttagPlayer : tnttagEvent.getPlayers().values()) {
+                if (tnttagPlayer.getFightTask() != null) {
+                    tnttagPlayer.getFightTask().cancel();
                 }
             }
         }

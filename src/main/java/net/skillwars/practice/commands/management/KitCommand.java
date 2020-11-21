@@ -65,6 +65,7 @@ public class KitCommand extends Command {
             sender.sendMessage(ChatColor.WHITE + "/kit sumo <kitname>");
             sender.sendMessage(ChatColor.WHITE + "/kit spleef <kitname>");
             sender.sendMessage(ChatColor.WHITE + "/kit parkour <kitname>");
+            sender.sendMessage(ChatColor.WHITE + "/kit tnttag <kitname>");
             sender.sendMessage(ChatColor.WHITE + "/kit whitelistarena <kitname> <arenaname>");
             sender.sendMessage(ChatColor.WHITE + "/kit getinv <kitname>");
             sender.sendMessage(ChatColor.WHITE + "/kit excludearena <kitname> <arenaname>");
@@ -158,6 +159,16 @@ public class KitCommand extends Command {
                     kit.setParkour(!kit.isParkour());
                     this.plugin.getKitManager().saveKits();
                     sender.sendMessage(kit.isParkour() ? (ChatColor.GREEN + "Successfully enabled parkour mode for kit " + args[1] + ".") : (ChatColor.RED + "Successfully disabled parkour mode for kit " + args[1] + "."));
+                    break;
+                }
+                sender.sendMessage(KitCommand.NO_KIT);
+                break;
+            }
+            case "tnttag": {
+                if (kit != null) {
+                    kit.setTnttag(!kit.isTnttag());
+                    this.plugin.getKitManager().saveKits();
+                    sender.sendMessage(kit.isTnttag() ? (ChatColor.GREEN + "Successfully enabled tnttag mode for kit " + args[1] + ".") : (ChatColor.RED + "Successfully disabled tnttag mode for kit " + args[1] + "."));
                     break;
                 }
                 sender.sendMessage(KitCommand.NO_KIT);

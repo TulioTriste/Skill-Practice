@@ -33,6 +33,7 @@ public class Kit {
     private boolean build;
     private boolean spleef;
     private boolean parkour;
+    private boolean tnttag;
     private boolean editable;
 
     public void applyToPlayer(Player player) {

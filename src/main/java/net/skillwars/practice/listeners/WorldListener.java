@@ -1,16 +1,15 @@
 package net.skillwars.practice.listeners;
 
 import net.skillwars.practice.Practice;
+import net.skillwars.practice.arena.Arena;
 import net.skillwars.practice.arena.StandaloneArena;
 import net.skillwars.practice.events.PracticeEvent;
 import net.skillwars.practice.match.Match;
 import net.skillwars.practice.player.PlayerData;
 import net.skillwars.practice.player.PlayerState;
-import org.bukkit.Difficulty;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -224,7 +223,8 @@ public class WorldListener implements Listener {
         if (event.getToBlock() == null) {
             return;
         }
-        for (StandaloneArena arena : this.plugin.getArenaManager().getArenaMatchUUIDs().keySet()) {
+
+        for (Arena arena : this.plugin.getArenaManager().getArenaMatchUUIDs().keySet()) {
             double minX = arena.getMin().getX();
             double minZ = arena.getMin().getZ();
             double maxX = arena.getMax().getX();
@@ -240,15 +240,62 @@ public class WorldListener implements Listener {
                 minZ = maxZ;
                 maxZ = lastMinZ;
             }
-            if (event.getToBlock().getX() >= minX && event.getToBlock().getZ() >= minZ
-                    && event.getToBlock().getX() <= maxX && event.getToBlock().getZ() <= maxZ) {
+
+            Block b = event.getToBlock();
+            if (b.getX() >= minX && b.getZ() >= minZ
+                    && b.getX() <= maxX && b.getZ() <= maxZ) {
                 UUID matchUUID = this.plugin.getArenaManager().getArenaMatchUUID(arena);
                 Match match = this.plugin.getMatchManager().getMatchFromUUID(matchUUID);
 
-                match.addPlacedBlockLocation(event.getToBlock().getLocation());
+                    /*if (type == Material.WATER || type == Material.STATIONARY_WATER || type == Material.LAVA || type == Material.STATIONARY_LAVA) {
+                        if (b.getType() == Material.AIR) {
+                            if (generatesCobble(type, b)) {
+                                Bukkit.getPlayer("TulioTriste").sendMessage("test");
+                                match.addPlacedBlockLocation(b.getLocation());
+                            }
+                        }
+                    }*/
+
+                match.addPlacedBlockLocation(b.getLocation());
                 break;
             }
         }
+    }
+
+    /*@EventHandler
+    public void onFromTo(BlockFromToEvent event){
+        Material type = event.getBlock().getType();
+        if (type == Material.WATER || type == Material.STATIONARY_WATER || type == Material.LAVA || type == Material.STATIONARY_LAVA){
+            Block b = event.getToBlock();
+            if (b.getType() == Material.AIR) {
+                if (generatesCobble(type, b)) {
+
+                    event.getToBlock().setType(Material.COBBLESTONE);
+                }
+            }
+        }
+    }*/
+
+    private final BlockFace[] faces = new BlockFace[]{
+            BlockFace.SELF,
+            BlockFace.UP,
+            BlockFace.DOWN,
+            BlockFace.NORTH,
+            BlockFace.EAST,
+            BlockFace.SOUTH,
+            BlockFace.WEST
+    };
+
+    public boolean generatesCobble(Material type, Block b){
+        Material mirrorID1 = (type == Material.WATER || type == Material.STATIONARY_WATER ? Material.LAVA : Material.WATER);
+        Material mirrorID2 = (type == Material.WATER || type == Material.STATIONARY_WATER ? Material.STATIONARY_LAVA : Material.STATIONARY_WATER);
+        for (BlockFace face : faces){
+            Block r = b.getRelative(face, 1);
+            if (r.getType() == mirrorID1 || r.getType() == mirrorID2){
+                return true;
+            }
+        }
+        return false;
     }
 
     /*@EventHandler

@@ -39,6 +39,7 @@ public class SpawnsCommand extends Command {
             sender.sendMessage(Style.translate("&f/" + alias + " tournamentlocation/tournamentfirst/tournamentsecond/tournamentmin/tournamentmax"));
             sender.sendMessage(Style.translate("&f/" + alias + " ffalocation/ffamin/ffamax"));
             sender.sendMessage(Style.translate("&f/" + alias + " teamfightslocation/teamfightsfirst/teamfightssecond/teamfightsmin/teamfightsmax"));
+            sender.sendMessage(Style.translate("&f/" + alias + " tnttaglocation/tnttagmin/tnttagmax"));
             sender.sendMessage(Style.translate("&7&m--------------------------------"));
             return true;
         }
@@ -186,6 +187,24 @@ public class SpawnsCommand extends Command {
                 Practice.getInstance().getSpawnManager().setTeamFightsMax(CustomLocation.fromBukkitLocation(player.getLocation()));
                 Practice.getInstance().getSpawnManager().saveConfig();
                 player.sendMessage(ChatColor.GREEN + "Successfully set the teamfights max.");
+                break;
+            }
+            case "tnttaglocation": {
+                Practice.getInstance().getSpawnManager().setTntTagLocation(CustomLocation.fromBukkitLocation(player.getLocation()));
+                Practice.getInstance().getSpawnManager().saveConfig();
+                player.sendMessage(ChatColor.GREEN + "Successfully set the TNTTag Location.");
+                break;
+            }
+            case "tnttagmin": {
+                Practice.getInstance().getSpawnManager().setTntTagMin(CustomLocation.fromBukkitLocation(player.getLocation()));
+                Practice.getInstance().getSpawnManager().saveConfig();
+                player.sendMessage(ChatColor.GREEN + "Successfully set the TNTTag Min.");
+                break;
+            }
+            case "tnttagmax": {
+                Practice.getInstance().getSpawnManager().setTntTagMax(CustomLocation.fromBukkitLocation(player.getLocation()));
+                Practice.getInstance().getSpawnManager().saveConfig();
+                player.sendMessage(ChatColor.GREEN + "Successfully set the TNTTag Max.");
                 break;
             }
         }

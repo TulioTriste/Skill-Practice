@@ -52,7 +52,8 @@ public class EnderpearlListener implements Listener {
                 if (validLocation != null) {
                     validLocation.setPitch(event.getPlayer().getLocation().getPitch());
                     validLocation.setYaw(event.getPlayer().getLocation().getYaw());
-                    event.setTo(validLocation);
+                    event.setCancelled(true);
+                    event.getPlayer().teleport(validLocation);
                 }
             }
         }

@@ -2,7 +2,6 @@ package net.skillwars.practice.events.sumo;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import me.joeleoli.nucleus.Nucleus;
 import net.minecraft.server.v1_8_R3.EntityPlayer;
 import net.skillwars.practice.Practice;
 import net.skillwars.practice.events.EventCountdownTask;
@@ -12,6 +11,7 @@ import net.skillwars.practice.util.CC;
 import net.skillwars.practice.util.CustomLocation;
 import net.skillwars.practice.util.PlayerUtil;
 
+import net.skillwars.practice.util.StaffUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -21,6 +21,7 @@ import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
+import pt.foxspigot.jar.knockback.KnockbackModule;
 import pt.foxspigot.jar.knockback.KnockbackProfile;
 
 import java.util.*;
@@ -90,7 +91,7 @@ public class SumoEvent extends PracticeEvent<SumoPlayer> {
                 EntityPlayer player1Ep = player1Cp.getHandle();
                 CraftPlayer player2Cp = (CraftPlayer) killer;
                 EntityPlayer player2Ep = player2Cp.getHandle();
-                KnockbackProfile profile4 = new KnockbackProfile("default");
+                KnockbackProfile profile4 = KnockbackModule.getByName("default");
                 player1Ep.setKnockback(profile4);
                 player2Ep.setKnockback(profile4);
 
@@ -141,7 +142,6 @@ public class SumoEvent extends PracticeEvent<SumoPlayer> {
     }
 
     private void selectPlayers() {
-
         if (this.getByState(SumoPlayer.SumoState.WAITING).size() == 1) {
             Player winner = Bukkit.getPlayer(this.getByState(SumoPlayer.SumoState.WAITING).get(0));
 
@@ -150,6 +150,14 @@ public class SumoEvent extends PracticeEvent<SumoPlayer> {
 
             Bukkit.broadcastMessage(CC.translate("&e[Evento] &fGanador: &a" + winner.getName()));
 
+            this.fighting.clear();
+            end();
+            return;
+        }
+        else if (this.getByState(SumoPlayer.SumoState.WAITING).size() < 1) {
+            StaffUtil.sendStaffMessage(Arrays.asList("",
+                    "&bEl Evento ha sido cancelado!",
+                    ""));
             this.fighting.clear();
             end();
             return;
@@ -167,7 +175,7 @@ public class SumoEvent extends PracticeEvent<SumoPlayer> {
         EntityPlayer player1Ep = player1Cp.getHandle();
         CraftPlayer player2Cp = (CraftPlayer) picked2;
         EntityPlayer player2Ep = player2Cp.getHandle();
-        KnockbackProfile profile4 = new KnockbackProfile("sumo");
+        KnockbackProfile profile4 = KnockbackModule.getByName("sumo");
         player1Ep.setKnockback(profile4);
         player2Ep.setKnockback(profile4);
 

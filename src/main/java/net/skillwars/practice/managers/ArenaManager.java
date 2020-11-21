@@ -36,7 +36,7 @@ public class ArenaManager {
     private final Map<String, Arena> arenas = new HashMap<>();
 
     @Getter
-    private final Map<StandaloneArena, UUID> arenaMatchUUIDs = new HashMap<>();
+    private final Map<Arena, UUID> arenaMatchUUIDs = new HashMap<>();
 
     @Getter
     @Setter
@@ -57,11 +57,13 @@ public class ArenaManager {
         arenaSection.getKeys(false).forEach(name -> {
             String a = arenaSection.getString(name + ".a");
             String b = arenaSection.getString(name + ".b");
+            String center = arenaSection.getString(name + ".center");
             String min = arenaSection.getString(name + ".min");
             String max = arenaSection.getString(name + ".max");
 
             CustomLocation locA = CustomLocation.stringToLocation(a);
             CustomLocation locB = CustomLocation.stringToLocation(b);
+            CustomLocation locCenter = CustomLocation.stringToLocation(center);
             CustomLocation locMin = CustomLocation.stringToLocation(min);
             CustomLocation locMax = CustomLocation.stringToLocation(max);
 
@@ -73,21 +75,23 @@ public class ArenaManager {
                 saSection.getKeys(false).forEach(id -> {
                     String saA = saSection.getString(id + ".a");
                     String saB = saSection.getString(id + ".b");
+                    String saCenter = saSection.getString(id + ".center");
                     String saMin = saSection.getString(id + ".min");
                     String saMax = saSection.getString(id + ".max");
 
                     CustomLocation locSaA = CustomLocation.stringToLocation(saA);
                     CustomLocation locSaB = CustomLocation.stringToLocation(saB);
+                    CustomLocation locSaCenter = CustomLocation.stringToLocation(saCenter);
                     CustomLocation locSaMin = CustomLocation.stringToLocation(saMin);
                     CustomLocation locSaMax = CustomLocation.stringToLocation(saMax);
 
-                    standaloneArenas.add(new StandaloneArena(locSaA, locSaB, locSaMin, locSaMax));
+                    standaloneArenas.add(new StandaloneArena(locSaA, locSaB, locSaCenter, locSaMin, locSaMax));
                 });
             }
 
             boolean enabled = arenaSection.getBoolean(name + ".enabled", false);
 
-            Arena arena = new Arena(name, standaloneArenas, new ArrayList<>(standaloneArenas), locA, locB, locMin, locMax, enabled);
+            Arena arena = new Arena(name, standaloneArenas, new ArrayList<>(standaloneArenas), locA, locB, locCenter, locMin, locMax, enabled);
 
             this.arenas.put(name, arena);
         });
@@ -100,6 +104,7 @@ public class ArenaManager {
         arenas.forEach((arenaName, arena) -> {
             String a = CustomLocation.locationToString(arena.getA());
             String b = CustomLocation.locationToString(arena.getB());
+            String center = CustomLocation.locationToString(arena.getCenter());
             String min = CustomLocation.locationToString(arena.getMin());
             String max = CustomLocation.locationToString(arena.getMax());
 
@@ -107,6 +112,7 @@ public class ArenaManager {
 
             fileConfig.set(arenaRoot + ".a", a);
             fileConfig.set(arenaRoot + ".b", b);
+            fileConfig.set(arenaRoot + ".center", center);
             fileConfig.set(arenaRoot + ".min", min);
             fileConfig.set(arenaRoot + ".max", max);
             fileConfig.set(arenaRoot + ".enabled", arena.isEnabled());
@@ -116,6 +122,7 @@ public class ArenaManager {
                 for (StandaloneArena saArena : arena.getStandaloneArenas()) {
                     String saA = CustomLocation.locationToString(saArena.getA());
                     String saB = CustomLocation.locationToString(saArena.getB());
+                    String saCenter = CustomLocation.locationToString(saArena.getCenter());
                     String saMin = CustomLocation.locationToString(saArena.getMin());
                     String saMax = CustomLocation.locationToString(saArena.getMax());
 
@@ -123,6 +130,7 @@ public class ArenaManager {
 
                     fileConfig.set(standAloneRoot + ".a", saA);
                     fileConfig.set(standAloneRoot + ".b", saB);
+                    fileConfig.set(standAloneRoot + ".center", saCenter);
                     fileConfig.set(standAloneRoot + ".min", saMin);
                     fileConfig.set(standAloneRoot + ".max", saMax);
 
@@ -221,15 +229,15 @@ public class ArenaManager {
         return enabledArenas.get(ThreadLocalRandom.current().nextInt(enabledArenas.size()));
     }
 
-    public void removeArenaMatchUUID(StandaloneArena arena) {
+    public void removeArenaMatchUUID(Arena arena) {
         this.arenaMatchUUIDs.remove(arena);
     }
 
-    public UUID getArenaMatchUUID(StandaloneArena arena) {
+    public UUID getArenaMatchUUID(Arena arena) {
         return this.arenaMatchUUIDs.get(arena);
     }
 
-    public void setArenaMatchUUID(StandaloneArena arena, UUID matchUUID) {
+    public void setArenaMatchUUID(Arena arena, UUID matchUUID) {
         this.arenaMatchUUIDs.put(arena, matchUUID);
     }
 }

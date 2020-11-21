@@ -38,6 +38,9 @@ public class SpawnManager {
     private CustomLocation FFALocation;
     private CustomLocation FFAMin;
     private CustomLocation FFAMax;
+    private CustomLocation tntTagLocation;
+    private CustomLocation tntTagMin;
+    private CustomLocation tntTagMax;
 
     public SpawnManager() {
         this.plugin = Practice.getInstance();
@@ -81,6 +84,11 @@ public class SpawnManager {
             this.FFALocation = CustomLocation.stringToLocation(config.getString("ffaLocation"));
             this.FFAMin = CustomLocation.stringToLocation(config.getString("ffaMin"));
             this.FFAMax = CustomLocation.stringToLocation(config.getString("ffaMax"));
+        }
+        if (config.contains("tntTagLocation")) {
+            this.tntTagLocation = CustomLocation.stringToLocation(config.getString("tntTagLocation"));
+            this.tntTagMin = CustomLocation.stringToLocation(config.getString("tntTagMin"));
+            this.tntTagMax = CustomLocation.stringToLocation(config.getString("tntTagMax"));
         }
     }
 
@@ -134,6 +142,12 @@ public class SpawnManager {
             config.set("ffaMin", CustomLocation.locationToString(this.FFAMin));
         if(FFAMax != null)
             config.set("ffaMax", CustomLocation.locationToString(this.FFAMax));
+        if (tntTagLocation != null)
+            config.set("tntTagLocation", CustomLocation.locationToString(this.tntTagLocation));
+        if (tntTagMin != null)
+            config.set("tntTagMin", CustomLocation.locationToString(this.tntTagMin));
+        if (tntTagMax != null)
+            config.set("tntTagMax", CustomLocation.locationToString(this.tntTagMax));
         this.plugin.getMainConfig().save();
     }
 

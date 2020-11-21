@@ -254,12 +254,12 @@ public class QueueManager {
     public void removePlayerFromQueue(final Player player) {
         final QueueEntry entry = this.queued.get(player.getUniqueId());
         this.queued.remove(player.getUniqueId());
-        this.plugin.getPlayerManager().sendToSpawnAndReset(player);
+        this.plugin.getPlayerManager().sendToSpawnAndResetNoTP(player);
 
 		if(entry == null){
 			return;
 		}
-        player.sendMessage(CC.WHITE + "has sido removido de la queue " + CC.SECONDARY + entry.getQueueType().getName()
+        player.sendMessage(CC.WHITE + "Has sido removido de la queue " + CC.SECONDARY + entry.getQueueType().getName()
                 + " " + entry.getKitName() + CC.PRIMARY + ".");
     }
 

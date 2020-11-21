@@ -1,9 +1,10 @@
 package net.skillwars.practice.listeners;
 
-import lombok.Getter;
 import me.joansiitoh.datas.events.NickUpdateEvent;
 import me.joeleoli.nucleus.nametag.NameTagHandler;
 import net.skillwars.practice.Practice;
+import net.skillwars.practice.commands.management.PlayersCommand;
+import net.skillwars.practice.event.match.MatchCancelEvent;
 import net.skillwars.practice.event.match.MatchEndEvent;
 import net.skillwars.practice.event.match.MatchStartEvent;
 import net.skillwars.practice.inventory.InventorySnapshot;
@@ -14,21 +15,21 @@ import net.skillwars.practice.match.MatchTeam;
 import net.skillwars.practice.player.PlayerData;
 import net.skillwars.practice.player.PlayerState;
 import net.skillwars.practice.queue.QueueType;
+import net.skillwars.practice.runnable.MatchResetRunnable;
 import net.skillwars.practice.runnable.MatchRunnable;
+import net.skillwars.practice.runnable.MatchTntTagRunnable;
 import net.skillwars.practice.util.*;
 import net.minecraft.server.v1_8_R3.EntityPlayer;
 
-import net.skillwars.practice.util.*;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import pt.foxspigot.jar.FoxSpigot;
+import org.bukkit.scheduler.BukkitRunnable;
+import pt.foxspigot.jar.knockback.KnockbackModule;
 import pt.foxspigot.jar.knockback.KnockbackProfile;
 
 import java.util.*;
@@ -36,11 +37,6 @@ import java.util.*;
 public class MatchListener implements Listener {
 
     private final Practice plugin = Practice.getInstance();
-    public static Map<UUID, Map<Location, Block>> blocks;
-
-    static {
-        blocks = new HashMap<>();
-    }
 
     @EventHandler
     public void onMatchStart(MatchStartEvent event) {
@@ -60,7 +56,7 @@ public class MatchListener implements Listener {
                 return;
             }
             match.setStandaloneArena(match.getArena().getAvailableArena());
-            this.plugin.getArenaManager().setArenaMatchUUID(match.getStandaloneArena(), match.getMatchId());
+            this.plugin.getArenaManager().setArenaMatchUUID(match.getArena(), match.getMatchId());
         }
 
         if (kit.isBuild()) {
@@ -74,15 +70,14 @@ public class MatchListener implements Listener {
                 return;
             }
             match.setStandaloneArena(match.getArena().getAvailableArena());
-            this.plugin.getArenaManager().setArenaMatchUUID(match.getStandaloneArena(), match.getMatchId());
-            blocks.put(match.getMatchId(), this.blocksFromTwoPoints(match.getArena().getMin().toBukkitLocation(),
-                    match.getArena().getMax().toBukkitLocation()));
+            this.plugin.getArenaManager().setArenaMatchUUID(match.getArena(), match.getMatchId());
         }
 
         Set<Player> matchPlayers = new HashSet<>();
 
         CustomLocation locationA = match.getArena().getA();
         CustomLocation locationB = match.getArena().getB();
+        CustomLocation locationCenter = match.getArena().getCenter();
         List<Location> locs = Circle.getCircle(MathUtil.getMiddle(locationA.toBukkitLocation(), locationB.toBukkitLocation()), kit.isSumo() ? 2 : 10,
                 match.getTeams().get(0).getAlivePlayers().size());
 
@@ -98,6 +93,7 @@ public class MatchListener implements Listener {
 
             playerData.setCurrentMatchID(match.getMatchId());
             playerData.setTeamID(team.getTeamID());
+            playerData.setPlayerState(PlayerState.FIGHTING);
 
             playerData.setMissedPots(0);
             playerData.setLongestCombo(0);
@@ -108,7 +104,7 @@ public class MatchListener implements Listener {
 
             if(match.isFFA()){
                 Location loc = locs.get(0);
-                Location target = loc.setDirection(MathUtil.getMiddle(locationA.toBukkitLocation(), locationB.toBukkitLocation()).subtract(loc).toVector());
+                Location target = kit.isTnttag() ? loc.setDirection(locationCenter.toBukkitLocation().toVector()) : loc.setDirection(MathUtil.getMiddle(locationA.toBukkitLocation(), locationB.toBukkitLocation()).subtract(loc).toVector());
                 player.teleport(target);
                 locs.remove(0);
             } else {
@@ -118,33 +114,27 @@ public class MatchListener implements Listener {
                 player.setMaximumNoDamageTicks(3);
                 CraftPlayer playerCp = (CraftPlayer) player;
                 EntityPlayer playerEp = playerCp.getHandle();
-                KnockbackProfile profile4 = new KnockbackProfile("combo");
+                KnockbackProfile profile4 = KnockbackModule.getByName("combo");
                 playerEp.setKnockback(profile4);
-//                KnockbackModule profile4 = KnockbackModule.get();
-//                playerEp.setKnockback(profile4.getKnockbackProfile("Combo"));
             } else if (kit.isSumo()) {
                 player.setMaximumNoDamageTicks(20);
                 CraftPlayer playerCp = (CraftPlayer) player;
                 EntityPlayer playerEp = playerCp.getHandle();
-                KnockbackProfile profile4 = new KnockbackProfile("sumo");
+                KnockbackProfile profile4 = KnockbackModule.getByName("sumo");
                 playerEp.setKnockback(profile4);
             } else {
                 player.setMaximumNoDamageTicks(20);
                 CraftPlayer playerCp = (CraftPlayer) player;
                 EntityPlayer playerEp = playerCp.getHandle();
-                KnockbackProfile profile4 = new KnockbackProfile("default");
+                KnockbackProfile profile4 = KnockbackModule.getByName("default");
                 playerEp.setKnockback(profile4);
-//                KnockbackModule profile4 = KnockbackModule.get();
-//                playerEp.setKnockback(profile4.getKnockbackProfile("default"));
             }
             if (!match.isRedrover()) {
-                if (!kit.isSumo()) {
+                if (!kit.isSumo() && !kit.isTnttag()) {
                     this.plugin.getMatchManager().giveKits(player, kit);
                 }
 
                 playerData.setPlayerState(PlayerState.FIGHTING);
-            } else {
-                this.plugin.getMatchManager().addRedroverSpectator(player, match);
             }
 
             if(match.isFFA()){
@@ -189,6 +179,10 @@ public class MatchListener implements Listener {
             }
         }
 
+        if (kit.isTnttag()) {
+            new MatchTntTagRunnable(match).runTaskTimer(this.plugin, 20L, 20L);
+            return;
+        }
         new MatchRunnable(match).runTaskTimer(this.plugin, 20L, 20L);
     }
 
@@ -206,6 +200,8 @@ public class MatchListener implements Listener {
             String winnerMessage = CC.WHITE + "Ganador: " + CC.SECONDARY + winner.getName();
 
             event.getWinningTeam().players().forEach(player -> {
+                PlayerData data = this.plugin.getPlayerManager().getPlayerData(player.getUniqueId());
+                data.setPlayerState(PlayerState.SPAWN);
                 if (!match.hasSnapshot(player.getUniqueId())) {
                     match.addSnapshot(player);
                 }
@@ -221,16 +217,17 @@ public class MatchListener implements Listener {
                     NameTagHandler.removeFromTeams(other, player);
                     NameTagHandler.removeFromTeams(player, other);
                 });
-//                PlayerUtil.refreshDisplayName(player);
                 if (match.getKit().isCombo()) {
                     player.setMaximumNoDamageTicks(20);
                     CraftPlayer playerCp = (CraftPlayer) player;
                     EntityPlayer playerEp = playerCp.getHandle();
-                    KnockbackProfile profile4 = new KnockbackProfile("default");
+                    KnockbackProfile profile4 = KnockbackModule.getByName("default");
                     playerEp.setKnockback(profile4);
-//                    KnockbackModule profile4 = KnockbackModule.get();
-//                    playerEp.setKnockback(profile4.getKnockbackProfile("default"));
                 }
+            });
+            event.getLosingTeam().players().forEach(player -> {
+                PlayerData data = this.plugin.getPlayerManager().getPlayerData(player.getUniqueId());
+                data.setPlayerState(PlayerState.SPAWN);
             });
             for (InventorySnapshot snapshot : match.getSnapshots().values()) {
                 this.plugin.getInventoryManager().addSnapshot(snapshot);
@@ -242,6 +239,8 @@ public class MatchListener implements Listener {
             match.broadcast(CC.SECONDARY + event.getWinningTeam().getLeaderName() + CC.PRIMARY + " ha ganado el Redrover!");
         } else {
             match.getTeams().forEach(team -> team.players().forEach(player -> {
+                PlayerData data = this.plugin.getPlayerManager().getPlayerData(player.getUniqueId());
+                data.setPlayerState(PlayerState.SPAWN);
                 if (!match.hasSnapshot(player.getUniqueId())) {
                     match.addSnapshot(player);
                 }
@@ -272,15 +271,12 @@ public class MatchListener implements Listener {
                     NameTagHandler.removeHealthDisplay(teamplayer);
                 }
 
-//                PlayerUtil.refreshDisplayName(player);
                 if (match.getKit().isCombo()) {
                     player.setMaximumNoDamageTicks(20);
                     CraftPlayer playerCp = (CraftPlayer) player;
                     EntityPlayer playerEp = playerCp.getHandle();
-                    KnockbackProfile profile4 = new KnockbackProfile("default");
+                    KnockbackProfile profile4 = KnockbackModule.getByName("default");
                     playerEp.setKnockback(profile4);
-//                    KnockbackModule profile4 = KnockbackModule.get();
-//                    playerEp.setKnockback(profile4.getKnockbackProfile("default"));
                 }
             }));
             for (InventorySnapshot snapshot : match.getSnapshots().values()) {
@@ -295,6 +291,17 @@ public class MatchListener implements Listener {
 
             if (match.getType().isRanked()) {
                 String kitName = match.getKit().getName();
+                event.getWinningTeam().getPlayers().forEach(player -> {
+                    PlayerData data = this.plugin.getPlayerManager().getPlayerData(player);
+                    int matchWins = data.getMatchWins(kitName);
+                    data.setMatchWins(kitName, matchWins + 1);
+                });
+
+                event.getLosingTeam().getPlayers().forEach(player -> {
+                    PlayerData data = this.plugin.getPlayerManager().getPlayerData(player);
+                    int matchLosses = data.getMatchLosses(kitName);
+                    data.setMatchLosses(kitName, matchLosses + 1);
+                });
 
                 Player winnerLeader = this.plugin.getServer().getPlayer(event.getWinningTeam().getPlayers().get(0));
                 PlayerData winnerLeaderData = this.plugin.getPlayerManager()
@@ -376,27 +383,18 @@ public class MatchListener implements Listener {
         }
     }
 
-    public Map<Location, Block> blocksFromTwoPoints(Location loc1, Location loc2) {
-        Map<Location, Block> blocks = new HashMap<>();
-
-        int topBlockX = (loc1.getBlockX() < loc2.getBlockX() ? loc2.getBlockX() : loc1.getBlockX());
-        int bottomBlockX = (loc1.getBlockX() > loc2.getBlockX() ? loc2.getBlockX() : loc1.getBlockX());
-
-        int topBlockY = (loc1.getBlockY() < loc2.getBlockY() ? loc2.getBlockY() : loc1.getBlockY());
-        int bottomBlockY = (loc1.getBlockY() > loc2.getBlockY() ? loc2.getBlockY() : loc1.getBlockY());
-
-        int topBlockZ = (loc1.getBlockZ() < loc2.getBlockZ() ? loc2.getBlockZ() : loc1.getBlockZ());
-        int bottomBlockZ = (loc1.getBlockZ() > loc2.getBlockZ() ? loc2.getBlockZ() : loc1.getBlockZ());
-
-        for (int x = bottomBlockX; x <= topBlockX; x++) {
-            for (int z = bottomBlockZ; z <= topBlockZ; z++) {
-                for (int y = bottomBlockY; y <= topBlockY; y++) {
-                    Block block = loc1.getWorld().getBlockAt(x, y, z);
-                    blocks.put(new Location(loc1.getWorld(), x, y, z), block);
-                }
-            }
-        }
-
-        return blocks;
+    @EventHandler
+    public void onMatchCancel(MatchCancelEvent event) {
+        Match match = event.getMatch();
+        match.setMatchState(MatchState.ENDING);
+        match.getTeams().forEach(teams -> teams.getPlayers().forEach(uuid -> {
+            Player player = Bukkit.getPlayer(uuid);
+            PlayerData data = this.plugin.getPlayerManager().getPlayerData(uuid);
+            player.sendMessage(CC.translate("&eEsta partida ha sido cancelada por un Staff debido a problemas tecnicos."));
+            data.setPlayerState(PlayerState.SPAWN);
+            this.plugin.getPlayerManager().sendToSpawnAndReset(player);
+        }));
+        this.plugin.getMatchManager().removeMatch(match);
+        new MatchResetRunnable(match).runTaskTimer(plugin, 20L, 20L);
     }
 }

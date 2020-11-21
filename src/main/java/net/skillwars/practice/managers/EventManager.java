@@ -2,12 +2,14 @@ package net.skillwars.practice.managers;
 
 import lombok.Setter;
 import net.skillwars.practice.Practice;
+import net.skillwars.practice.commands.management.PlayersCommand;
 import net.skillwars.practice.events.EventState;
 import net.skillwars.practice.events.PracticeEvent;
 import net.skillwars.practice.events.ffa.FFAEvent;
 import net.skillwars.practice.events.nodebufflite.NoDebuffLiteEvent;
 import net.skillwars.practice.events.teamfights.TeamFightEvent;
 import net.skillwars.practice.events.sumo.SumoEvent;
+import net.skillwars.practice.events.tnttag.TNTTagEvent;
 import net.skillwars.practice.player.PlayerData;
 import net.skillwars.practice.player.PlayerState;
 import net.skillwars.practice.util.CustomLocation;
@@ -42,7 +44,8 @@ public class EventManager {
                 FFAEvent.class,
                 SumoEvent.class,
                 NoDebuffLiteEvent.class,
-                TeamFightEvent.class
+                TeamFightEvent.class,
+                TNTTagEvent.class
         ).forEach(this::addEvent);
 
         boolean newWorld;
@@ -94,6 +97,28 @@ public class EventManager {
     }
 
     public void addSpectatorTeamFights(Player player, PlayerData playerData, TeamFightEvent event) {
+
+        this.addSpectator(player, playerData, event);
+
+        if (event.getSpawnLocations().size() == 1) {
+            player.teleport(event.getSpawnLocations().get(0).toBukkitLocation());
+        } else {
+            List<CustomLocation> spawnLocations = new ArrayList<>(event.getSpawnLocations());
+            player.teleport(spawnLocations.remove(ThreadLocalRandom.current().nextInt(spawnLocations.size())).toBukkitLocation());
+        }
+
+
+        for(Player eventPlayer : event.getBukkitPlayers()) {
+            player.showPlayer(eventPlayer);
+        }
+
+        player.setGameMode(GameMode.SPECTATOR);
+
+        player.setAllowFlight(true);
+        player.setFlying(true);
+    }
+
+    public void addSpectatorTNTTag(Player player, PlayerData playerData, TNTTagEvent event) {
 
         this.addSpectator(player, playerData, event);
 

@@ -1,9 +1,11 @@
 package net.skillwars.practice.managers;
 
 import lombok.Getter;
+import me.joeleoli.nucleus.nametag.NameTagHandler;
 import me.joeleoli.nucleus.util.TaskUtil;
 import net.skillwars.practice.Practice;
 import net.skillwars.practice.arena.Arena;
+import net.skillwars.practice.commands.management.PlayersCommand;
 import net.skillwars.practice.event.match.MatchEndEvent;
 import net.skillwars.practice.event.match.MatchStartEvent;
 import net.skillwars.practice.inventory.InventorySnapshot;
@@ -16,11 +18,13 @@ import net.skillwars.practice.match.MatchTeam;
 import net.skillwars.practice.player.PlayerData;
 import net.skillwars.practice.player.PlayerState;
 import net.skillwars.practice.queue.QueueType;
+import net.skillwars.practice.runnable.MatchTntTagRunnable;
 import net.skillwars.practice.runnable.RematchRunnable;
 import net.skillwars.practice.util.*;
 import net.skillwars.practice.util.*;
 import net.skillwars.practice.util.inventory.UtilItem;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
@@ -36,6 +40,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
 public class MatchManager {
@@ -44,8 +49,8 @@ public class MatchManager {
     private final Map<UUID, UUID> rematchUUIDs = new TtlHashMap<>(TimeUnit.SECONDS, 30);
     private final Map<UUID, UUID> rematchInventories = new TtlHashMap<>(TimeUnit.SECONDS, 30);
     private final Map<UUID, UUID> spectators = new ConcurrentHashMap<>();
-    @Getter
-    private final Map<UUID, Match> matches = new ConcurrentHashMap<>();
+    @Getter private final Map<UUID, UUID> spectatorPlayer = new ConcurrentHashMap<>();
+    @Getter private final Map<UUID, Match> matches = new ConcurrentHashMap<>();
 
     private final Practice plugin = Practice.getInstance();
 
@@ -61,7 +66,7 @@ public class MatchManager {
 
     public int getFighters(String ladder, QueueType type) {
         return (int) this.matches.entrySet().stream().filter(match -> match.getValue().getType() == type)
-                .filter(match -> match.getValue().getKit().getName().equals(ladder)).count();
+                .filter(match -> match.getValue().getKit().getName().equals(ladder)).count() * 2;
     }
 
     public void createMatchRequest(Player requester, Player requested, Arena arena, String kitName, boolean party) {
@@ -130,6 +135,9 @@ public class MatchManager {
             return;
         }
 
+        NameTagHandler.removeFromTeams(player, killer);
+        NameTagHandler.removeFromTeams(killer, player);
+
         String deathMessage = CC.SECONDARY + player.getName() + CC.WHITE + " ha " +
                 (killer != null ? "sido asesinado por " + CC.SECONDARY + killer.getName() + CC.WHITE :
                         "muerto") + "!";
@@ -167,12 +175,12 @@ public class MatchManager {
             Set<Item> items = new HashSet<>();
             for (ItemStack item : player.getInventory().getContents()) {
                 if (item != null && item.getType() != Material.AIR) {
-                    items.add(player.getWorld().dropItemNaturally(player.getLocation(), item, player));
+                    items.add(player.getWorld().dropItemNaturally(player.getLocation(), item));
                 }
             }
             for (ItemStack item : player.getInventory().getArmorContents()) {
                 if (item != null && item.getType() != Material.AIR) {
-                    items.add(player.getWorld().dropItemNaturally(player.getLocation(), item, player));
+                    items.add(player.getWorld().dropItemNaturally(player.getLocation(), item));
                 }
             }
             this.plugin.getMatchManager().addDroppedItems(match, items);
@@ -262,21 +270,9 @@ public class MatchManager {
         }, 3L);
     }
 
-    public void addRedroverSpectator(Player player, Match match) {
-        this.spectators.put(player.getUniqueId(), match.getMatchId());
-
-        player.setAllowFlight(true);
-        player.setFlying(true);
-        player.getInventory().setContents(this.plugin.getItemManager().getPartySpecItems());
-        player.updateInventory();
-
-        PlayerData playerData = this.plugin.getPlayerManager().getPlayerData(player.getUniqueId());
-
-        playerData.setPlayerState(PlayerState.SPECTATING);
-    }
-
     public void addSpectator(Player player, PlayerData playerData, Player target, Match targetMatch) {
         this.spectators.put(player.getUniqueId(), targetMatch.getMatchId());
+        this.spectatorPlayer.put(player.getUniqueId(), targetMatch.getMatchId());
 
         if (targetMatch.getMatchState() != MatchState.ENDING) {
             if (!targetMatch.haveSpectated(player.getUniqueId())) {
@@ -293,11 +289,15 @@ public class MatchManager {
 
         playerData.setPlayerState(PlayerState.SPECTATING);
 
-        player.teleport(target);
+        player.teleport(targetMatch.getArena().getCenter().toBukkitLocation());
         player.setAllowFlight(true);
         player.setFlying(true);
 
-        player.getInventory().setContents(this.plugin.getItemManager().getSpecItems());
+        if (player.hasPermission("practice.staff") || player.hasPermission("*")) {
+            player.getInventory().setContents(this.plugin.getItemManager().getStaffSpecItems());
+        } else {
+            player.getInventory().setContents(this.plugin.getItemManager().getSpecItems());
+        }
         player.updateInventory();
 
         this.plugin.getServer().getOnlinePlayers().forEach(online -> {
@@ -353,6 +353,7 @@ public class MatchManager {
         }
 
         this.spectators.remove(player.getUniqueId());
+        this.spectatorPlayer.remove(player.getUniqueId());
         this.plugin.getPlayerManager().sendToSpawnAndReset(player);
     }
 
@@ -397,6 +398,23 @@ public class MatchManager {
         playerB.showPlayer(playerA);
 
         match.broadcast(CC.SECONDARY + playerA.getName() + CC.PRIMARY + " vs. " + CC.SECONDARY + playerB.getName());
+    }
+
+    /*public void selectPlayer(Match match) {
+        Player bomb = Bukkit.getPlayer(match.getTeams().get(0).getAlivePlayers().get(ThreadLocalRandom.current().nextInt(match.getTeams().get(0).getAlivePlayers().size())));
+        match.getTeams().get(0).getAlivePlayers().forEach(uuid -> {
+            Player player = Bukkit.getPlayer(uuid);
+            PlayerData data = this.plugin.getPlayerManager().getPlayerData(uuid);
+            player.sendMessage(CC.translate("&bEl Usuario " + bomb.getName() + " es la Bomba!"));
+            bomb.getInventory().setHelmet(new ItemStack(Material.TNT));
+            bomb.getInventory().setItem(0, new ItemStack(Material.TNT));
+        });
+        match.setMatchState(MatchState.STARTING);
+    }*/
+
+    public Player selectBomb(Match match) {
+        Player bomb = Bukkit.getPlayer(match.getTeams().get(0).getAlivePlayers().get(ThreadLocalRandom.current().nextInt(match.getTeams().get(0).getAlivePlayers().size())));
+        return bomb;
     }
 
     public void saveRematches(Match match) {

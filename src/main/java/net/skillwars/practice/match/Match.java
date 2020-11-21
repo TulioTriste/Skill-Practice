@@ -25,6 +25,7 @@ import net.skillwars.practice.util.TimeUtil;
 
 import org.bukkit.Location;
 import org.bukkit.Sound;
+import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -42,6 +43,8 @@ public class Match {
 	private final Set<BlockState> originalBlockChanges = Sets.newConcurrentHashSet();
 
 	private final Set<Location> placedBlockLocations = Sets.newConcurrentHashSet();
+
+	private final Map<Location, Block> originalBlocksMap = new HashMap<>();
 
 	private final Set<UUID> spectators = new ConcurrentSet<>();
 
@@ -159,6 +162,10 @@ public class Match {
 
 	public void removePlacedBlockLocation(Location location) {
 		this.placedBlockLocations.remove(location);
+	}
+
+	public void addOriginalBlocksMap(Location loc, Block block) {
+		this.originalBlocksMap.put(loc, block);
 	}
 
 	public void broadcastWithSound(String message, Sound sound) {

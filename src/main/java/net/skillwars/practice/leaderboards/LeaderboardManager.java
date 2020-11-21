@@ -21,10 +21,8 @@ import java.util.stream.Collectors;
 public class LeaderboardManager {
 
     private List<PlayerData> playerDataList = Lists.newArrayList();
-    @Getter
-    private Map<String, List<PlayerData>> eloPlayerList = Maps.newHashMap();
-    @Getter
-    private List<PlayerData> globalplayerDataList = Lists.newArrayList();
+    @Getter private Map<String, List<PlayerData>> eloPlayerList = Maps.newHashMap();
+    @Getter private List<PlayerData> globalplayerDataList = Lists.newArrayList();
 
     public LeaderboardManager(){
         try (MongoCursor<Document> cursor = PracticeMongo.getInstance().getPlayers().find().iterator()){

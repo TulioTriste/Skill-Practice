@@ -68,7 +68,7 @@ public class TeamFightEvent extends PracticeEvent<TeamFightPlayer> {
 		this.redTeam.clear();
 		this.blueTeam.clear();
 		this.generateTeams();
-		this.prepareNextMatch();
+		this.startMatch();
 	}
 
 	@Override
@@ -163,7 +163,7 @@ public class TeamFightEvent extends PracticeEvent<TeamFightPlayer> {
 		};
 	}
 
-	private void prepareNextMatch() {
+	private void startMatch() {
 		this.fighting.addAll(redTeam);
 		this.fighting.addAll(blueTeam);
 		this.redFighting.addAll(redTeam);
@@ -328,7 +328,7 @@ public class TeamFightEvent extends PracticeEvent<TeamFightPlayer> {
 		public void run() {
 
 			if(time == 1800) {
-				prepareNextMatch();
+				startMatch();
 			}
 
 			if (Arrays.asList(60, 50, 40, 30, 25, 20, 15, 10).contains(time)) {

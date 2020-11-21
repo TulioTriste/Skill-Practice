@@ -5,7 +5,9 @@ import me.joeleoli.nucleus.command.param.Parameter;
 import me.joeleoli.nucleus.util.Style;
 import net.skillwars.practice.Practice;
 import net.skillwars.practice.arena.Arena;
+import net.skillwars.practice.file.Config;
 import net.skillwars.practice.runnable.ArenaCommandRunnable;
+import net.skillwars.practice.util.CC;
 import net.skillwars.practice.util.CustomLocation;
 import net.skillwars.practice.util.MathUtil;
 
@@ -16,15 +18,16 @@ import org.bukkit.entity.Player;
 public class ArenaCommand {
 
     private Practice plugin = Practice.getInstance();
-
     private String NO_ARENA = ChatColor.RED + "Esta arena no existe!";
 
     @Command(names = "arena", permissionNode = "practice.arena")
     public static void help(Player player) {
+        player.sendMessage(Style.translate("&a/arena list"));
         player.sendMessage(Style.translate("&a/arena create &e(name)"));
         player.sendMessage(Style.translate("&a/arena delete &e(name)"));
         player.sendMessage(Style.translate("&a/arena a &e(name)"));
         player.sendMessage(Style.translate("&a/arena b &e(name)"));
+        player.sendMessage(Style.translate("&a/arena center &e(name)"));
         player.sendMessage(Style.translate("&a/arena min &e(name)"));
         player.sendMessage(Style.translate("&a/arena max &e(name)"));
         player.sendMessage(Style.translate("&a/arena enable &e(name)"));
@@ -32,6 +35,18 @@ public class ArenaCommand {
         player.sendMessage(Style.translate("&a/arena generate &e(name) (numbers)"));
         player.sendMessage(Style.translate("&a/arena tp &e(name)"));
         player.sendMessage(Style.translate("&a/arena save &e(name)"));
+    }
+
+    @Command(names = "arena list", permissionNode = "practice.arena.list")
+    public static void list(Player player) {
+        Config config = new Config("arenas", Practice.getInstance());
+        player.sendMessage(CC.translate("&7&m--------------------------------"));
+        player.sendMessage(CC.translate("&bLista de Arenas"));
+        player.sendMessage(CC.translate(""));
+        config.getConfig().getConfigurationSection("arenas").getKeys(false).forEach(arenaName -> {
+            player.sendMessage(CC.translate(" &7- &f" + arenaName));
+        });
+        player.sendMessage(CC.translate("&7&m--------------------------------"));
     }
 
     @Command(names = "arena create", permissionNode = "practice.arena.create")
@@ -69,6 +84,16 @@ public class ArenaCommand {
         location.setZ(location.getBlockZ() + 0.5);
         arena.setB(CustomLocation.fromBukkitLocation(location));
         player.sendMessage(ChatColor.GREEN + "Se ha colocado la posición B correctamente en la arena " + arena.getName() + ".");
+    }
+
+    @Command(names = "arena center", permissionNode = "practice.arena.center")
+    public static void center(Player player, @Parameter(name = "arena") Arena arena) {
+        Location location = player.getLocation();
+        location.setX(location.getBlockX() + 0.5);
+        location.setY(location.getBlockY() + 3.0);
+        location.setZ(location.getBlockZ() + 0.5);
+        arena.setCenter(CustomLocation.fromBukkitLocation(location));
+        player.sendMessage(ChatColor.GREEN + "Se ha colocado el centro correctamente en la arena " + arena.getName() + ".");
     }
 
     @Command(names = "arena min", permissionNode = "practice.arena.min")

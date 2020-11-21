@@ -2,30 +2,30 @@ package net.skillwars.practice.managers;
 
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.ReplaceOptions;
+import lombok.SneakyThrows;
+import me.joansiitoh.skillcore.commands.admins.staff.StaffDatas;
+import me.joansiitoh.skillcore.commands.admins.staff.StaffUtils;
 import net.skillwars.practice.Practice;
 import net.skillwars.practice.file.Config;
 import net.skillwars.practice.kit.PlayerKit;
 import net.skillwars.practice.mongo.PracticeMongo;
-import net.skillwars.practice.party.Party;
 import net.skillwars.practice.player.PlayerData;
 import net.skillwars.practice.player.PlayerState;
 import net.skillwars.practice.settings.item.ProfileOptionsItemState;
-import net.skillwars.practice.util.CC;
-import net.skillwars.practice.util.Color;
-import net.skillwars.practice.util.InventoryUtil;
-import net.skillwars.practice.util.ItemUtil;
-import net.skillwars.practice.util.PlayerUtil;
+import net.skillwars.practice.util.*;
 import net.skillwars.practice.util.timer.impl.EnderpearlTimer;
-
 import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.InetAddress;
+import java.net.URL;
 import java.util.Collection;
 import java.util.Map;
 import java.util.UUID;
@@ -36,11 +36,11 @@ public class PlayerManager {
     private final Practice plugin = Practice.getInstance();
     private final Map<UUID, PlayerData> playerData = new ConcurrentHashMap<>();
 
-    public void createPlayerData(Player player) {
-        PlayerData data = new PlayerData(player.getUniqueId());
+    public void createPlayerData(UUID uuid, InetAddress ip) {
+        PlayerData data = new PlayerData(uuid);
 
         this.playerData.put(data.getUniqueId(), data);
-        this.loadData(data);
+        this.loadData(data, ip);
     }
 
     /*private void loadData(final PlayerData playerData) {
@@ -102,12 +102,29 @@ public class PlayerManager {
         playerData.setPlayerState(PlayerState.SPAWN);
     }*/
 
-    public void loadData(PlayerData playerData) {
+    public void loadData(PlayerData playerData, InetAddress ip) {
         playerData.setPlayerState(PlayerState.SPAWN);
-        Player player = Bukkit.getPlayer(playerData.getUniqueId());
+        playerData.setCountry(getCountry(ip));
 
         Config config = new Config("/players/" + playerData.getUniqueId().toString(), this.plugin);
         ConfigurationSection playerKitsSection = config.getConfig().getConfigurationSection("playerkits");
+        ConfigurationSection matchs = config.getConfig().getConfigurationSection("match");
+
+        if (matchs != null) {
+            matchs.getKeys(false).forEach(kitName -> {
+                playerData.setMatchWins(kitName, matchs.getInt("RankedWins." + kitName));
+                playerData.setMatchLosses(kitName, matchs.getInt("RankedLosses." + kitName));
+            });
+        } else {
+            this.plugin.getKitManager().getKits().forEach(kit -> {
+                if (kit.isRanked()) {
+                    config.getConfig().set("match." + kit.getName() + ".RankedWins", 0);
+                    config.getConfig().set("match." + kit.getName() + ".RankedLosses", 0);
+                    config.save();
+                    config.reload();
+                }
+            });
+        }
 
         if (playerKitsSection != null) {
             this.plugin.getKitManager().getKits().forEach((kit) -> {
@@ -133,20 +150,6 @@ public class PlayerManager {
                 playerData.getOptions().setPartyInvites(playerDataSelection.getBoolean("settings.partyInvites"));
                 playerData.getOptions().setPartyInvites(playerDataSelection.getBoolean("settings.spectators"));
                 playerData.getOptions().setTime(Enum.valueOf(ProfileOptionsItemState.class, playerDataSelection.getString("settings.time")));
-
-                if(playerData.getOptions().getTime() == ProfileOptionsItemState.DAY) {
-                    playerData.getOptions().setTime(ProfileOptionsItemState.DAY);
-                    player.performCommand("day");
-                }
-                else if(playerData.getOptions().getTime() == ProfileOptionsItemState.SUNSET) {
-                    playerData.getOptions().setTime(ProfileOptionsItemState.SUNSET);
-                    player.performCommand("sunset");
-                }
-
-                else if(playerData.getOptions().getTime() == ProfileOptionsItemState.NIGHT) {
-                    playerData.getOptions().setTime(ProfileOptionsItemState.NIGHT);
-                    player.performCommand("night");
-                }
             }
         }
 
@@ -258,6 +261,12 @@ public class PlayerManager {
             }
         });
 
+        playerData.getMatchWins().keySet().forEach(kitName ->
+                config.getConfig().set("match." + kitName + ".RankedWins", playerData.getMatchWins(kitName)));
+
+        playerData.getMatchLosses().keySet().forEach(kitName ->
+                config.getConfig().set("match." + kitName + ".RankedLosses", playerData.getMatchLosses(kitName)));
+
         config.save();
     }
 
@@ -274,23 +283,32 @@ public class PlayerManager {
         final boolean inTournament = this.plugin.getTournamentManager().getTournament(player.getUniqueId()) != null;
         final boolean inEvent = this.plugin.getEventManager().getEventPlaying(player) != null;
         final boolean isRematching = this.plugin.getMatchManager().isRematching(player.getUniqueId());
-        ItemStack[] items =!Practice.getInstance().getMainConfig().getConfig().getBoolean("stats") ?  this.plugin.getItemManager().getSpawnItems2() : this.plugin.getItemManager().getSpawnItems();
-        if (inTournament) {
+        final boolean isStaff = StaffDatas.staffs.contains(player);
+        ItemStack[] items = !Practice.getInstance().getMainConfig().getConfig().getBoolean("stats") ?
+                this.plugin.getItemManager().getSpawnItems2() : this.plugin.getItemManager().getSpawnItems();
+
+        if (isStaff) {
+            StaffUtils.joinStaff(player);
+            return;
+        }
+        else if (inTournament) {
             items = this.plugin.getItemManager().getTournamentItems();
-        } else if (inEvent) {
+        }
+        else if (inEvent) {
             items = this.plugin.getItemManager().getEventItems();
-        } else if (inParty) {
+        }
+        else if (inParty) {
             items = this.plugin.getItemManager().getPartyItems();
         }
         player.getInventory().setContents(items);
-        if (isRematching && !inParty && !inTournament && !inEvent) {
+        if (isRematching && !inParty && !inTournament && !inEvent && !isStaff) {
             player.getInventory().setItem(3, ItemUtil.createItem(Material.EMERALD, ChatColor.BLUE.toString() + "Rematch"));
         }
         player.updateInventory();
     }
 
     public void sendToSpawnAndReset(final Player player) {
-        final PlayerData playerData = this.getPlayerData(player.getUniqueId());
+        PlayerData playerData = this.getPlayerData(player.getUniqueId());
         if (!player.isOnline()) {
             return;
         }
@@ -302,18 +320,20 @@ public class PlayerManager {
         PlayerUtil.clearPlayer(player);
 		plugin.getTimerManager().getTimer(EnderpearlTimer.class).clearCooldown(player.getUniqueId());
 		giveLobbyItems(player);
-		Bukkit.getOnlinePlayers().forEach(other -> {
-			if(!player.hasPermission("practice.visibility")) {
-				other.hidePlayer(player);
-			}else{
-				other.showPlayer(player);
-			}
-			if(!other.hasPermission("practice.visibility")){
-				player.hidePlayer(other);
-			}else{
-				player.showPlayer(other);
-			}
-		});
+		if (Bukkit.getOnlinePlayers().size() > 1) {
+            Bukkit.getOnlinePlayers().forEach(other -> {
+                if (!player.hasPermission("practice.visibility")) {
+                    other.hidePlayer(player);
+                } else {
+                    other.showPlayer(player);
+                }
+                if (!other.hasPermission("practice.visibility")) {
+                    player.hidePlayer(other);
+                } else {
+                    player.showPlayer(other);
+                }
+            });
+        }
 		player.teleport(Practice.getInstance().getSpawnManager().getSpawnLocation().toBukkitLocation());
     }
 
@@ -342,5 +362,20 @@ public class PlayerManager {
 				.equals(plugin.getSpawnManager().getSpawnLocation().toBukkitLocation().getWorld().getName())){
 			player.teleport(plugin.getSpawnManager().getSpawnLocation().toBukkitLocation());
 		}
+    }
+
+    @SneakyThrows
+    public static String getCountry(InetAddress ip) {
+        URL url = new URL("http://ip-api.com/json/" + ip.getHostAddress());
+        BufferedReader stream = new BufferedReader(new InputStreamReader(
+                url.openStream()));
+        StringBuilder entirePage = new StringBuilder();
+        String inputLine;
+        while ((inputLine = stream.readLine()) != null)
+            entirePage.append(inputLine);
+        stream.close();
+        if(!(entirePage.toString().contains("\"country\":\"")))
+            return null;
+        return entirePage.toString().split("\"country\":\"")[1].split("\",")[0];
     }
 }

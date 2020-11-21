@@ -69,16 +69,21 @@ public class EnderpearlTimer extends PlayerTimer implements Listener {
 		}
 		Player player = event.getPlayer();
 
-		if (this.getRemaining(player) != 0) {
+		/*if (this.getRemaining(player) != 0) {
 			// Was the event cancelled?
 			if (event.isCancelled()) {
 				this.clearCooldown(player);
 			}
-		}
+		}*/
 		event.getTo().setX((double) event.getTo().getBlockX() + 0.5D);
 		event.getTo().setZ((double) event.getTo().getBlockZ() + 0.5D);
 		if (event.getTo().getBlock().getType() != Material.AIR) {
 			event.getTo().setY(event.getTo().getY() - (event.getTo().getY() - event.getTo().getBlockY()));
+			event.setCancelled(true);
+			player.teleport(event.getTo());
+			return;
 		}
+		event.setCancelled(true);
+		player.teleport(event.getTo());
 	}
 }

@@ -1,6 +1,8 @@
 package net.skillwars.practice.commands.management;
 
 import net.skillwars.practice.Practice;
+import net.skillwars.practice.file.Config;
+import net.skillwars.practice.util.CC;
 import net.skillwars.practice.util.CustomLocation;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -19,11 +21,11 @@ public class ArenaCommand extends Command {
         NO_ARENA = ChatColor.RED + "That arena doesn't exist!";
     }
 
-    private Practice plugin;
+    private Practice plugin = Practice.getInstance();
+    private Config config = new Config("arenas", this.plugin);
 
     public ArenaCommand() {
         super("arena");
-        this.plugin = Practice.getInstance();
         this.setDescription("Arenas command.");
         this.setUsage(ChatColor.RED + "Usage: /arena <subcommand> [args]");
     }
@@ -41,10 +43,12 @@ public class ArenaCommand extends Command {
             sender.sendMessage(ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "--------------------------------");
             sender.sendMessage(ChatColor.AQUA.toString() + ChatColor.BOLD + "Arena Help");
             sender.sendMessage("");
+            sender.sendMessage(ChatColor.WHITE + "/arena list - List Arenas");
             sender.sendMessage(ChatColor.WHITE + "/arena create <name> - Create Arena");
             sender.sendMessage(ChatColor.WHITE + "/arena delete <name> - Delete Arena");
             sender.sendMessage(ChatColor.WHITE + "/arena a <name> - Set a first Arena Location");
             sender.sendMessage(ChatColor.WHITE + "/arena b <name> - Set a second Arena Location");
+            sender.sendMessage(ChatColor.WHITE + "/arena center <name> - Set a center Arena Location");
             sender.sendMessage(ChatColor.WHITE + "/arena min <name> - Set a min Cuboid");
             sender.sendMessage(ChatColor.WHITE + "/arena max <name> - Set a max Cuboid");
             sender.sendMessage(ChatColor.WHITE + "/arena enable <name> - Enable Arena");
@@ -60,7 +64,18 @@ public class ArenaCommand extends Command {
         }
         Arena arena = this.plugin.getArenaManager().getArena(args[1]);
         String lowerCase = args[0].toLowerCase();
+        Location location = player.getLocation();
         switch (lowerCase) {
+            case "list": {
+                sender.sendMessage(CC.translate("&7&m--------------------------------"));
+                sender.sendMessage(CC.translate("&bLista de Arenas"));
+                sender.sendMessage(CC.translate(""));
+                config.getConfig().getConfigurationSection("arenas").getKeys(false).forEach(arenaName -> {
+                    sender.sendMessage(CC.translate(" &7- &f" + arenaName));
+                });
+                sender.sendMessage(CC.translate("&7&m--------------------------------"));
+                break;
+            }
             case "create": {
                 if (arena == null) {
                     this.plugin.getArenaManager().createArena(args[1]);
@@ -81,14 +96,13 @@ public class ArenaCommand extends Command {
             }
             case "a": {
                 if (arena != null) {
-                    Location location = player.getLocation();
                     if (args.length < 3 || !args[2].equalsIgnoreCase("-e")) {
                         location.setX(location.getBlockX() + 0.5);
                         location.setY(location.getBlockY() + 3.0);
                         location.setZ(location.getBlockZ() + 0.5);
                     }
                     arena.setA(CustomLocation.fromBukkitLocation(location));
-                    sender.sendMessage(ChatColor.GREEN + "Successfully set position A for arena " + args[1] + ".");
+                    sender.sendMessage(ChatColor.GREEN + "Successfully set position Center for arena " + args[1] + ".");
                     break;
                 }
                 sender.sendMessage(ArenaCommand.NO_ARENA);
@@ -96,13 +110,26 @@ public class ArenaCommand extends Command {
             }
             case "b": {
                 if (arena != null) {
-                    Location location = player.getLocation();
                     if (args.length < 3 || !args[2].equalsIgnoreCase("-e")) {
                         location.setX(location.getBlockX() + 0.5);
                         location.setY(location.getBlockY() + 3.0);
                         location.setZ(location.getBlockZ() + 0.5);
                     }
                     arena.setB(CustomLocation.fromBukkitLocation(location));
+                    sender.sendMessage(ChatColor.GREEN + "Successfully set position B for arena " + args[1] + ".");
+                    break;
+                }
+                sender.sendMessage(ArenaCommand.NO_ARENA);
+                break;
+            }
+            case "center": {
+                if (arena != null) {
+                    if (args.length < 3 || !args[2].equalsIgnoreCase("-e")) {
+                        location.setX(location.getBlockX() + 0.5);
+                        location.setY(location.getBlockY() + 3.0);
+                        location.setZ(location.getBlockZ() + 0.5);
+                    }
+                    arena.setCenter(CustomLocation.fromBukkitLocation(location));
                     sender.sendMessage(ChatColor.GREEN + "Successfully set position B for arena " + args[1] + ".");
                     break;
                 }

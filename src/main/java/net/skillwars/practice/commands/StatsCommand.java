@@ -2,6 +2,8 @@ package net.skillwars.practice.commands;
 
 import net.skillwars.practice.Practice;
 import net.skillwars.practice.leaderboards.LeaderBoardMenu;
+import net.skillwars.practice.stats.StatisticsMenu;
+import net.skillwars.practice.util.CC;
 import net.skillwars.practice.util.StringUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -22,30 +24,24 @@ public class StatsCommand extends Command {
 
 	@Override
 	public boolean execute(CommandSender sender, String s, String[] args) {
-
 		if(!(sender instanceof Player)){
+			sender.sendMessage(CC.translate("&4No Console."));
 			return true;
-		}
-		if(!Practice.getInstance().getMainConfig().getConfig().getBoolean("stats")){
-			return false;
 		}
 
 		Player player = (Player)sender;
-
 		if (args.length == 0) {
-			new LeaderBoardMenu(player).openMenu(player);
+			new StatisticsMenu(player).openMenu(player);
 			return true;
 		}
 
 		Player target = this.plugin.getServer().getPlayer(args[0]);
-
 		if (target == null) {
 			sender.sendMessage(String.format(StringUtil.PLAYER_NOT_FOUND, args[0]));
 			return true;
 		}
 
-		new LeaderBoardMenu(target).openMenu(player);
-
+		new StatisticsMenu(target).openMenu(player);
 		return true;
 	}
 

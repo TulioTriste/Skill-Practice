@@ -1,6 +1,8 @@
 package net.skillwars.practice.commands.duel;
 
 import net.skillwars.practice.Practice;
+import net.skillwars.practice.events.ffa.FFAEvent;
+import net.skillwars.practice.events.tnttag.TNTTagEvent;
 import net.skillwars.practice.party.Party;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -61,10 +63,18 @@ public class SpectateCommand extends Command {
             }
             if (event instanceof SumoEvent) {
                 player.performCommand("eventspectate Sumo");
-            } else if(event instanceof NoDebuffLiteEvent) {
-                player.performCommand("eventspectate MiniNoDebuff");
-            } else if(event instanceof TeamFightEvent) {
-                player.performCommand("eventspectate Redrover");
+            }
+            else if (event instanceof NoDebuffLiteEvent) {
+                player.performCommand("eventspectate NoDebuffLite");
+            }
+            else if (event instanceof TeamFightEvent) {
+                player.performCommand("eventspectate TeamFights");
+            }
+            else if (event instanceof TNTTagEvent) {
+                player.performCommand("eventspectate TNTTag");
+            }
+            else if (event instanceof FFAEvent) {
+                player.performCommand("eventspectate FFA");
             }
             return true;
         } else {

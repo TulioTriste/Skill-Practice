@@ -15,6 +15,8 @@ public class StandaloneArena {
     private CustomLocation a;
     private CustomLocation b;
 
+    private CustomLocation center;
+
     private CustomLocation min;
     private CustomLocation max;
 

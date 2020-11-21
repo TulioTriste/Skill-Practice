@@ -20,7 +20,7 @@ import org.bukkit.inventory.meta.SkullMeta;
 
 import java.util.*;
 
-public class LeaderBoardMenu extends Menu{
+public class LeaderBoardMenu extends Menu {
     private List<PlayerData> playerDataList = Lists.newArrayList();
 
     private Player target;
@@ -28,7 +28,6 @@ public class LeaderBoardMenu extends Menu{
     public LeaderBoardMenu(Player target){
         this.target = target;
     }
-
 
     @Override
     public String getTitle(Player player){
@@ -88,7 +87,7 @@ public class LeaderBoardMenu extends Menu{
     }
 
 
-    private class StatsButton extends Button{
+    private class StatsButton extends Button {
 
         @Override
         public ItemStack getButtonItem(Player player){

@@ -7,8 +7,11 @@ import net.skillwars.practice.events.ffa.FFAPlayer;
 import net.skillwars.practice.events.nodebufflite.NoDebuffLitePlayer;
 import net.skillwars.practice.events.teamfights.TeamFightEvent;
 import net.skillwars.practice.events.sumo.SumoPlayer;
+import net.skillwars.practice.events.tnttag.TNTTagEvent;
+import net.skillwars.practice.events.tnttag.TNTTagPlayer;
 import net.skillwars.practice.match.Match;
 import net.skillwars.practice.player.PlayerData;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Arrow;
@@ -61,7 +64,7 @@ public class EntityListener implements Listener {
                             SumoEvent sumoEvent = (SumoEvent) event;
                             SumoPlayer sumoPlayer = sumoEvent.getPlayer(player);
 
-                            if (sumoPlayer != null && sumoPlayer.getState() == SumoPlayer.SumoState.FIGHTING) {
+                            if (sumoPlayer != null && sumoPlayer.getState() == SumoPlayer.SumoState.FIGHTING && e.getCause().equals(EntityDamageEvent.DamageCause.FALL)) {
                                 e.setCancelled(false);
                             }
                         }
@@ -70,6 +73,16 @@ public class EntityListener implements Listener {
                             TeamFightPlayer tfPlayer = tfEvent.getPlayer(player);
 
                             if (tfEvent.getState().equals(EventState.WAITING) && !tfPlayer.getState().equals(TeamFightPlayer.TeamFightState.FIGHTING)) {
+                                e.setCancelled(true);
+                            }
+                        }
+                        else if (event instanceof TNTTagEvent) {
+                            TNTTagEvent tntEvent = (TNTTagEvent) event;
+                            TNTTagPlayer tntTagPlayer = tntEvent.getPlayer(player);
+
+                            if (tntEvent.getState().equals(EventState.STARTED) && tntTagPlayer.getState().equals(TNTTagPlayer.TNTTagState.FIGHTING) && !e.getCause().equals(EntityDamageEvent.DamageCause.FALL)) {
+                                e.setCancelled(false);
+                            } else {
                                 e.setCancelled(true);
                             }
                         }
@@ -127,7 +140,22 @@ public class EntityListener implements Listener {
                 }
             }
 
-            if(damagerData.getPlayerState() == PlayerState.SPECTATING || this.plugin.getEventManager().getSpectators().containsKey(damager.getUniqueId())) {
+            if (isEventDamager && isEventEntity && eventDamager instanceof TNTTagEvent && event instanceof TNTTagEvent) {
+                TNTTagEvent eventt = (TNTTagEvent) eventDamager;
+                TNTTagPlayer test = ((TNTTagEvent) eventDamager).getPlayer(damager.getUniqueId());
+                if (test.getState().equals(TNTTagPlayer.TNTTagState.FIGHTING)) {
+                    if (eventt.getBomb().equals(damager)) {
+                        eventt.setBomb(entity);
+                        eventt.getFighting().forEach(name -> {
+                            Player player = Bukkit.getPlayer(name);
+                            player.sendMessage(ChatColor.AQUA + eventt.getBomb().getName() + " have the Bomb!");
+                        });
+                    }
+                }
+            }
+
+            if(damagerData.getPlayerState() == PlayerState.SPECTATING
+                    || this.plugin.getEventManager().getSpectators().containsKey(damager.getUniqueId())) {
                 e.setCancelled(true);
                 return;
             }
@@ -137,17 +165,32 @@ public class EntityListener implements Listener {
                 return;
             }
 
-            if (isEventDamager && eventDamager instanceof TeamFightEvent && ((TeamFightEvent) eventDamager).getPlayer(damager).getState() != TeamFightPlayer.TeamFightState.FIGHTING || isEventEntity &&  eventDamager instanceof TeamFightEvent && ((TeamFightEvent) eventEntity).getPlayer(entity).getState() != TeamFightPlayer.TeamFightState.FIGHTING  || !isEventDamager && damagerData.getPlayerState() != PlayerState.FIGHTING || !isEventEntity && entityData.getPlayerState() != PlayerState.FIGHTING) {
+            if (isEventDamager && eventDamager instanceof TeamFightEvent
+                    && ((TeamFightEvent) eventDamager).getPlayer(damager).getState() != TeamFightPlayer.TeamFightState.FIGHTING
+                    || isEventEntity &&  eventDamager instanceof TeamFightEvent
+                    && ((TeamFightEvent) eventEntity).getPlayer(entity).getState() != TeamFightPlayer.TeamFightState.FIGHTING
+                    || !isEventDamager && damagerData.getPlayerState() != PlayerState.FIGHTING
+                    || !isEventEntity && entityData.getPlayerState() != PlayerState.FIGHTING) {
                 e.setCancelled(true);
                 return;
             }
 
-            if (isEventDamager && eventDamager instanceof SumoEvent && ((SumoEvent) eventDamager).getPlayer(damager).getState() != SumoPlayer.SumoState.FIGHTING || isEventEntity &&  eventDamager instanceof SumoEvent && ((SumoEvent) eventEntity).getPlayer(entity).getState() != SumoPlayer.SumoState.FIGHTING  || !isEventDamager && damagerData.getPlayerState() != PlayerState.FIGHTING || !isEventEntity && entityData.getPlayerState() != PlayerState.FIGHTING) {
+            if (isEventDamager && eventDamager instanceof SumoEvent
+                    && ((SumoEvent) eventDamager).getPlayer(damager).getState() != SumoPlayer.SumoState.FIGHTING
+                    || isEventEntity &&  eventDamager instanceof SumoEvent
+                    && ((SumoEvent) eventEntity).getPlayer(entity).getState() != SumoPlayer.SumoState.FIGHTING
+                    || !isEventDamager && damagerData.getPlayerState() != PlayerState.FIGHTING
+                    || !isEventEntity && entityData.getPlayerState() != PlayerState.FIGHTING) {
                 e.setCancelled(true);
                 return;
             }
 
-            if (isEventDamager && eventDamager instanceof FFAEvent && ((FFAEvent) eventDamager).getPlayer(damager).getState() != FFAPlayer.FFAState.FIGHTING || isEventEntity &&  eventDamager instanceof FFAEvent && ((FFAEvent) eventEntity).getPlayer(entity).getState() != FFAPlayer.FFAState.FIGHTING || !isEventDamager && damagerData.getPlayerState() != PlayerState.FIGHTING || !isEventEntity && entityData.getPlayerState() != PlayerState.FIGHTING) {
+            if (isEventDamager && eventDamager instanceof FFAEvent
+                    && ((FFAEvent) eventDamager).getPlayer(damager).getState() != FFAPlayer.FFAState.FIGHTING
+                    || isEventEntity &&  eventDamager instanceof FFAEvent
+                    && ((FFAEvent) eventEntity).getPlayer(entity).getState() != FFAPlayer.FFAState.FIGHTING
+                    || !isEventDamager && damagerData.getPlayerState() != PlayerState.FIGHTING
+                    || !isEventEntity && entityData.getPlayerState() != PlayerState.FIGHTING) {
                 e.setCancelled(true);
                 return;
             }
@@ -156,6 +199,14 @@ public class EntityListener implements Listener {
                     && ((NoDebuffLiteEvent) eventDamager).getPlayer(damager).getState() != NoDebuffLitePlayer.NoDebuffLiteState.FIGHTING
                     || isEventEntity &&  eventDamager instanceof NoDebuffLiteEvent
                     && ((NoDebuffLiteEvent) eventEntity).getPlayer(entity).getState() != NoDebuffLitePlayer.NoDebuffLiteState.FIGHTING) {
+                e.setCancelled(true);
+                return;
+            }
+
+            if (isEventDamager && eventDamager instanceof TNTTagEvent
+                    && ((TNTTagEvent) eventDamager).getPlayer(damager).getState() != TNTTagPlayer.TNTTagState.FIGHTING
+                    || isEventEntity &&  eventDamager instanceof TNTTagEvent
+                    && ((TNTTagEvent) eventEntity).getPlayer(entity).getState() != TNTTagPlayer.TNTTagState.FIGHTING) {
                 e.setCancelled(true);
                 return;
             }
@@ -189,10 +240,23 @@ public class EntityListener implements Listener {
                 return;
             }
 
+            if(entityData.getPlayerState() == PlayerState.EVENT &&
+                    eventEntity instanceof TNTTagEvent
+                    || damagerData.getPlayerState() == PlayerState.EVENT
+                    && eventDamager instanceof TNTTagEvent) {
+                e.setDamage(0.0D);
+                return;
+            }
+
             Match match = this.plugin.getMatchManager().getMatch(entityData);
 
             if(match == null) {
                 e.setDamage(0.0D);
+                return;
+            }
+
+            if (match.getKit().isTnttag()) {
+
                 return;
             }
 
@@ -206,7 +270,7 @@ public class EntityListener implements Listener {
                 return;
             }
 
-            if (match.getKit().isSpleef() || match.getKit().isSumo()) {
+            if (match.getKit().isSpleef() || match.getKit().isSumo() || match.getKit().isTnttag()) {
                 e.setDamage(0.0D);
             }
 
@@ -216,7 +280,7 @@ public class EntityListener implements Listener {
                     public void run() {
                         if (match.getKit().isCombo()) {
                             entity.setNoDamageTicks(3);
-                        }else{
+                        } else {
                             entity.setNoDamageTicks(20);
                         }
                     }

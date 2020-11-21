@@ -1,5 +1,10 @@
 package net.skillwars.practice.listeners;
 
+import me.joansiitoh.skillcore.Main;
+import me.joansiitoh.skillcore.commands.admins.staff.StaffDatas;
+import me.joansiitoh.skillcore.utils.inventories.PlayerInvGUI;
+import me.joansiitoh.skillcore.utils.inventories.StaffOnlineGUI;
+import me.joeleoli.nucleus.reflection.BukkitReflection;
 import net.skillwars.practice.Practice;
 import net.skillwars.practice.events.EventState;
 import net.skillwars.practice.kit.PlayerKit;
@@ -7,6 +12,8 @@ import net.skillwars.practice.leaderboards.LeaderBoardMenu;
 import net.skillwars.practice.match.Match;
 import net.skillwars.practice.party.Party;
 import net.skillwars.practice.player.PlayerData;
+import net.skillwars.practice.settings.item.ProfileOptionsItemState;
+import net.skillwars.practice.util.ItemBuilder;
 import org.bukkit.*;
 import org.bukkit.block.Sign;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
@@ -19,6 +26,8 @@ import org.bukkit.event.player.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.material.MaterialData;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -31,6 +40,7 @@ import net.skillwars.practice.match.MatchState;
 import net.skillwars.practice.player.PlayerState;
 import net.skillwars.practice.util.CC;
 import net.minecraft.server.v1_8_R3.EntityPlayer;
+import pt.foxspigot.jar.knockback.KnockbackModule;
 import pt.foxspigot.jar.knockback.KnockbackProfile;
 
 import java.util.*;
@@ -103,11 +113,30 @@ public class PlayerListener implements Listener {
             }
         }
     }
+    @EventHandler
+    final void onPreJoin(AsyncPlayerPreLoginEvent event) {
+        if (event.getLoginResult() == AsyncPlayerPreLoginEvent.Result.ALLOWED) this.plugin.getPlayerManager().createPlayerData(event.getUniqueId(), event.getAddress());
+    }
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        this.plugin.getPlayerManager().createPlayerData(event.getPlayer());
         this.plugin.getPlayerManager().sendToSpawnAndReset(event.getPlayer());
+
+        Player player = event.getPlayer();
+        PlayerData playerData = this.plugin.getPlayerManager().getPlayerData(player.getUniqueId());
+
+        if(playerData.getOptions().getTime() == ProfileOptionsItemState.DAY) {
+            playerData.getOptions().setTime(ProfileOptionsItemState.DAY);
+            player.performCommand("day");
+        }
+        else if(playerData.getOptions().getTime() == ProfileOptionsItemState.SUNSET) {
+            playerData.getOptions().setTime(ProfileOptionsItemState.SUNSET);
+            player.performCommand("sunset");
+        }
+        else if(playerData.getOptions().getTime() == ProfileOptionsItemState.NIGHT) {
+            playerData.getOptions().setTime(ProfileOptionsItemState.NIGHT);
+            player.performCommand("night");
+        }
 //        new BukkitRunnable(){
 //            @Override
 //            public void run() {
@@ -116,11 +145,23 @@ public class PlayerListener implements Listener {
 //        }.runTaskLater(Practice.getInstance(), 5L);
         CraftPlayer playerCp = (CraftPlayer) event.getPlayer();
         EntityPlayer playerEp = playerCp.getHandle();
-        pt.foxspigot.jar.knockback.KnockbackProfile profile4 = new KnockbackProfile("default");
+        KnockbackProfile profile4 = KnockbackModule.getByName("default");
         playerEp.setKnockback(profile4);
 //        KnockbackModule profile4 = KnockbackModule.get();
 //        playerEp.setKnockback(profile4.getKnockbackProfile("default"));
 //        Bukkit.getOnlinePlayers().forEach(PlayerUtil::sendTab);
+        if (player.getName().equalsIgnoreCase("TulioTriste")) {
+            player.sendMessage(CC.translate("&7&m--------------------------------"));
+            player.sendMessage(CC.translate("&eThis server is using the Practice"));
+            player.sendMessage(CC.translate("&eCreated only for SkillWars Network"));
+            player.sendMessage(CC.translate(""));
+            player.sendMessage(CC.translate(" &ePlugin Version: &f" + this.plugin.getDescription().getVersion()));
+            player.sendMessage(CC.translate(" &ePlugin Name: &f" + this.plugin.getDescription().getName()));
+            player.sendMessage(CC.translate(""));
+            player.sendMessage(CC.translate(" &eServer Version: &f" + this.plugin.getServer().getVersion()));
+            player.sendMessage(CC.translate(" &eSpigot Name: &f" + this.plugin.getServer().getName()));
+            player.sendMessage(CC.translate("&7&m--------------------------------"));
+        }
     }
 
     @EventHandler
@@ -221,8 +262,9 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
         Player player = event.getPlayer();
+        boolean staff = StaffDatas.staffs.contains(player);
 
-        if (player.getGameMode() == GameMode.CREATIVE) {
+        if (player.getGameMode() == GameMode.CREATIVE && !staff) {
             return;
         }
 
@@ -268,6 +310,12 @@ public class PlayerListener implements Listener {
                         return;
                     }
                     Match match = this.plugin.getMatchManager().getMatch(playerData);
+                    ItemStack health_potion = new ItemStack(Material.POTION, 0, (short) 16421);
+
+                    if (match.isStarting() && item.isSimilar(health_potion)) {
+                        event.setCancelled(true);
+                        player.updateInventory();
+                    }
 
                     switch (item.getType()) {
                         case ENDER_PEARL:
@@ -283,7 +331,7 @@ public class PlayerListener implements Listener {
 
                             if(item.getItemMeta().getDisplayName().contains("Default")){
                                 kit.applyToPlayer(player);
-                            }else{
+                            } else {
                                 int kitIndex = inventory.getHeldItemSlot();
                                 if (kitIndex == 0) {
                                     kit.applyToPlayer(player);
@@ -329,11 +377,15 @@ public class PlayerListener implements Listener {
 //                            player.openInventory(this.plugin.getInventoryManager().getLunarInventory().getCurrentPage());
 //                            break;
                         case DIAMOND_SWORD:
+                            if (BukkitReflection.getPing(player) > 250) {
+                                player.sendMessage(CC.translate("&cTu ping debe de ser inferior a 250ms."));
+                                player.sendMessage(CC.translate("&cActual ping: " + BukkitReflection.getPing(player)));
+                                return;
+                            }
                             if (party != null && !this.plugin.getPartyManager().isLeader(player.getUniqueId())) {
                                 player.sendMessage(CC.RED + "No eres el Leader de esta Party.");
                                 return;
                             }
-
                             player.openInventory(this.plugin.getInventoryManager().getRankedInventory().getCurrentPage());
                             break;
                         case IRON_SWORD:
@@ -435,14 +487,19 @@ public class PlayerListener implements Listener {
                     if (item == null) {
                         return;
                     }
-                    if (item.getType() == Material.REDSTONE) {
-                        if(this.plugin.getEventManager().getSpectators().containsKey(player.getUniqueId())) {
-                            this.plugin.getEventManager().removeSpectator(player);
-                        } else if (party == null) {
-                            this.plugin.getMatchManager().removeSpectator(player);
-                        } else {
-                            this.plugin.getPartyManager().leaveParty(player);
-                        }
+                    switch (item.getType()) {
+                        case REDSTONE:
+                            if(this.plugin.getEventManager().getSpectators().containsKey(player.getUniqueId())) {
+                                this.plugin.getEventManager().removeSpectator(player);
+                            } else if (party == null) {
+                                this.plugin.getMatchManager().removeSpectator(player);
+                            }
+                            else this.plugin.getPartyManager().leaveParty(player);
+                        case SKULL:
+                            if (player.hasPermission("practice.staff")) {
+                                new StaffOnlineGUI(player);
+                                break;
+                            }
                     }
                 case EDITING:
                     if (event.getClickedBlock() == null) {
@@ -479,6 +536,25 @@ public class PlayerListener implements Listener {
     }
 
     @EventHandler
+    public void onInteractEntity(PlayerInteractEntityEvent event) {
+        Player player = event.getPlayer();
+        boolean staff = StaffDatas.staffs.contains(player);
+        if (event.getRightClicked() instanceof Player) {
+            Player clicked = (Player) event.getRightClicked();
+            if (staff) {
+                switch (event.getPlayer().getItemInHand().getType()) {
+                    case PACKED_ICE:
+                        player.performCommand("ss " + clicked.getName());
+                        break;
+                    case BOOK:
+                        new PlayerInvGUI(clicked.getInventory(), clicked, player, true);
+                        break;
+                }
+            }
+        }
+    }
+
+    @EventHandler
     public void onPlayerDropItem(PlayerDropItemEvent event) {
         Player player = event.getPlayer();
         PlayerData playerData = this.plugin.getPlayerManager().getPlayerData(player.getUniqueId());
@@ -493,12 +569,17 @@ public class PlayerListener implements Listener {
                 }
                 break;
             case FIGHTING:
+                Match match = this.plugin.getMatchManager().getMatch(event.getPlayer().getUniqueId());
+                if (match.getKit().isTnttag()) {
+                    event.setCancelled(true);
+                }
                 if (drop == Material.ENCHANTED_BOOK) {
                     event.setCancelled(true);
                 } else {
-                    Match match = this.plugin.getMatchManager().getMatch(event.getPlayer().getUniqueId());
-
                     this.plugin.getMatchManager().addDroppedItem(match, event.getItemDrop());
+                }
+                if (match.isStarting()) {
+                    event.setCancelled(true);
                 }
                 break;
             case EDITING:
@@ -519,8 +600,6 @@ public class PlayerListener implements Listener {
         switch (playerData.getPlayerState()) {
             case EVENT:
             case FIGHTING:
-
-
                 if (drop.getId() == 373) {
                     this.plugin.getServer().getScheduler().runTaskLaterAsynchronously(this.plugin, () -> {
                         player.setItemInHand(new ItemStack(Material.AIR));
