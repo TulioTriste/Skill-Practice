@@ -16,6 +16,8 @@ import net.skillwars.practice.events.sumo.SumoEvent;
 import net.skillwars.practice.events.sumo.SumoPlayer;
 import net.skillwars.practice.events.teamfights.TeamFightEvent;
 import net.skillwars.practice.events.teamfights.TeamFightPlayer;
+import net.skillwars.practice.events.tnttag.TNTTagEvent;
+import net.skillwars.practice.events.tnttag.TNTTagPlayer;
 import net.skillwars.practice.file.Config;
 import net.skillwars.practice.match.Match;
 import net.skillwars.practice.match.MatchTeam;
@@ -382,6 +384,51 @@ public class PracticeAdapter implements FrameAdapter {
 												.replace("{blueMax}", String.valueOf(teamfightEvent.getBlueFighting().size()))
 												.replace("{redLeft}", String.valueOf(redPlayers.size()))
 												.replace("{redMax}", String.valueOf(teamfightEvent.getRedFighting().size()));
+												lines.add(Color.translate(linessb3));
+											}
+										}
+										continue;
+									}
+									lines.add(Color.translate(linessb2));
+								}
+							}
+							continue;
+						}
+						else if (linessb.contains("{tnttag}")) {
+							if (event instanceof TNTTagEvent) {
+								TNTTagEvent tntTagEvent = (TNTTagEvent) event;
+								int playingtnttag = tntTagEvent.getByState(TNTTagPlayer.TNTTagState.WAITING).size() + tntTagEvent.getByState(TNTTagPlayer.TNTTagState.FIGHTING).size() + tntTagEvent.getByState(TNTTagPlayer.TNTTagState.PREPARING).size();
+								int limittnttag = tntTagEvent.getLimit();
+								for (String linessb2 : config.getConfig().getStringList("lobby.in-event-tnttag-lines")) {
+									linessb2 = linessb2.replace("{players}", String.valueOf(playingtnttag))
+											.replace("{limit}", String.valueOf(limittnttag));
+									if (linessb2.contains("{starting}")) {
+										int countdown = tntTagEvent.getCountdownTask().getTimeUntilStart();
+										if (countdown > 0 && countdown <= 60) {
+											for (String linessb3 : config.getConfig().getStringList("lobby.in-event-tnttag-starting-lines")) {
+												linessb3 = linessb3.replace("{time}", String.valueOf(countdown));
+												lines.add(Color.translate(linessb3));
+											}
+										}
+										continue;
+									}
+									if (linessb2.contains("{state}")) {
+										if (tntTagEvent.getPlayer(player) != null) {
+											TNTTagPlayer teamfightPlayer = tntTagEvent.getPlayer(player);
+											for (String linessb3 : config.getConfig().getStringList("lobby.in-event-tnttag-state-lines")) {
+												linessb3 = linessb3.replace("{state}", StringUtils.capitalize(teamfightPlayer.getState().name().toLowerCase()));
+												lines.add(Color.translate(linessb3));
+											}
+										}
+										continue;
+									}
+									if (linessb2.contains("{fight}")) {
+										if (tntTagEvent.getState().equals(EventState.STARTED)) {
+											for (String linessb3 : config.getConfig().getStringList("lobby.in-event-tnttag-fighting-lines")) {
+												Player bomb = tntTagEvent.getBomb();
+												linessb3 = linessb3.replace("{playerBomb}", bomb.getName())
+													.replace("{countdown}", String.valueOf(tntTagEvent.getCountdownTest().time))
+												.replace("{leftPlayers}", String.valueOf(tntTagEvent.getFighting().size()));
 												lines.add(Color.translate(linessb3));
 											}
 										}

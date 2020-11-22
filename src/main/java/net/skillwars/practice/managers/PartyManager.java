@@ -71,7 +71,7 @@ public class PartyManager {
         this.plugin.getInventoryManager().addParty(player);
         this.plugin.getPlayerManager().sendToSpawnAndResetNoTP(player);
 
-        player.sendMessage(CC.SECONDARY + "Has creado una Party.");
+        player.sendMessage(CC.GREEN + "Has creado una Party.");
     }
 
     private void disbandParty(Party party, boolean tournament) {
@@ -82,7 +82,7 @@ public class PartyManager {
             party.getBroadcastTask().cancel();
         }
 
-        party.broadcast(CC.SECONDARY + "Tu Party ha sido disbandeada.");
+        party.broadcast(CC.RED + "Tu Party ha sido eliminada.");
 
         party.members().forEach(member -> {
             PlayerData memberData = this.plugin.getPlayerManager().getPlayerData(member.getUniqueId());

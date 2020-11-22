@@ -35,6 +35,7 @@ public class TNTTagEvent extends PracticeEvent<TNTTagPlayer> {
     public Map<UUID, TNTTagPlayer> players = new HashMap<>();
     @Getter HashSet<String> fighting = new HashSet<>();
     private final TNTTagCountdownTask countdownTask = new TNTTagCountdownTask(this);
+    @Getter public TNTTagTimeTask countdownTest = new TNTTagTimeTask();
     @Getter Player bomb;
 
     public TNTTagEvent() {
@@ -121,7 +122,7 @@ public class TNTTagEvent extends PracticeEvent<TNTTagPlayer> {
     }
 
     private void selectPlayers() {
-        sendMessage(ChatColor.YELLOW + "(Event) " + ChatColor.GRAY + "Teletransportando jugadores...");
+        sendMessage("&e[Evento] &fTeletransportando jugadores...");
 
         this.fighting.clear();
 
@@ -136,7 +137,7 @@ public class TNTTagEvent extends PracticeEvent<TNTTagPlayer> {
             }
         }
 
-        new TNTTagTimeTask().runTaskTimer(getPlugin(), 0L, 20L);
+        countdownTest.runTaskTimer(getPlugin(), 0L, 20L);
     }
 
     public List<UUID> getByState(TNTTagPlayer.TNTTagState state) {
@@ -146,7 +147,7 @@ public class TNTTagEvent extends PracticeEvent<TNTTagPlayer> {
     @Getter
     @RequiredArgsConstructor
     public class TNTTagTimeTask extends BukkitRunnable {
-        private int time = 61;
+        @Getter public int time = 61;
 
         @Override
         public void run() {

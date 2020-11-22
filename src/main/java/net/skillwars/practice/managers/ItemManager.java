@@ -24,8 +24,8 @@ public class ItemManager {
 
     public ItemManager() {
         this.spawnItems = new ItemStack[]{
-                ItemUtil.createItem(Material.IRON_SWORD, CC.YELLOW + "Join UnRanked Queue"),
-                ItemUtil.createItem(Material.DIAMOND_SWORD, CC.GREEN + "Join Ranked Queue"),
+                ItemUtil.createItem(Material.IRON_SWORD, CC.YELLOW + "Entrar UnRanked Queue"),
+                ItemUtil.createItem(Material.DIAMOND_SWORD, CC.GREEN + "Entrar Ranked Queue"),
                 null,
                 null,
                 ItemUtil.createItem(Material.NETHER_STAR, CC.YELLOW + "Estadisticas"),
@@ -39,11 +39,11 @@ public class ItemManager {
                 ItemUtil.createItem(Material.DIAMOND_SWORD, CC.GREEN + "Join Ranked Queue"),
                 null,
                 null,
-                ItemUtil.createItem(Material.NAME_TAG, CC.PRIMARY + "Create Party"),
+                ItemUtil.createItem(Material.NAME_TAG, CC.PRIMARY + "Crear Party"),
                 null,
                 null,
                 ItemUtil.createItem(Material.COMPASS, CC.PRIMARY + "Ajustes"),
-                ItemUtil.createItem(Material.BOOK, CC.GOLD + "Edit Kits"),
+                ItemUtil.createItem(Material.BOOK, CC.GOLD + "Editar Kits"),
         };
         this.queueItems = new ItemStack[]{
                 null,
@@ -87,7 +87,7 @@ public class ItemManager {
                 null,
                 null,
                 null,
-                ItemUtil.createItem(Material.REDSTONE, CC.RED + "Leave Party")
+                ItemUtil.createItem(Material.REDSTONE, CC.RED + "Salir Party")
         };
         this.tournamentItems = new ItemStack[]{
                 null,
@@ -98,7 +98,7 @@ public class ItemManager {
                 null,
                 null,
                 null,
-                ItemUtil.createItem(Material.REDSTONE, CC.RED + "Leave Tournament")
+                ItemUtil.createItem(Material.REDSTONE, CC.RED + "Salir Tournament")
         };
         this.eventItems = new ItemStack[]{
                 null,
@@ -112,16 +112,16 @@ public class ItemManager {
                 ItemUtil.createItem(Material.NETHER_STAR, CC.RED + "Leave Event"),
         };
         this.partyItems = new ItemStack[]{
-                ItemUtil.createItem(Material.IRON_SWORD, CC.YELLOW + "Join 2v2 UnRanked Queue"),
-                ItemUtil.createItem(Material.DIAMOND_SWORD, CC.GREEN + "Join 2v2 Ranked Queue"),
+                ItemUtil.createItem(Material.IRON_SWORD, CC.YELLOW + "Entrar 2v2 UnRanked Queue"),
+                ItemUtil.createItem(Material.DIAMOND_SWORD, CC.GREEN + "Entrar 2v2 Ranked Queue"),
                 null,
                 null,
-                ItemUtil.createItem(Material.DIAMOND_AXE, CC.AQUA + "Start Party Event"),
-                ItemUtil.createItem(Material.IRON_AXE, CC.PRIMARY + "Fight Other Party"),
+                ItemUtil.createItem(Material.DIAMOND_AXE, CC.AQUA + "Iniciar Evento de Party"),
+                ItemUtil.createItem(Material.IRON_AXE, CC.PRIMARY + "Pelear contra otras Partys"),
                 null,
-                ItemUtil.createItem(Material.BONE, CC.YELLOW + "Settings"),
-                ItemUtil.createItem(Material.REDSTONE, CC.RED + "Leave Party")
+                ItemUtil.createItem(Material.BONE, CC.YELLOW + "Opciones"),
+                ItemUtil.createItem(Material.REDSTONE, CC.RED + "Salir Party")
         };
-        this.defaultBook = ItemUtil.createItem(Material.ENCHANTED_BOOK, CC.PRIMARY + "Default Kit");
+        this.defaultBook = ItemUtil.createItem(Material.ENCHANTED_BOOK, CC.PRIMARY + "Kit Default");
     }
 }

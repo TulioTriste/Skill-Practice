@@ -645,6 +645,9 @@ public class PlayerListener implements Listener {
 
         switch (playerData.getPlayerState()) {
             case FIGHTING:
+                int potsLeft = (int) Arrays.stream(player.getInventory().getContents())
+                        .filter(Objects::nonNull).map(ItemStack::getDurability).filter(d -> d == 16421).count();
+                playerData.setPotsLeft(potsLeft);
                 this.plugin.getMatchManager().removeFighter(player, playerData, true);
                 break;
             case EVENT:

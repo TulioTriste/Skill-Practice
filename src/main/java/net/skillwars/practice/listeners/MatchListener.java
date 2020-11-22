@@ -1,6 +1,7 @@
 package net.skillwars.practice.listeners;
 
 import me.joansiitoh.datas.events.NickUpdateEvent;
+import me.joansiitoh.skillcore.apis.NametagEdit;
 import me.joeleoli.nucleus.nametag.NameTagHandler;
 import net.skillwars.practice.Practice;
 import net.skillwars.practice.commands.management.PlayersCommand;
@@ -28,10 +29,12 @@ import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import pt.foxspigot.jar.knockback.KnockbackModule;
 import pt.foxspigot.jar.knockback.KnockbackProfile;
 
+import javax.swing.*;
 import java.util.*;
 
 public class MatchListener implements Listener {
@@ -80,6 +83,21 @@ public class MatchListener implements Listener {
         CustomLocation locationCenter = match.getArena().getCenter();
         List<Location> locs = Circle.getCircle(MathUtil.getMiddle(locationA.toBukkitLocation(), locationB.toBukkitLocation()), kit.isSumo() ? 2 : 10,
                 match.getTeams().get(0).getAlivePlayers().size());
+
+        match.getTeams().forEach(team -> team.getAlivePlayers().forEach(player1 -> {
+            Player p1 = Bukkit.getPlayer(player1);
+            team.getAlivePlayers().forEach(player2 -> {
+                Player p2 = Bukkit.getPlayer(player2);
+                //if (player1 == player2) return;
+                if (team.getPlayers().contains(player1) && team.getPlayers().contains(player2)) {
+                    NameTagHandler.addToTeam(p1, p2, ChatColor.GREEN, kit.isBuild());
+                    NameTagHandler.addToTeam(p2, p1, ChatColor.GREEN, kit.isBuild());
+                } else {
+                    NameTagHandler.addToTeam(p1, p2, ChatColor.RED, kit.isBuild());
+                    NameTagHandler.addToTeam(p2, p1, ChatColor.RED, kit.isBuild());
+                }
+            });
+        }));
 
         match.getTeams().forEach(team -> team.alivePlayers().forEach(player -> {
             matchPlayers.add(player);
@@ -137,29 +155,26 @@ public class MatchListener implements Listener {
                 playerData.setPlayerState(PlayerState.FIGHTING);
             }
 
-            if(match.isFFA()){
+            /*if (match.isFFA()) {
                 for (UUID uuid : team.getAlivePlayers()){
                     Player teamplayer = this.plugin.getServer().getPlayer(uuid);
                     NameTagHandler.removeFromTeams(player, teamplayer);
                     NameTagHandler.addToTeam(player, teamplayer, ChatColor.RED, kit.isBuild());
-                    Bukkit.getServer().getPluginManager().callEvent(new NickUpdateEvent(teamplayer));
                 }
-            }else{
+            } else {
                 MatchTeam otherteam = team == match.getTeams().get(0) ? match.getTeams().get(1) : match.getTeams().get(0);
                 for (UUID memberUUID : team.getAlivePlayers()){
                     Player member = this.plugin.getServer().getPlayer(memberUUID);
                     NameTagHandler.removeFromTeams(player, member);
                     NameTagHandler.addToTeam(player, member, ChatColor.GREEN, kit.isBuild());
-                    Bukkit.getServer().getPluginManager().callEvent(new NickUpdateEvent(member));
 
                 }
                 for (UUID enemyUUID : otherteam.getAlivePlayers()){
                     Player enemy = this.plugin.getServer().getPlayer(enemyUUID);
                     NameTagHandler.removeFromTeams(player, enemy);
                     NameTagHandler.addToTeam(player, enemy, ChatColor.RED, kit.isBuild());
-                    Bukkit.getServer().getPluginManager().callEvent(new NickUpdateEvent(enemy));
                 }
-            }
+            }*/
 
             if(kit.isSumo() || match.getKit().isSpleef()){
                 PlayerUtil.denyMovement(player);
@@ -189,15 +204,41 @@ public class MatchListener implements Listener {
     @EventHandler
     public void onMatchEnd(MatchEndEvent event) {
         Match match = event.getMatch();
-        Clickable inventories = new Clickable(CC.WHITE + "Inventarios: ");
 
         match.setMatchState(MatchState.ENDING);
         match.setWinningTeamId(event.getWinningTeam().getTeamID());
         match.setCountdown(4);
 
+        /*event.getWinningTeam().getPlayers().forEach(uuidWin -> {
+            Player pWin1 = Bukkit.getPlayer(uuidWin);
+            event.getWinningTeam().getPlayers().forEach(uuidWin2 -> {
+                Player pWin2 = Bukkit.getPlayer(uuidWin2);
+                if (pWin1 == pWin2) return;
+                NameTagHandler.removeFromTeams(pWin1, pWin2);
+                NameTagHandler.removeFromTeams(pWin2, pWin1);
+            });
+            event.getLosingTeam().getPlayers().forEach(uuidLos -> {
+                Player pLos1 = Bukkit.getPlayer(uuidLos);
+                NameTagHandler.removeFromTeams(pLos1, pWin1);
+                NameTagHandler.removeFromTeams(pWin1, pLos1);
+            });
+        });
+        event.getLosingTeam().getPlayers().forEach(uuidLos -> {
+            Player pLos1 = Bukkit.getPlayer(uuidLos);
+            event.getLosingTeam().getPlayers().forEach(uuidLos2 -> {
+                Player pLos2 = Bukkit.getPlayer(uuidLos2);
+                if (pLos1 == pLos2) return;
+                NameTagHandler.removeFromTeams(pLos1, pLos2);
+                NameTagHandler.removeFromTeams(pLos2, pLos1);
+            });
+        });*/
+
         if (match.isFFA()) {
             Player winner = this.plugin.getServer().getPlayer(event.getWinningTeam().getAlivePlayers().get(0));
-            String winnerMessage = CC.WHITE + "Ganador: " + CC.SECONDARY + winner.getName();
+            PlayerData winnerData = this.plugin.getPlayerManager().getPlayerData(winner.getUniqueId());
+            Player losser = this.plugin.getServer().getPlayer(event.getLosingTeam().getAlivePlayers().get(0));
+            PlayerData losserData = this.plugin.getPlayerManager().getPlayerData(losser.getUniqueId());
+            Clickable inventories = new Clickable("            " + CC.DARK_AQUA);
 
             event.getWinningTeam().players().forEach(player -> {
                 PlayerData data = this.plugin.getPlayerManager().getPlayerData(player.getUniqueId());
@@ -205,18 +246,23 @@ public class MatchListener implements Listener {
                 if (!match.hasSnapshot(player.getUniqueId())) {
                     match.addSnapshot(player);
                 }
-                inventories.add((player.getUniqueId() == winner.getUniqueId() ? CC.GREEN : CC.RED)
-                                + player.getName() + " ",
-                        CC.WHITE + "Ver inventario",
-                        "/inv " + match.getSnapshot(player.getUniqueId()).getSnapshotId());
+                if (player.getUniqueId() == winner.getUniqueId()) {
+                    inventories.add(CC.DARK_AQUA + player.getName() + CC.GRAY + " vs ",
+                            CC.AQUA + "Ver inventario",
+                            "/inv " + match.getSnapshot(player.getUniqueId()).getSnapshotId());
+                } else {
+                    inventories.add(CC.DARK_AQUA + player.getName(),
+                            CC.AQUA + "Ver inventario",
+                            "/inv " + match.getSnapshot(player.getUniqueId()).getSnapshotId());
+                }
 
 
                 NameTagHandler.removeHealthDisplay(player);
 
-                event.getLosingTeam().players().forEach(other -> {
+                /*event.getLosingTeam().players().forEach(other -> {
                     NameTagHandler.removeFromTeams(other, player);
                     NameTagHandler.removeFromTeams(player, other);
-                });
+                });*/
                 if (match.getKit().isCombo()) {
                     player.setMaximumNoDamageTicks(20);
                     CraftPlayer playerCp = (CraftPlayer) player;
@@ -233,11 +279,31 @@ public class MatchListener implements Listener {
                 this.plugin.getInventoryManager().addSnapshot(snapshot);
             }
 
-            match.broadcast(winnerMessage);
+            match.broadcast("&b" + winner.getName() + " &fha &aGanado &fla Pelea.");
+            match.broadcast("&7&m---------------------------------------");
+            match.broadcast("                  &b" + match.getKit().getName() + " &7- &b" + TimeUtil.millisToTimer(match.getElapsedDuration()));
+            match.broadcast("");
             match.broadcast(inventories);
+            match.broadcast("");
+            match.broadcast("               &f" + winnerData.getHits() + " &7- &bGolpes dados &7- &f" + losserData.getHits());
+            match.broadcast("            &f" + winnerData.getLongestCombo() + " &7- &bCombo mas largo &7- &f" + losserData.getLongestCombo());
+            if (match.getKit().getName().equalsIgnoreCase("NoDebuff") || match.getKit().getName().equalsIgnoreCase("NoDebuffLite") ||
+                    match.getKit().getName().equalsIgnoreCase("AxePvP") || match.getKit().getName().equalsIgnoreCase("HCF") ||
+                    match.getKit().getName().equalsIgnoreCase("Tanqueado") || match.getKit().getName().equalsIgnoreCase("Debuff")) {
+                match.broadcast("         &f" + winnerData.getPotsLeft() + " &7- &bPociones restantes &7- &f" + losserData.getPotsLeft());
+                match.broadcast("         &f" + winnerData.getMissedPots() + " &7- &bPociones gastadas &7- &f" + losserData.getMissedPots());
+            }
+            match.broadcast("");
+            match.broadcast("                        &f" + MathUtil.roundToHalves(winner.getHealth() / 2.0D) + " / 10 &c❤");
+            match.broadcast(CC.translate("&7&m---------------------------------------"));
         } else if (match.isRedrover()) {
             match.broadcast(CC.SECONDARY + event.getWinningTeam().getLeaderName() + CC.PRIMARY + " ha ganado el Redrover!");
         } else {
+            Player winner = Bukkit.getPlayer(event.getWinningTeam().getLeader());
+            Player losser = Bukkit.getPlayer(event.getLosingTeam().getLeader());
+            PlayerData winnerData = this.plugin.getPlayerManager().getPlayerData(winner.getUniqueId());
+            PlayerData losserData = this.plugin.getPlayerManager().getPlayerData(losser.getUniqueId());
+            Clickable inventories = new Clickable("            " + CC.DARK_AQUA);
             match.getTeams().forEach(team -> team.players().forEach(player -> {
                 PlayerData data = this.plugin.getPlayerManager().getPlayerData(player.getUniqueId());
                 data.setPlayerState(PlayerState.SPAWN);
@@ -245,17 +311,20 @@ public class MatchListener implements Listener {
                     match.addSnapshot(player);
                 }
 
-                boolean onWinningTeam =
-                        this.plugin.getPlayerManager().getPlayerData(player.getUniqueId()).getTeamID() ==
-                                event.getWinningTeam().getTeamID();
-                inventories.add((onWinningTeam ? CC.GREEN : CC.RED)
-                                + player.getName() + " ",
-                        CC.WHITE + "Ver inventario",
-                        "/inv " + match.getSnapshot(player.getUniqueId()).getSnapshotId());
+                boolean onWinningTeam = this.plugin.getPlayerManager().getPlayerData(player.getUniqueId()).getTeamID() == event.getWinningTeam().getTeamID();
+                if (onWinningTeam) {
+                    inventories.add(CC.DARK_AQUA + player.getName() + CC.GRAY + " vs ",
+                            CC.AQUA + "Ver inventario",
+                            "/inv " + match.getSnapshot(player.getUniqueId()).getSnapshotId());
+                } else {
+                    inventories.add(CC.DARK_AQUA + player.getName(),
+                            CC.AQUA + "Ver inventario",
+                            "/inv " + match.getSnapshot(player.getUniqueId()).getSnapshotId());
+                }
 
                 MatchTeam otherTeam = team == match.getTeams().get(0) ? match.getTeams().get(1) : match.getTeams().get(0);
 
-                NameTagHandler.removeHealthDisplay(player);
+                /*NameTagHandler.removeHealthDisplay(player);
                 for (UUID uuid : otherTeam.getAlivePlayers()){
                     Player teamplayer = this.plugin.getServer().getPlayer(uuid);
 
@@ -269,7 +338,7 @@ public class MatchListener implements Listener {
                     NameTagHandler.removeFromTeams(player, teamplayer);
                     NameTagHandler.removeFromTeams(teamplayer, player);
                     NameTagHandler.removeHealthDisplay(teamplayer);
-                }
+                }*/
 
                 if (match.getKit().isCombo()) {
                     player.setMaximumNoDamageTicks(20);
@@ -283,11 +352,30 @@ public class MatchListener implements Listener {
                 this.plugin.getInventoryManager().addSnapshot(snapshot);
             }
 
-            String winnerMessage = CC.WHITE + (match.isParty() ? "Ha ganado el team: " : "Ganador: ")
-                    + CC.SECONDARY + event.getWinningTeam().getLeaderName();
+            if (match.getKit().getName().equalsIgnoreCase("NoDebuff") || match.getKit().getName().equalsIgnoreCase("NoDebuffLite") ||
+                    match.getKit().getName().equalsIgnoreCase("AxePvP") || match.getKit().getName().equalsIgnoreCase("HCF") ||
+                    match.getKit().getName().equalsIgnoreCase("Tanqueado") || match.getKit().getName().equalsIgnoreCase("Debuff")) {
+                winnerData.setPotsLeft((int) Arrays.stream(winner.getInventory().getContents())
+                        .filter(Objects::nonNull).map(ItemStack::getDurability).filter(d -> d == 16421).count());
+            }
 
-            match.broadcast(winnerMessage);
+            match.broadcast("&b" + winner.getName() + " &fha &aGanado &fla Pelea.");
+            match.broadcast("&7&m---------------------------------------");
+            match.broadcast("                  &b" + match.getKit().getName() + " &7- &b" + TimeUtil.millisToTimer(match.getElapsedDuration()));
+            match.broadcast("");
             match.broadcast(inventories);
+            match.broadcast("");
+            match.broadcast("               &f" + winnerData.getHits() + " &7- &bGolpes dados &7- &f" + losserData.getHits());
+            match.broadcast("            &f" + winnerData.getLongestCombo() + " &7- &bCombo mas largo &7- &f" + losserData.getLongestCombo());
+            if (match.getKit().getName().equalsIgnoreCase("NoDebuff") || match.getKit().getName().equalsIgnoreCase("NoDebuffLite") ||
+                    match.getKit().getName().equalsIgnoreCase("AxePvP") || match.getKit().getName().equalsIgnoreCase("HCF") ||
+                    match.getKit().getName().equalsIgnoreCase("Tanqueado") || match.getKit().getName().equalsIgnoreCase("Debuff")) {
+                match.broadcast("         &f" + winnerData.getPotsLeft() + " &7- &bPociones restantes &7- &f" + losserData.getPotsLeft());
+                match.broadcast("         &f" + winnerData.getMissedPots() + " &7- &bPociones gastadas &7- &f" + losserData.getMissedPots());
+            }
+            match.broadcast("");
+            match.broadcast("                        &f" + MathUtil.roundToHalves(winner.getHealth() / 2.0D) + " / 10 &c❤");
+            match.broadcast(CC.translate("&7&m---------------------------------------"));
 
             if (match.getType().isRanked()) {
                 String kitName = match.getKit().getName();

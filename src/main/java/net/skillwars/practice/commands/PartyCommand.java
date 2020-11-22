@@ -24,18 +24,18 @@ public class PartyCommand extends Command {
     private static String[] HELP_MESSAGE = new String[] {
             CC.DARK_GRAY + CC.STRIKE_THROUGH + "----------------------------------------------------",
             CC.PRIMARY + CC.BOLD + "Comandos de Party",
-            CC.GRAY + " - " + CC.SECONDARY + "/party help " + CC.GRAY + "-" + CC.WHITE + " Mostrar ayuda de la party.",
+            CC.GRAY + " - " + CC.SECONDARY + "/party help " + CC.GRAY + "-" + CC.WHITE + " Mostrar comandos de la party.",
             CC.GRAY + " - " + CC.SECONDARY + "/party create " + CC.GRAY + "-" + CC.WHITE + " Crear una party.",
-            CC.GRAY + " - " + CC.SECONDARY + "/party leave " + CC.GRAY + "-" + CC.WHITE + " Dejar una party.",
+            CC.GRAY + " - " + CC.SECONDARY + "/party leave " + CC.GRAY + "-" + CC.WHITE + " Salirse una party.",
             CC.GRAY + " - " + CC.SECONDARY + "/party info " + CC.GRAY + "-" + CC.WHITE + " Información de tu party.",
             CC.GRAY + " - " + CC.SECONDARY + "/party join (player) " + CC.GRAY  + "-" + CC.WHITE + " Entra a una party.",
             "",
-            CC.PRIMARY + CC.BOLD + "Commandos de Líder",
+            CC.PRIMARY + CC.BOLD + "Comandos de Líder",
             CC.GRAY + " - " + CC.SECONDARY + "/party open " + CC.GRAY + "-" + CC.WHITE + " Abre tu party para que otros se puedan unir.",
             CC.GRAY + " - " + CC.SECONDARY + "/party lock " + CC.GRAY + "-" + CC.WHITE + " Cerrar tu party para que otros no se puedan unir.",
-            CC.GRAY + " - " + CC.SECONDARY + "/party setlimit (amount) " + CC.GRAY + "-" + CC.WHITE + "Ponle un límite a tu party.",
+            CC.GRAY + " - " + CC.SECONDARY + "/party setlimit (amount) " + CC.GRAY + "-" + CC.WHITE + "Pon un límite a tu party.",
             CC.GRAY + " - " + CC.SECONDARY + "/party invite (player) " + CC.GRAY + "-" + CC.WHITE + " Invita a jugadores a tu party.",
-            CC.GRAY + " - " + CC.SECONDARY + "/party kick (player) " + CC.GRAY + "-" + CC.WHITE + " Remueve a un jugador de tu party.",
+            CC.GRAY + " - " + CC.SECONDARY + "/party kick (player) " + CC.GRAY + "-" + CC.WHITE + " Elimina a un jugador de tu party.",
             CC.DARK_GRAY + CC.STRIKE_THROUGH + "----------------------------------------------------"
     };
 

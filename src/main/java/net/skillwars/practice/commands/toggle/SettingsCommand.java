@@ -14,8 +14,8 @@ public class SettingsCommand extends Command {
 	public SettingsCommand() {
 		super("settings");
 		this.setDescription("Toggles multiple settings.");
-		this.setUsage(ChatColor.RED + "Usage: /pref");
-		this.setAliases(Arrays.asList("pref", "options"));
+		this.setUsage(ChatColor.RED + "Usa: /pref");
+		this.setAliases(Arrays.asList("pref", "options", "opciones"));
 	}
 
 	@Override

@@ -19,6 +19,7 @@ lobby:
     - "{ffa}"
     - "{nodebufflite}"
     - "{teamfights}"
+    - "{tnttag}"
   event-in-lobby:
     - "&bEvent&7: &f{event}"
   in-event-sumo-lines:
@@ -76,6 +77,21 @@ lobby:
     - ""
     - "&c&lRED"
     - " &f{redLeft}/{redMax}"
+  in-event-tnttag-lines:
+    - "&bPlayers&7: &f{players}&7/&f{limit}"
+    - "{starting}"
+    - "{state}"
+    - "{fight}"
+  in-event-tnttag-starting-lines:
+    - "&bStarting&7: &f{time}s"
+  in-event-tnttag-state-lines:
+    - "&bState&7: &f{state}"
+  in-event-tnttag-fighting-lines:
+    - "&bJugadores Restantes&7: &f{leftPlayers}"
+    - "&bTiempo Restante&7: &f{countdown}"
+    - ""
+    - "&c&lBOMB"
+    - " &f{playerBomb}"
   in-tournament:
     - ""
     - "&3&lTournament &7({size}v{size})"

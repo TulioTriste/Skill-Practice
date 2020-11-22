@@ -6,6 +6,7 @@ import net.skillwars.practice.stats.StatisticsMenu;
 import net.skillwars.practice.util.CC;
 import net.skillwars.practice.util.StringUtil;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -19,7 +20,7 @@ public class StatsCommand extends Command {
 	public StatsCommand() {
 		super("stats");
 		this.setAliases(Arrays.asList("elo", "statistics"));
-		this.setUsage(ChatColor.RED + "Usage: /stats [player]");
+		this.setUsage(ChatColor.RED + "Usa: /stats [player]");
 	}
 
 	@Override
@@ -35,7 +36,7 @@ public class StatsCommand extends Command {
 			return true;
 		}
 
-		Player target = this.plugin.getServer().getPlayer(args[0]);
+		OfflinePlayer target = this.plugin.getServer().getOfflinePlayer(args[0]);
 		if (target == null) {
 			sender.sendMessage(String.format(StringUtil.PLAYER_NOT_FOUND, args[0]));
 			return true;

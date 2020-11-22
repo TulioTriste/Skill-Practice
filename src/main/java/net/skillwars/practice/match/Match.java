@@ -20,6 +20,7 @@ import net.skillwars.practice.arena.StandaloneArena;
 import net.skillwars.practice.inventory.InventorySnapshot;
 import net.skillwars.practice.kit.Kit;
 import net.skillwars.practice.queue.QueueType;
+import net.skillwars.practice.util.CC;
 import net.skillwars.practice.util.Clickable;
 import net.skillwars.practice.util.TimeUtil;
 
@@ -180,8 +181,8 @@ public class Match {
 	}
 
 	public void broadcast(String message) {
-		this.teams.forEach(team -> team.alivePlayers().forEach(player -> player.sendMessage(message)));
-		this.spectatorPlayers().forEach(spectator -> spectator.sendMessage(message));
+		this.teams.forEach(team -> team.alivePlayers().forEach(player -> player.sendMessage(CC.translate(message))));
+		this.spectatorPlayers().forEach(spectator -> spectator.sendMessage(CC.translate(message)));
 	}
 
 	public void broadcast(Clickable message) {

@@ -93,7 +93,7 @@ public class FFAEvent extends PracticeEvent<FFAPlayer> {
     }
 
     private void selectPlayers() {
-        sendMessage(ChatColor.YELLOW + "(Event) " + ChatColor.GRAY + "Teletransportando jugadores...");
+        sendMessage("&e[Evento] &fTeletransportando jugadores...");
 
         this.fighting.clear();
 

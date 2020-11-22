@@ -19,9 +19,9 @@ by TulioTriviño#6969
 */
 public class MatchTntTagRunnable extends BukkitRunnable {
 
-    private final Practice plugin;
+    private Practice plugin;
     private final Match match;
-    private final Player bomb;
+    private Player bomb;
     private int i = 30;
 
     public MatchTntTagRunnable(Match match) {
@@ -32,7 +32,9 @@ public class MatchTntTagRunnable extends BukkitRunnable {
 
     @Override
     public void run() {
-        match.setMatchState(MatchState.STARTING);
+        if (i == 30) {
+            match.setMatchState(MatchState.STARTING);
+        }
         this.match.getTeams().forEach(team -> team.getAlivePlayers().forEach(uuid -> {
                 Player player = Bukkit.getPlayer(uuid);
                 if (i == 30) {
@@ -47,26 +49,39 @@ public class MatchTntTagRunnable extends BukkitRunnable {
                 else if (i == 27) {
                     player.sendMessage(CC.translate("&aLa pelea ha comenzado"));
                     player.sendMessage(CC.translate("&b" + bomb.getName() + " es la Bomba!"));
-                    bomb.getInventory().setHelmet(new ItemStack(Material.TNT));
-                    bomb.getInventory().setItem(0, new ItemStack(Material.TNT));
-                    match.setMatchState(MatchState.FIGHTING);
                 }
                 else if (Arrays.asList(10, 5, 4, 3, 2, 1).contains(i)) {
                     player.sendMessage(CC.translate("&bQuedan " + i + " para que termina la Pelea."));
                 }
                 else if (i == 0) {
-                    plugin.getPlayerManager().sendToSpawnAndReset(player);
+                    this.plugin.getPlayerManager().sendToSpawnAndReset(player);
                 }
             }));
-        if (i <= 0) {
+        if (i == 27) {
+            bomb.getInventory().setHelmet(new ItemStack(Material.TNT));
+            bomb.getInventory().setItem(0, new ItemStack(Material.TNT));
+            match.setMatchState(MatchState.FIGHTING);
+        }
+        else if (i <= 0) {
             this.cancel();
-            match.getTeams().forEach(matchTeam -> matchTeam.getAlivePlayers().forEach(uuid -> {
+            match.setMatchState(MatchState.ENDING);
+            match
+                    .getTeams().forEach(matchTeam -> matchTeam
+                    .getAlivePlayers().forEach(uuid -> {
                 Player player = Bukkit.getPlayer(uuid);
-                if (player.getInventory().getHelmet().getType().equals(Material.TNT) && player.getInventory().getItem(0).getType().equals(Material.TNT)) {
+                PlayerData data = this.plugin.getPlayerManager().getPlayerData(player.getUniqueId());
+                if (player
+                        .getInventory()
+                        .getHelmet()
+                        .getType() != Material.TNT
+                        && player.getInventory().getItem(0).getType() != Material.TNT) {
+                    return;
+                }
+                if (player.getInventory().getHelmet().getType() == Material.TNT
+                        && player.getInventory().getItem(0).getType() == Material.TNT) {
                     player.setHealth(0.0D);
                 }
             }));
-            match.setMatchState(MatchState.ENDING);
         }
         i--;
     }

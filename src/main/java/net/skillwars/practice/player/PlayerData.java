@@ -47,6 +47,7 @@ public class PlayerData {
     @Getter private int longestCombo;
     @Getter private int combo;
     @Getter private int hits;
+    @Getter private int potsLeft;
 
     @Getter private int sumoEventWins;
     @Getter private int sumoEventLosses;

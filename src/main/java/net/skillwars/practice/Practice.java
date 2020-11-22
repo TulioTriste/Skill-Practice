@@ -20,8 +20,8 @@ import net.skillwars.practice.commands.duel.AcceptCommand;
 import net.skillwars.practice.commands.duel.CancelRankedCommand;
 import net.skillwars.practice.commands.duel.DuelCommand;
 import net.skillwars.practice.commands.duel.SpectateCommand;
-import net.skillwars.practice.commands.elo.EloCommand;
 import net.skillwars.practice.commands.elo.EloManagerCommand;
+import net.skillwars.practice.commands.elo.LeaderboardCommand;
 import net.skillwars.practice.commands.event.*;
 import net.skillwars.practice.commands.management.*;
 import net.skillwars.practice.commands.time.DayCommand;
@@ -187,12 +187,12 @@ public class Practice extends JavaPlugin implements PluginMessageListener {
                 new SunsetCommand(),
                 new SettingsCommand(),
                 new EventsCommand(),
-                new EloCommand(),
                 new EloManagerCommand(),
                 new PlayersCommand(),
                 new PlayerStatusCommand(),
                 new CancelRankedCommand(),
-                new HologramCommand()
+                new HologramCommand(),
+                new LeaderboardCommand()
         ).forEach(command -> registerCommand(command, getName()));
     }
 

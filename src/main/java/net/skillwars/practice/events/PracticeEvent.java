@@ -18,6 +18,7 @@ import net.skillwars.practice.events.tnttag.TNTTagEvent;
 import net.skillwars.practice.events.tnttag.TNTTagPlayer;
 import net.skillwars.practice.player.PlayerData;
 import net.skillwars.practice.player.PlayerState;
+import net.skillwars.practice.util.CC;
 import net.skillwars.practice.util.CustomLocation;
 import net.skillwars.practice.util.PlayerUtil;
 
@@ -53,7 +54,7 @@ public abstract class PracticeEvent<K extends EventPlayer> {
     }
 
     public void sendMessage(final String message) {
-        this.getBukkitPlayers().forEach(player -> player.sendMessage(message));
+        this.getBukkitPlayers().forEach(player -> player.sendMessage(CC.translate(message)));
     }
 
     public Set<Player> getBukkitPlayers() {

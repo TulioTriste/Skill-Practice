@@ -14,6 +14,7 @@ import net.skillwars.practice.player.PlayerData;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
+import org.bukkit.Material;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -21,6 +22,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -148,7 +150,7 @@ public class EntityListener implements Listener {
                         eventt.setBomb(entity);
                         eventt.getFighting().forEach(name -> {
                             Player player = Bukkit.getPlayer(name);
-                            player.sendMessage(ChatColor.AQUA + eventt.getBomb().getName() + " have the Bomb!");
+                            player.sendMessage(ChatColor.AQUA + eventt.getBomb().getName() + " tiene la Bomba!");
                         });
                     }
                 }
@@ -256,7 +258,17 @@ public class EntityListener implements Listener {
             }
 
             if (match.getKit().isTnttag()) {
-
+                e.setCancelled(false);
+                e.setDamage(0.0D);
+                if (damager.getInventory().getHelmet().getType() != Material.TNT && damager.getInventory().getItem(0).getType() != Material.TNT) {
+                    return;
+                }
+                if (damager.getInventory().getHelmet().getType() == Material.TNT && damager.getInventory().getItem(0).getType() == Material.TNT) {
+                    damager.getInventory().setHelmet(null);
+                    damager.getInventory().setItem(0, null);
+                    entity.getInventory().setHelmet(new ItemStack(Material.TNT));
+                    entity.getInventory().setItem(0, new ItemStack(Material.TNT));
+                }
                 return;
             }
 

@@ -49,8 +49,8 @@ public class LeaderBoardMenu extends Menu {
         int pos = 0;
 
         for(Kit kit : Practice.getInstance().getKitManager().getKits()){
-            if(kit.isRanked()){
-                buttons.put(28 + pos++, new KitButton(kit));
+            if (kit.isRanked()) {
+                buttons.put(27 + pos++, new KitButton(kit));
             }
         }
 
