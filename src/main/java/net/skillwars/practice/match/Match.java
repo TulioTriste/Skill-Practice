@@ -47,6 +47,8 @@ public class Match {
 
 	private final Map<Location, Block> originalBlocksMap = new HashMap<>();
 
+	private final Map<Location, Block> waterDropSpawn = new HashMap<>();
+
 	private final Set<UUID> spectators = new ConcurrentSet<>();
 
 	private final Set<Integer> runnables = new HashSet<>();
@@ -65,7 +67,9 @@ public class Match {
 	private MatchState matchState = MatchState.STARTING;
 	private int winningTeamId;
 	private int countdown = 6;
+	private int matchTime = 60;
 	private long startTimestamp;
+	private Player bomb;
 
 	public Match(Arena arena, Kit kit, QueueType type, MatchTeam... teams) {
 		this(arena, kit, type, false, teams);
@@ -171,11 +175,11 @@ public class Match {
 
 	public void broadcastWithSound(String message, Sound sound) {
 		this.teams.forEach(team -> team.alivePlayers().forEach(player -> {
-			player.sendMessage(message);
+			player.sendMessage(CC.translate(message));
 			player.playSound(player.getLocation(), sound, 10, 1);
 		}));
 		this.spectatorPlayers().forEach(spectator -> {
-			spectator.sendMessage(message);
+			spectator.sendMessage(CC.translate(message));
 			spectator.playSound(spectator.getLocation(), sound, 10, 1);
 		});
 	}
@@ -196,6 +200,10 @@ public class Match {
 
 	public int decrementCountdown() {
 		return --this.countdown;
+	}
+
+	public int decrementMatchTime() {
+		return --this.matchTime;
 	}
 
 	public boolean isParty() {

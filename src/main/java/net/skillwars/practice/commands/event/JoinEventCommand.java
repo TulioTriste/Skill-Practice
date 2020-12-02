@@ -35,7 +35,7 @@ public class JoinEventCommand extends Command {
             return true;
         }
         PlayerData playerData = this.plugin.getPlayerManager().getPlayerData(player.getUniqueId());
-        if (this.plugin.getPartyManager().getParty(playerData.getUniqueId()) != null || playerData.getPlayerState() != PlayerState.SPAWN) {
+        if (this.plugin.getPartyManager().getParty(playerData.getUniqueId()) != null && playerData.getPlayerState() != PlayerState.SPAWN) {
             player.sendMessage(ChatColor.RED + "Solo puedes ejecutar este comando en el Spawn.");
             return true;
         }

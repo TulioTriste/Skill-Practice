@@ -102,10 +102,10 @@ public class EloManagerCommand extends Command {
             }
 
             Integer elo = targetData.getElo(kit.getName());
-            Integer eloAdd = Ints.tryParse(args[2]);
+            Integer eloAdd = Integer.getInteger(args[2]);
 
             if (eloAdd == null) {
-                sender.sendMessage(CC.translate("&c'" + args[2] + "' no es un numero valido."));
+                sender.sendMessage(CC.translate("&c'" + eloAdd + "' no es un numero valido."));
                 return true;
             }
 

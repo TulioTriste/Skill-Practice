@@ -31,6 +31,7 @@ import org.bukkit.material.MaterialData;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import net.skillwars.practice.events.PracticeEvent;
@@ -115,7 +116,7 @@ public class PlayerListener implements Listener {
     }
     @EventHandler
     final void onPreJoin(AsyncPlayerPreLoginEvent event) {
-        if (event.getLoginResult() == AsyncPlayerPreLoginEvent.Result.ALLOWED) this.plugin.getPlayerManager().createPlayerData(event.getUniqueId(), event.getAddress());
+        if (event.getLoginResult() == AsyncPlayerPreLoginEvent.Result.ALLOWED) plugin.getPlayerManager().createPlayerData(event.getUniqueId(), event.getAddress());
     }
 
     @EventHandler
@@ -206,11 +207,15 @@ public class PlayerListener implements Listener {
         }
 
         this.plugin.getTournamentManager().leaveTournament(player);
+        if (party != null) {
+            this.plugin.getQueueManager().removePartyFromQueue(party);
+        }
         this.plugin.getPartyManager().leaveParty(player);
 
         this.plugin.getMatchManager().removeMatchRequests(player.getUniqueId());
         this.plugin.getPartyManager().removePartyInvites(player.getUniqueId());
         this.plugin.getPlayerManager().removePlayerData(player.getUniqueId());
+        this.plugin.getQueueManager().removePlayerFromQueue(player);
     }
 
     @EventHandler
@@ -270,7 +275,7 @@ public class PlayerListener implements Listener {
 
         PlayerData playerData = this.plugin.getPlayerManager().getPlayerData(player.getUniqueId());
 
-        if (playerData.getPlayerState() == PlayerState.SPECTATING || playerData.getPlayerState() == PlayerState.EDITING) {
+        if (playerData.getPlayerState() == PlayerState.SPECTATING || playerData.getPlayerState() == PlayerState.EDITING || playerData.getPlayerState() == PlayerState.SPAWN) {
             event.setCancelled(true);
         }
 
@@ -383,14 +388,14 @@ public class PlayerListener implements Listener {
                                 return;
                             }
                             if (party != null && !this.plugin.getPartyManager().isLeader(player.getUniqueId())) {
-                                player.sendMessage(CC.RED + "No eres el Leader de esta Party.");
+                                player.sendMessage(CC.RED + "No eres el Lider de esta Party.");
                                 return;
                             }
                             player.openInventory(this.plugin.getInventoryManager().getRankedInventory().getCurrentPage());
                             break;
                         case IRON_SWORD:
                             if (party != null && !this.plugin.getPartyManager().isLeader(player.getUniqueId())) {
-                                player.sendMessage(CC.RED + "No eres el Leader de esta Party.");
+                                player.sendMessage(CC.RED + "No eres el Lider de esta Party.");
                                 return;
                             }
 
@@ -429,14 +434,14 @@ public class PlayerListener implements Listener {
                             break;
                         case DIAMOND_AXE:
                             if (party != null && !this.plugin.getPartyManager().isLeader(player.getUniqueId())) {
-                                player.sendMessage(CC.RED + "Solo el Leader de la Party puede iniciar Eventos.");
+                                player.sendMessage(CC.RED + "Solo el Lider de la Party puede iniciar Eventos.");
                                 return;
                             }
                             player.openInventory(this.plugin.getInventoryManager().getPartyEventInventory().getCurrentPage());
                             break;
                         case IRON_AXE:
                             if (party != null && !this.plugin.getPartyManager().isLeader(player.getUniqueId())) {
-                                player.sendMessage(CC.RED + "Solo el Leader de la Party puede iniciar Eventos.");
+                                player.sendMessage(CC.RED + "Solo el Lider de la Party puede iniciar Eventos.");
                                 return;
                             }
                             player.openInventory(this.plugin.getInventoryManager().getPartyInventory().getCurrentPage());
@@ -495,11 +500,12 @@ public class PlayerListener implements Listener {
                                 this.plugin.getMatchManager().removeSpectator(player);
                             }
                             else this.plugin.getPartyManager().leaveParty(player);
+                            break;
                         case SKULL:
                             if (player.hasPermission("practice.staff")) {
                                 new StaffOnlineGUI(player);
-                                break;
                             }
+                            break;
                     }
                 case EDITING:
                     if (event.getClickedBlock() == null) {

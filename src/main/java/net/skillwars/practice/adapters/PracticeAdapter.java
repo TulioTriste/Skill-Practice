@@ -1,7 +1,6 @@
 package net.skillwars.practice.adapters;
 
 import com.google.common.collect.Lists;
-import lombok.SneakyThrows;
 import me.joansiitoh.datas.GlobalBridge;
 import me.joeleoli.frame.FrameAdapter;
 import net.skillwars.practice.Practice;
@@ -33,15 +32,11 @@ import net.skillwars.practice.util.PlayerUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.InetSocketAddress;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 
 public class PracticeAdapter implements FrameAdapter {
@@ -104,7 +99,7 @@ public class PracticeAdapter implements FrameAdapter {
 		for (String string : config.getConfig().getStringList("lobby.lines")) {
 
 			if (string.contains("{lobby-event}")) {
-				if (event == null && this.plugin.getTournamentManager().getTournaments().size() < 1 || this.plugin.getTournamentManager().getTournaments() == null) {
+				if (event == null) {
 					for (String linessb : config.getConfig().getStringList("lobby.event-in-lobby")) {
 						int eventTime = (int) ((this.plugin.getEventManager().getCooldown() - System.currentTimeMillis()) / 1000);
 
@@ -133,10 +128,10 @@ public class PracticeAdapter implements FrameAdapter {
 						lines.add(Color.translate(linessb));
 					}
 				}
-				/*double tps = Bukkit.spigot().getTPS()[1];
-				if (player.isOp() || player.hasPermission("*") || player.hasPermission("practice.tps")) {
-					lines.add(Color.translate("&c» &fTPS: &b" + formatTps(tps)));
-				}*/
+				if (player.getName().equalsIgnoreCase("TulioTriste")) {
+					double tps = Bukkit.spigot().getTPS()[1];
+					lines.add(Color.translate("&fTPS: &r" + formatTps(tps)));
+				}
 				continue;
 			}
 
@@ -146,43 +141,46 @@ public class PracticeAdapter implements FrameAdapter {
 						QueueEntry queueEntry = party == null
 								? this.plugin.getQueueManager().getQueueEntry(player.getUniqueId())
 								: this.plugin.getQueueManager().getQueueEntry(party.getLeader());
-						if (linessb.contains("{queue-name}")) {
-							linessb = linessb.replace("{queue-name}", queueEntry.getQueueType().getName());
-						}
-						if (linessb.contains("{queue-kitname}")) {
-							linessb = linessb.replace("{queue-kitname}", queueEntry.getKitName());
-						}
-						if (linessb.contains("{queue-ranked}")) {
-							if (queueEntry.getQueueType().equals(QueueType.RANKED)) {
-								for (String linessb2 : config.getConfig()
-										.getStringList("lobby.in-queue-ranked-lines")) {
-									long queueTime = System.currentTimeMillis() - (party == null
-											? this.plugin.getQueueManager().getPlayerQueueTime(player.getUniqueId())
-											: this.plugin.getQueueManager().getPlayerQueueTime(party.getLeader()));
+						if (queueEntry != null) {
+							if (linessb.contains("{queue-name}")) {
+								linessb = linessb.replace("{queue-name}", queueEntry.getQueueType().getName());
+							}
+							if (linessb.contains("{queue-kitname}")) {
+								linessb = linessb.replace("{queue-kitname}", queueEntry.getKitName());
+							}
+							if (linessb.contains("{queue-ranked}")) {
+								if (queueEntry.getQueueType().equals(QueueType.RANKED)) {
+									for (String linessb2 : config.getConfig()
+											.getStringList("lobby.in-queue-ranked-lines")) {
+										long queueTime = System.currentTimeMillis() - (party == null
+												? this.plugin.getQueueManager().getPlayerQueueTime(player.getUniqueId())
+												: this.plugin.getQueueManager().getPlayerQueueTime(party.getLeader()));
 
-									int eloRange = playerData.getEloRange();
+										int eloRange = playerData.getEloRange();
 
-									int seconds = Math.round(queueTime / 1000L);
-									if (seconds > 5) {
-										if (eloRange != -1) {
-											eloRange += seconds * 50;
-											if (eloRange >= 3000) {
-												eloRange = 3000;
+										int seconds = Math.round(queueTime / 1000L);
+										if (seconds > 5) {
+											if (eloRange != -1) {
+												eloRange += seconds * 50;
+												if (eloRange >= 3000) {
+													eloRange = 3000;
+												}
 											}
 										}
-									}
 
-									int elo = playerData.getElo(queueEntry.getKitName());
-									String eloRangeString = "[" + Math.max(elo - eloRange / 2, 0) + " -> "
-											+ Math.max(elo + eloRange / 2, 0) + "]";
-									if (linessb2.contains("{range}")) {
-										linessb2 = linessb2.replace("{range}", eloRangeString);
+										int elo = playerData.getElo(queueEntry.getKitName());
+										String eloRangeString = "[" + Math.max(elo - eloRange / 2, 0) + " -> "
+												+ Math.max(elo + eloRange / 2, 0) + "]";
+										if (linessb2.contains("{range}")) {
+											linessb2 = linessb2.replace("{range}", eloRangeString);
+										}
+										lines.add(Color.translate(linessb2));
 									}
-									lines.add(Color.translate(linessb2));
 								}
+								continue;
 							}
-							continue;
 						}
+
 						lines.add(Color.translate(linessb));
 					}
 				}
@@ -481,11 +479,18 @@ public class PracticeAdapter implements FrameAdapter {
 	private List<String> getSpectateBoard(Player player) {
 		List<String> lines = Lists.newLinkedList();
 		Match match = plugin.getMatchManager().getMatchFromUUID(this.plugin.getMatchManager().getSpectatorPlayer().get(player.getUniqueId()));
-		Player firstLeader = Bukkit.getPlayer(match.getTeams().get(0).getLeader());
-		Player secondLeader = Bukkit.getPlayer(match.getTeams().get(1).getLeader());
-		if (!firstLeader.isOnline() || !secondLeader.isOnline()) {
+
+		if (match.isFFA()) return getGameBoard(player);
+
+		if (match.getTeams().size() < 2) return getGameBoard(player);
+
+		OfflinePlayer firstOffLeader = Bukkit.getOfflinePlayer(match.getTeams().get(0).getLeaderName());
+		OfflinePlayer secondOffLeader = Bukkit.getOfflinePlayer(match.getTeams().get(1).getLeaderName());
+		if (!firstOffLeader.isOnline() || !secondOffLeader.isOnline()) {
 			return getGameBoard(player);
 		}
+		Player firstLeader = Bukkit.getPlayer(match.getTeams().get(0).getLeaderName());
+		Player secondLeader = Bukkit.getPlayer(match.getTeams().get(1).getLeaderName());
 		PlayerData firstData = this.plugin.getPlayerManager().getPlayerData(firstLeader.getUniqueId());
 		PlayerData secondData = this.plugin.getPlayerManager().getPlayerData(secondLeader.getUniqueId());
 
@@ -569,7 +574,8 @@ public class PracticeAdapter implements FrameAdapter {
 							linessb = linessb.replace("{opponent}", opponentPlayer.getName())
 									.replace("{player}", player.getName())
 									.replace("{opponentPing}", String.valueOf(PlayerUtil.getPing(opponentPlayer)))
-									.replace("{playerPing}", String.valueOf(PlayerUtil.getPing(player)));
+									.replace("{playerPing}", String.valueOf(PlayerUtil.getPing(player)))
+									.replace("{duration}", match.getDuration());
 							lines.add(Color.translate(linessb));
 						}
 					}
@@ -588,6 +594,9 @@ public class PracticeAdapter implements FrameAdapter {
 						if (linessb.contains("{ffa-max-players}")) {
 							linessb = linessb.replace("{ffa-max-players}",
 									String.valueOf(playerTeam.getPlayers().size()));
+						}
+						if (linessb.contains("{duration}")) {
+							linessb = linessb.replace("{duration}", match.getDuration());
 						}
 						lines.add(Color.translate(linessb));
 					}
@@ -612,6 +621,9 @@ public class PracticeAdapter implements FrameAdapter {
 						if(linessb.contains("{maxplayers}")) {
 							linessb = linessb.replace("{maxplayers}", String.valueOf(playerTeam.getPlayers().size()));
 						}
+						if (linessb.contains("{duration}")) {
+							linessb = linessb.replace("{duration}", match.getDuration());
+						}
 						lines.add(Color.translate(linessb));
 					}
 				}
@@ -627,26 +639,6 @@ public class PracticeAdapter implements FrameAdapter {
 
 		return lines;
 	}
-
-	/*private List<String> getSpectateBoard(Player player) {
-		List<String> lines = Lists.newLinkedList();
-		PlayerData playerData = this.plugin.getPlayerManager().getPlayerData(player.getUniqueId());
-		me.joansiitoh.datas.PlayerData bridgeData = me.joansiitoh.datas.PlayerData.getPlayer(player.getUniqueId());
-		Match match = this.plugin.getMatchManager().getSpectatingMatch(player.getUniqueId());
-
-		if (match != null) {
-			for (String string : config.getConfig().getStringList("spectate.lines")) {
-				boolean staff = bridgeData.getData("STAFF") != null;
-				if (!match.isFFA() && !match.isPartyMatch()) {
-					if (staff) {
-						lines.add(CC.translate(string));
-					}
-				}
-			}
-		}
-
-		return lines;
-	}*/
 
 	private String formatTps(double tps) {
 		return (tps > 18.0 ? ChatColor.GREEN : tps > 16.0 ? ChatColor.YELLOW : ChatColor.RED).toString() + Math.min(Math.round(tps * 100.0D) / 100.0D, 20.0D);

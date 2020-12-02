@@ -140,6 +140,7 @@ public class ArenaManager {
         });
 
         this.config.save();
+        this.config.reload();
     }
 
     public void reloadArenas() {

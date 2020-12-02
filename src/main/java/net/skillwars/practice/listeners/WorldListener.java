@@ -70,7 +70,8 @@ public class WorldListener implements Listener {
                 if (!match.getPlacedBlockLocations().contains(event.getBlock().getLocation())) {
                     event.setCancelled(true);
                 }
-            } else if (match.getKit().isSpleef()) {
+            }
+            else if (match.getKit().isSpleef()) {
                 double minX = match.getArena().getMin().getX();
                 double minZ = match.getArena().getMin().getZ();
                 double maxX = match.getArena().getMax().getX();
@@ -180,7 +181,7 @@ public class WorldListener implements Listener {
         }
         if (playerData.getPlayerState() == PlayerState.FIGHTING) {
             Match match = this.plugin.getMatchManager().getMatch(player.getUniqueId());
-            if (!match.getKit().isBuild()) {
+            if (!match.getKit().isBuild() && !match.getKit().isWaterdrop()) {
                 event.setCancelled(true);
             } else {
                 double minX = match.getArena().getMin().getX();
@@ -246,6 +247,11 @@ public class WorldListener implements Listener {
                     && b.getX() <= maxX && b.getZ() <= maxZ) {
                 UUID matchUUID = this.plugin.getArenaManager().getArenaMatchUUID(arena);
                 Match match = this.plugin.getMatchManager().getMatchFromUUID(matchUUID);
+
+                if (match.getKit().isWaterdrop()) {
+                    event.setCancelled(true);
+                    return;
+                }
 
                     /*if (type == Material.WATER || type == Material.STATIONARY_WATER || type == Material.LAVA || type == Material.STATIONARY_LAVA) {
                         if (b.getType() == Material.AIR) {

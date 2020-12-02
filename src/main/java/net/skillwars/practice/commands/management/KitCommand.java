@@ -60,12 +60,7 @@ public class KitCommand extends Command {
             sender.sendMessage(ChatColor.WHITE + "/kit delete <kitname>");
             sender.sendMessage(ChatColor.WHITE + "/kit disable <kitname>");
             sender.sendMessage(ChatColor.WHITE + "/kit ranked <kitname>");
-            sender.sendMessage(ChatColor.WHITE + "/kit combo <kitname>");
-            sender.sendMessage(ChatColor.WHITE + "/kit build <kitname>");
-            sender.sendMessage(ChatColor.WHITE + "/kit sumo <kitname>");
-            sender.sendMessage(ChatColor.WHITE + "/kit spleef <kitname>");
-            sender.sendMessage(ChatColor.WHITE + "/kit parkour <kitname>");
-            sender.sendMessage(ChatColor.WHITE + "/kit tnttag <kitname>");
+            sender.sendMessage(ChatColor.WHITE + "/kit combo|build|sumo|spleef|parkour|tnttag|waterdrop|freefall <kitname>");
             sender.sendMessage(ChatColor.WHITE + "/kit whitelistarena <kitname> <arenaname>");
             sender.sendMessage(ChatColor.WHITE + "/kit getinv <kitname>");
             sender.sendMessage(ChatColor.WHITE + "/kit excludearena <kitname> <arenaname>");
@@ -81,7 +76,6 @@ public class KitCommand extends Command {
         }
         Kit kit = this.plugin.getKitManager().getKit(args[1]);
         String lowerCase = args[0].toLowerCase();
-        FileConfiguration fileConfig = this.config.getConfig();
         switch (lowerCase) {
             case "create": {
                 if (kit == null) {
@@ -169,6 +163,26 @@ public class KitCommand extends Command {
                     kit.setTnttag(!kit.isTnttag());
                     this.plugin.getKitManager().saveKits();
                     sender.sendMessage(kit.isTnttag() ? (ChatColor.GREEN + "Successfully enabled tnttag mode for kit " + args[1] + ".") : (ChatColor.RED + "Successfully disabled tnttag mode for kit " + args[1] + "."));
+                    break;
+                }
+                sender.sendMessage(KitCommand.NO_KIT);
+                break;
+            }
+            case "waterdrop": {
+                if (kit != null) {
+                    kit.setWaterdrop(!kit.isWaterdrop());
+                    this.plugin.getKitManager().saveKits();
+                    sender.sendMessage(kit.isWaterdrop() ? (ChatColor.GREEN + "Successfully enabled waterdrop mode for kit " + args[1] + ".") : (ChatColor.RED + "Successfully disabled waterdrop mode for kit " + args[1] + "."));
+                    break;
+                }
+                sender.sendMessage(KitCommand.NO_KIT);
+                break;
+            }
+            case "freefall": {
+                if (kit != null) {
+                    kit.setFreeFall(!kit.isFreeFall());
+                    this.plugin.getKitManager().saveKits();
+                    sender.sendMessage(kit.isFreeFall() ? (ChatColor.GREEN + "Successfully enabled freefall mode for kit " + args[1] + ".") : (ChatColor.RED + "Successfully disabled freefall mode for kit " + args[1] + "."));
                     break;
                 }
                 sender.sendMessage(KitCommand.NO_KIT);

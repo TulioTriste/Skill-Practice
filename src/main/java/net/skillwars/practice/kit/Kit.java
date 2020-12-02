@@ -34,6 +34,8 @@ public class Kit {
     private boolean spleef;
     private boolean parkour;
     private boolean tnttag;
+    private boolean waterdrop;
+    private boolean freeFall;
     private boolean editable;
 
     public void applyToPlayer(Player player) {

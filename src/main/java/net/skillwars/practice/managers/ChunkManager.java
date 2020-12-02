@@ -1,5 +1,7 @@
 package net.skillwars.practice.managers;
 
+import net.skillwars.practice.util.CC;
+import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 
 import lombok.Getter;
@@ -9,18 +11,16 @@ import net.skillwars.practice.arena.StandaloneArena;
 import net.skillwars.practice.util.CustomLocation;
 
 public class ChunkManager {
-    private final Practice plugin = Practice.getInstance();
 
-    @Getter
-    private boolean chunksLoaded;
+    private final Practice plugin = Practice.getInstance();
+    @Getter private boolean chunksLoaded;
 
     public ChunkManager() {
-        //Practice.getInstance().setSetupSupplier(() -> this.chunksLoaded);
         this.plugin.getServer().getScheduler().runTaskLater(this.plugin, this::loadChunks, 1L);
     }
 
     private void loadChunks() {
-        this.plugin.getLogger().info("Started loading all the chunks...");
+        Bukkit.getConsoleSender().sendMessage(CC.translate("&cSe ha iniciado la carga de todos los chunks..."));
 
         CustomLocation spawnMin = this.plugin.getSpawnManager().getSpawnMin();
         CustomLocation spawnMax = this.plugin.getSpawnManager().getSpawnMax();
@@ -219,7 +219,7 @@ public class ChunkManager {
             }
         }
 
-        this.plugin.getLogger().info("Finished loading all the chunks!");
+        Bukkit.getConsoleSender().sendMessage(CC.translate("&a&lTodos los chunks han sido cargados Correctamente!"));
         this.chunksLoaded = true;
     }
 }

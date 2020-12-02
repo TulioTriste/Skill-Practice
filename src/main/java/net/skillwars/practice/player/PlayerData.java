@@ -24,8 +24,6 @@ public class PlayerData {
     private final Map<String, Integer> rankedLosses = new HashMap<>();
     private final Map<String, Integer> rankedWins = new HashMap<>();
     private final Map<String, Integer> rankedElo = new HashMap<>();
-    private final Map<String, Integer> matchWins = new HashMap<>();
-    private final Map<String, Integer> matchLosses = new HashMap<>();
     private final Map<String, Integer> partyElo = new HashMap<>();
 
     @Getter private final UUID uniqueId;
@@ -54,19 +52,19 @@ public class PlayerData {
 
     @Getter private int unrankedWins;
 
-    public int getWins(String kitName) {
+    public int getRankedWins(String kitName) {
         return this.rankedWins.computeIfAbsent(kitName, k -> 0);
     }
 
-    public void setWins(String kitName, int wins) {
+    public void setRankedWins(String kitName, int wins) {
         this.rankedWins.put(kitName, wins);
     }
 
-    public int getLosses(String kitName) {
+    public int getRankedLosses(String kitName) {
         return this.rankedLosses.computeIfAbsent(kitName, k -> 0);
     }
 
-    public void setLosses(String kitName, int losses) {
+    public void setRankedLosses(String kitName, int losses) {
         this.rankedLosses.put(kitName, losses);
     }
 
@@ -90,24 +88,13 @@ public class PlayerData {
         this.getPlayerKits(playerKit.getName()).put(index, playerKit);
     }
 
-    public int getMatchWins(String kitName) {
-        return this.matchWins.computeIfAbsent(kitName, k -> 0);
-    }
-
-    public void setMatchWins(String kitName, Integer amount) {
-        this.matchWins.put(kitName, amount);
-    }
-
-    public int getMatchLosses(String kitName) {
-        return this.matchLosses.computeIfAbsent(kitName, k -> 0);
-    }
-
-    public void setMatchLosses(String kitName, Integer amount) {
-        this.matchLosses.put(kitName, amount);
-    }
-
     public Map<Integer, PlayerKit> getPlayerKits(String kitName) {
         return this.playerKits.computeIfAbsent(kitName, k -> new HashMap<>());
+    }
+
+    public int getKDR(String kitName) {
+        if (getRankedWins(kitName) == 0 || getRankedLosses(kitName) == 0) return 0;
+        return getRankedWins(kitName) % getRankedLosses(kitName);
     }
 
     public int getGlobalStats(String type) {
@@ -121,10 +108,10 @@ public class PlayerData {
                     i += getElo(kit.getName());
                     break;
                 case "WINS":
-                    i += getWins(kit.getName());
+                    i += getRankedWins(kit.getName());
                     break;
                 case "LOSSES":
-                    i += getLosses(kit.getName());
+                    i += getRankedLosses(kit.getName());
                     break;
             }
 

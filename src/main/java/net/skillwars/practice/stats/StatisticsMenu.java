@@ -59,12 +59,10 @@ public class StatisticsMenu extends Menu {
         public ItemStack getButtonItem(Player player) {
             PlayerData data = Practice.getInstance().getPlayerManager().getPlayerData(target.getUniqueId());
             List<String> lore = new ArrayList<>();
-            int kdr = data.getMatchWins(kit.getName()) != 0 &&
-                    data.getMatchLosses(kit.getName()) != 0 ? data.getMatchWins(kit.getName()) % data.getMatchLosses(kit.getName()) : 0;
             lore.add(CC.translate("&bElo: &f" + data.getElo(kit.getName())));
-            lore.add(CC.translate("&bGanadas: &f" + data.getMatchWins(kit.getName())));
-            lore.add(CC.translate("&bPerdidas: &f" + data.getMatchLosses(kit.getName())));
-            lore.add(CC.translate("&bKDR: &f" + kdr));
+            lore.add(CC.translate("&bGanadas: &f" + data.getRankedWins(kit.getName())));
+            lore.add(CC.translate("&bPerdidas: &f" + data.getRankedLosses(kit.getName())));
+            lore.add(CC.translate("&bKDR: &f" + data.getKDR(kit.getName())));
             return new ItemBuilder(kit.getIcon()).lore(lore).build();
         }
     }

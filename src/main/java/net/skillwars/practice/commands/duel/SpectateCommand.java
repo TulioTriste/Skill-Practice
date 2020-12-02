@@ -46,7 +46,7 @@ public class SpectateCommand extends Command {
         PlayerData playerData = this.plugin.getPlayerManager().getPlayerData(player.getUniqueId());
         Party party = this.plugin.getPartyManager().getParty(playerData.getUniqueId());
         if (party != null || (playerData.getPlayerState() != PlayerState.SPAWN && playerData.getPlayerState() != PlayerState.SPECTATING)) {
-            player.sendMessage(ChatColor.RED + "Para usar este comando tienes que estar en el Spawn.");
+            player.sendMessage(ChatColor.RED + "No estas en condiciones de usar este comando.");
             return true;
         }
         Player target = this.plugin.getServer().getPlayer(args[0]);

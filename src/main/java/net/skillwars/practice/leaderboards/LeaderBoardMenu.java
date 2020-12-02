@@ -16,6 +16,7 @@ import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
 import java.util.*;
@@ -36,22 +37,38 @@ public class LeaderBoardMenu extends Menu {
 
     @Override
     public int getSize(){
-        return 54;
+        return 18;
     }
 
     @Override
     public Map<Integer, Button> getButtons(Player player){
         Map<Integer, Button> buttons = Maps.newHashMap();
+        Button empty = new Button() {
+            @Override
+            public ItemStack getButtonItem(Player player) {
+                ItemStack a = new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 15);
+                ItemMeta aMeta = a.getItemMeta();
+                aMeta.setDisplayName("");
+                a.setItemMeta(aMeta);
+                return a;
+            }
+        };
 
-        buttons.put(12, new StatsButton());
-        buttons.put(14, new GlobalStatsButton());
+        buttons.put(0, new StatsButton());
+        buttons.put(9, new GlobalStatsButton());
+
+        buttons.put(1, empty);
+        buttons.put(10, empty);
 
         int pos = 0;
 
-        for(Kit kit : Practice.getInstance().getKitManager().getKits()){
-            if (kit.isRanked()) {
-                buttons.put(27 + pos++, new KitButton(kit));
-            }
+        for (Kit kit : Practice.getInstance().getKitManager().getRankedKits()) {
+            pos++;
+
+            if (1 + pos == 9) pos++;
+            if (1 + pos == 10) pos++;
+
+            buttons.put(1 + pos, new KitButton(kit));
         }
 
         return buttons;

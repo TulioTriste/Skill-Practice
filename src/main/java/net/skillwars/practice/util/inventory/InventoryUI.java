@@ -72,7 +72,7 @@ public class InventoryUI {
 	private void createNewInventory() {
 		Inventory2D inventory = new Inventory2D(this.title, this.rows, this.rowOffset);
 
-		if (this.inventories.size() > 0) {
+		/*if (this.inventories.size() > 0) {
 			inventory.setItem(0, this.rows - 1, new AbstractClickableItem(
 					ItemUtil.createItem(Material.ARROW, ChatColor.RED + "Page #" + (this.inventories.size()))) {
 				@Override
@@ -94,7 +94,7 @@ public class InventoryUI {
 			if (inventory.currentY == this.rows - 1 && inventory.currentX == -1) {
 				inventory.currentX++;
 			}
-		}
+		}*/
 
 		this.inventories.add(inventory);
 	}
@@ -124,7 +124,7 @@ public class InventoryUI {
 
 		Inventory2D lastInventory = this.inventories.get(this.inventories.size() - 1);
 
-		if (lastInventory.currentY == this.rows - 1 && lastInventory.currentX >= 7 - this.offset) {
+		/*if (lastInventory.currentY == this.rows - 1 && lastInventory.currentX >= 7 - this.offset) {
 			lastInventory.setItem(8, this.rows - 1, new AbstractClickableItem(
 					ItemUtil.createItem(Material.ARROW, ChatColor.RED + "Page #" + (this.inventories.size() + 1))) {
 				@Override
@@ -144,9 +144,8 @@ public class InventoryUI {
 			});
 			this.createNewInventory();
 			this.addItem(item);
-		} else {
-			lastInventory.setItem(++lastInventory.currentX + this.offset, lastInventory.currentY, item);
-		}
+		}*/
+		lastInventory.setItem(++lastInventory.currentX + this.offset, lastInventory.currentY, item);
 
 		if (lastInventory.currentX >= 8 - this.offset) {
 			lastInventory.currentX = this.offset - 1;

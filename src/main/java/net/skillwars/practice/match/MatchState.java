@@ -4,5 +4,6 @@ public enum MatchState {
 	STARTING,
 	FIGHTING,
 	SWITCHING,
+	REPEATING,
 	ENDING
 }

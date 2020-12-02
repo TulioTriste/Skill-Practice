@@ -12,10 +12,12 @@ import net.skillwars.practice.player.PlayerData;
 import net.skillwars.practice.util.CC;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Arrays;
 import java.util.List;
@@ -43,6 +45,11 @@ public class HologramCommand extends Command implements Listener {
             return true;
         }
 
+        if (!commandSender.hasPermission(getPermission())) {
+            commandSender.sendMessage(CC.translate("&cNo tienes los suficientes permisos para usar esto."));
+            return true;
+        }
+
         Player player = (Player) commandSender;
         if (strings.length == 0) {
             player.sendMessage(CC.translate("&cUsa: /" + s + " create/delete"));
@@ -53,9 +60,9 @@ public class HologramCommand extends Command implements Listener {
         List<PlayerData> playerDataList2 = Practice.getInstance().getLeaderboardManager().getGlobalplayerDataList();
         List<String> stats = Lists.newArrayList();
         stats.add(CC.translate("STATS GLOBAL TEST"));
-        for (int i = 1; i <= 10; i++) {
+        for (int i = 1; i <= 3; i++) {
             PlayerData data = playerDataList2.get(i);
-            Player target = Bukkit.getPlayer(data.getUniqueId());
+            OfflinePlayer target = Bukkit.getOfflinePlayer(data.getUniqueId());
             stats.add(CC.translate("&e" + i + ") &f" + target.getName() + " " + data.getGlobalStats("ELO")));
         }
         stats.forEach(lines -> {
@@ -67,6 +74,14 @@ public class HologramCommand extends Command implements Listener {
         hologramManager.addActiveHologram(hologram);
         hologramManager.saveHologram(hologram);
         hologramManager.reload();
+
+        new BukkitRunnable() {
+
+            @Override
+            public void run() {
+                hologramManager.reload();
+            }
+        }.runTaskTimer(this.plugin, 20L, 20L);
 
         return false;
     }

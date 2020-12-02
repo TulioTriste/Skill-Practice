@@ -104,6 +104,10 @@ public class TNTTagEvent extends PracticeEvent<TNTTagPlayer> {
                         }
                     }.runTaskLater(getPlugin(), 60L);
                 }
+                else if (this.getByState(TNTTagPlayer.TNTTagState.FIGHTING).size() == 0) {
+                    fighting.clear();
+                    end();
+                }
             }
         };
     }

@@ -37,7 +37,7 @@ public class StatsCommand extends Command {
 		}
 
 		OfflinePlayer target = this.plugin.getServer().getOfflinePlayer(args[0]);
-		if (target == null) {
+		if (target == null || !target.isOnline()) {
 			sender.sendMessage(String.format(StringUtil.PLAYER_NOT_FOUND, args[0]));
 			return true;
 		}

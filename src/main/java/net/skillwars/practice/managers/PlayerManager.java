@@ -21,6 +21,7 @@ import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -104,16 +105,21 @@ public class PlayerManager {
 
     public void loadData(PlayerData playerData, InetAddress ip) {
         playerData.setPlayerState(PlayerState.SPAWN);
-        playerData.setCountry(getCountry(ip));
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                playerData.setCountry(getCountry(ip));
+            }
+        }.runTaskAsynchronously(this.plugin);
 
         Config config = new Config("/players/" + playerData.getUniqueId().toString(), this.plugin);
         ConfigurationSection playerKitsSection = config.getConfig().getConfigurationSection("playerkits");
         ConfigurationSection matchs = config.getConfig().getConfigurationSection("match");
 
-        if (matchs != null) {
+        /*if (matchs != null) {
             matchs.getKeys(false).forEach(kitName -> {
-                playerData.setMatchWins(kitName, matchs.getInt("RankedWins." + kitName));
-                playerData.setMatchLosses(kitName, matchs.getInt("RankedLosses." + kitName));
+                playerData.setRankedWins(kitName, matchs.getInt("RankedWins." + kitName));
+                playerData.setRankedLosses(kitName, matchs.getInt("RankedLosses." + kitName));
             });
         } else {
             this.plugin.getKitManager().getKits().forEach(kit -> {
@@ -124,7 +130,7 @@ public class PlayerManager {
                     config.reload();
                 }
             });
-        }
+        }*/
 
         if (playerKitsSection != null) {
             this.plugin.getKitManager().getKits().forEach((kit) -> {
@@ -177,6 +183,8 @@ public class PlayerManager {
                 playerData.getRankedLosses().put(key, ladderDocument.getInteger("ranked-losses"));
             }
         });
+
+        Document matchStatisticsDocument = (Document) document.get("statistics");
     }
 
     public void removePlayerData(final UUID uuid) {
@@ -229,9 +237,9 @@ public class PlayerManager {
         playerData.getRankedElo().forEach((key, value) -> {
             Document ladderDocument;
 
-            if(statisticsDocument.containsKey(key)){
+            if (statisticsDocument.containsKey(key)) {
                 ladderDocument = (Document)statisticsDocument.get(key);
-            }else{
+            } else {
                 ladderDocument = new Document();
             }
 
@@ -261,12 +269,6 @@ public class PlayerManager {
             }
         });
 
-        playerData.getMatchWins().keySet().forEach(kitName ->
-                config.getConfig().set("match." + kitName + ".RankedWins", playerData.getMatchWins(kitName)));
-
-        playerData.getMatchLosses().keySet().forEach(kitName ->
-                config.getConfig().set("match." + kitName + ".RankedLosses", playerData.getMatchLosses(kitName)));
-
         config.save();
     }
 
@@ -274,7 +276,7 @@ public class PlayerManager {
         return this.playerData.values();
     }
 
-    public PlayerData getPlayerData(final UUID uuid) {
+    public PlayerData getPlayerData(UUID uuid) {
         return this.playerData.get(uuid);
     }
 
@@ -307,11 +309,8 @@ public class PlayerManager {
         player.updateInventory();
     }
 
-    public void sendToSpawnAndReset(final Player player) {
+    public void sendToSpawnAndReset(Player player) {
         PlayerData playerData = this.getPlayerData(player.getUniqueId());
-        if (!player.isOnline()) {
-            return;
-        }
         if (Practice.getInstance().getSpawnManager().getSpawnLocation() == null) {
         	player.sendMessage(Color.translate("&cPlease set a spawn location!"));
         	return;
@@ -337,7 +336,7 @@ public class PlayerManager {
 		player.teleport(Practice.getInstance().getSpawnManager().getSpawnLocation().toBukkitLocation());
     }
 
-    public void sendToSpawnAndResetNoTP(final Player player) {
+    public void sendToSpawnAndResetNoTP(Player player) {
         final PlayerData playerData = this.getPlayerData(player.getUniqueId());
         if (!player.isOnline()) {
             return;

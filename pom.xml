@@ -102,6 +102,12 @@
 			<scope>system</scope>
 			<systemPath>${project.basedir}/libs/Holograms-2.13.jar</systemPath>
 		</dependency>
+		<dependency>
+			<groupId>net.luckperms</groupId>
+			<artifactId>api</artifactId>
+			<version>5.2</version>
+			<scope>provided</scope>
+		</dependency>
         <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>

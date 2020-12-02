@@ -2,6 +2,7 @@ package net.skillwars.practice.commands.management;
 
 import net.skillwars.practice.Practice;
 import net.skillwars.practice.player.PlayerData;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -31,7 +32,7 @@ public class ResetStatsCommand extends Command {
             commandSender.sendMessage(ChatColor.RED + "Usage: /reset <player>");
             return true;
         }
-        Player target = this.plugin.getServer().getPlayer(args[0]);
+        Player target = Bukkit.getPlayer(args[0]);
         if (target == null) {
             commandSender.sendMessage(String.format(StringUtil.PLAYER_NOT_FOUND, args[0]));
             return true;
@@ -39,8 +40,8 @@ public class ResetStatsCommand extends Command {
         PlayerData playerData = this.plugin.getPlayerManager().getPlayerData(target.getUniqueId());
         for (Kit kit : this.plugin.getKitManager().getKits()) {
             playerData.setElo(kit.getName(), 1000);
-            playerData.setLosses(kit.getName(), 0);
-            playerData.setWins(kit.getName(), 0);
+            playerData.setRankedWins(kit.getName(), 0);
+            playerData.setRankedLosses(kit.getName(), 0);
         }
         commandSender.sendMessage(ChatColor.GREEN + target.getName() + "'s stats have been wiped.");
         return true;

@@ -1,12 +1,13 @@
 package net.skillwars.practice.listeners;
 
-import me.joansiitoh.datas.events.NickUpdateEvent;
+import com.google.common.collect.Lists;
 import me.joansiitoh.skillcore.apis.NametagEdit;
 import me.joeleoli.nucleus.nametag.NameTagHandler;
+import net.minecraft.server.v1_8_R3.EntityPlayer;
 import net.skillwars.practice.Practice;
-import net.skillwars.practice.commands.management.PlayersCommand;
 import net.skillwars.practice.event.match.MatchCancelEvent;
 import net.skillwars.practice.event.match.MatchEndEvent;
+import net.skillwars.practice.event.match.MatchResetEvent;
 import net.skillwars.practice.event.match.MatchStartEvent;
 import net.skillwars.practice.inventory.InventorySnapshot;
 import net.skillwars.practice.kit.Kit;
@@ -18,10 +19,7 @@ import net.skillwars.practice.player.PlayerState;
 import net.skillwars.practice.queue.QueueType;
 import net.skillwars.practice.runnable.MatchResetRunnable;
 import net.skillwars.practice.runnable.MatchRunnable;
-import net.skillwars.practice.runnable.MatchTntTagRunnable;
 import net.skillwars.practice.util.*;
-import net.minecraft.server.v1_8_R3.EntityPlayer;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -30,11 +28,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
 import pt.foxspigot.jar.knockback.KnockbackModule;
 import pt.foxspigot.jar.knockback.KnockbackProfile;
 
-import javax.swing.*;
 import java.util.*;
 
 public class MatchListener implements Listener {
@@ -52,21 +48,11 @@ public class MatchListener implements Listener {
             return;
         }
 
-        if (kit.isSpleef()) {
+        if (kit.isBuild() || kit.isWaterdrop() || kit.isSpleef()) {
             if (match.getArena().getAvailableArenas().size() <= 0) {
                 match.broadcast(ChatColor.RED + "No hay arenas disponibles.");
                 this.plugin.getMatchManager().removeMatch(match);
-                return;
-            }
-            match.setStandaloneArena(match.getArena().getAvailableArena());
-            this.plugin.getArenaManager().setArenaMatchUUID(match.getArena(), match.getMatchId());
-        }
-
-        if (kit.isBuild()) {
-            if (match.getArena().getAvailableArenas().size() <= 0) {
-                match.broadcast(ChatColor.RED + "No hay arenas disponibles.");
-                this.plugin.getMatchManager().removeMatch(match);
-                match.getTeams().forEach(team -> team.getAlivePlayers().forEach(uuid -> {
+                match.getTeams().forEach(team -> team.getPlayers().forEach(uuid -> {
                     Player player = Bukkit.getPlayer(uuid);
                     this.plugin.getPlayerManager().sendToSpawnAndResetNoTP(player);
                 }));
@@ -84,7 +70,7 @@ public class MatchListener implements Listener {
         List<Location> locs = Circle.getCircle(MathUtil.getMiddle(locationA.toBukkitLocation(), locationB.toBukkitLocation()), kit.isSumo() ? 2 : 10,
                 match.getTeams().get(0).getAlivePlayers().size());
 
-        match.getTeams().forEach(team -> team.getAlivePlayers().forEach(player1 -> {
+        /*match.getTeams().forEach(team -> team.getAlivePlayers().forEach(player1 -> {
             Player p1 = Bukkit.getPlayer(player1);
             team.getAlivePlayers().forEach(player2 -> {
                 Player p2 = Bukkit.getPlayer(player2);
@@ -97,7 +83,7 @@ public class MatchListener implements Listener {
                     NameTagHandler.addToTeam(p2, p1, ChatColor.RED, kit.isBuild());
                 }
             });
-        }));
+        }));*/
 
         match.getTeams().forEach(team -> team.alivePlayers().forEach(player -> {
             matchPlayers.add(player);
@@ -126,7 +112,13 @@ public class MatchListener implements Listener {
                 player.teleport(target);
                 locs.remove(0);
             } else {
-                player.teleport(team.getTeamID() == 1 ? locationA.toBukkitLocation() : locationB.toBukkitLocation());
+                Location locA = locationA.toBukkitLocation();
+                Location locB = locationB.toBukkitLocation();
+                if (kit.isWaterdrop()) {
+                    locA.subtract(0.0, 1.0, 0.0);
+                    locB.subtract(0.0, 1.0, 0.0);
+                }
+                player.teleport(team.getTeamID() == 1 ? locA : locB);
             }
             if (kit.isCombo()) {
                 player.setMaximumNoDamageTicks(3);
@@ -155,7 +147,7 @@ public class MatchListener implements Listener {
                 playerData.setPlayerState(PlayerState.FIGHTING);
             }
 
-            /*if (match.isFFA()) {
+            if (match.isFFA()) {
                 for (UUID uuid : team.getAlivePlayers()){
                     Player teamplayer = this.plugin.getServer().getPlayer(uuid);
                     NameTagHandler.removeFromTeams(player, teamplayer);
@@ -174,15 +166,15 @@ public class MatchListener implements Listener {
                     NameTagHandler.removeFromTeams(player, enemy);
                     NameTagHandler.addToTeam(player, enemy, ChatColor.RED, kit.isBuild());
                 }
-            }*/
+            }
 
-            if(kit.isSumo() || match.getKit().isSpleef()){
+            if(kit.isSumo() || kit.isSpleef() || kit.isWaterdrop()){
                 PlayerUtil.denyMovement(player);
             }
         }));
 
         for (Player player : matchPlayers) {
-            for (Player online : this.plugin.getServer().getOnlinePlayers()) {
+            for (Player online : Bukkit.getOnlinePlayers()) {
                 online.hidePlayer(player);
                 player.hidePlayer(online);
             }
@@ -194,10 +186,29 @@ public class MatchListener implements Listener {
             }
         }
 
-        if (kit.isTnttag()) {
-            new MatchTntTagRunnable(match).runTaskTimer(this.plugin, 20L, 20L);
-            return;
+        if (!match.isParty() && !match.isPartyMatch()) {
+            Player player1 = Bukkit.getPlayer(match.getTeams().get(0).getAlivePlayers().get(0));
+            PlayerData data1 = this.plugin.getPlayerManager().getPlayerData(player1.getUniqueId());
+            Player player2 = Bukkit.getPlayer(match.getTeams().get(1).getAlivePlayers().get(0));
+            PlayerData data2 = this.plugin.getPlayerManager().getPlayerData(player2.getUniqueId());
+
+            player1.sendMessage(CC.translate("&7&m----------------------------------"));
+            player1.sendMessage(CC.translate("&eOponente: &c" + player2.getName()));
+            player1.sendMessage(CC.translate("&ePais: &c" + data2.getCountry()));
+            if (match.getType() == QueueType.RANKED) {
+                player1.sendMessage(CC.translate("&eElo: &c" + data2.getElo(kit.getName())));
+            }
+            player1.sendMessage(CC.translate("&7&m----------------------------------"));
+
+            player2.sendMessage(CC.translate("&7&m----------------------------------"));
+            player2.sendMessage(CC.translate("&eOponente: &c" + player1.getName()));
+            player2.sendMessage(CC.translate("&ePais: &c" + data1.getCountry()));
+            if (match.getType() == QueueType.RANKED) {
+                player2.sendMessage(CC.translate("&eElo: &c" + data1.getElo(kit.getName())));
+            }
+            player2.sendMessage(CC.translate("&7&m----------------------------------"));
         }
+
         new MatchRunnable(match).runTaskTimer(this.plugin, 20L, 20L);
     }
 
@@ -209,8 +220,9 @@ public class MatchListener implements Listener {
         match.setWinningTeamId(event.getWinningTeam().getTeamID());
         match.setCountdown(4);
 
-        /*event.getWinningTeam().getPlayers().forEach(uuidWin -> {
+        event.getWinningTeam().getPlayers().forEach(uuidWin -> {
             Player pWin1 = Bukkit.getPlayer(uuidWin);
+            NameTagHandler.removeHealthDisplay(pWin1);
             event.getWinningTeam().getPlayers().forEach(uuidWin2 -> {
                 Player pWin2 = Bukkit.getPlayer(uuidWin2);
                 if (pWin1 == pWin2) return;
@@ -222,23 +234,28 @@ public class MatchListener implements Listener {
                 NameTagHandler.removeFromTeams(pLos1, pWin1);
                 NameTagHandler.removeFromTeams(pWin1, pLos1);
             });
+            NametagEdit.updatePrefix(pWin1);
         });
         event.getLosingTeam().getPlayers().forEach(uuidLos -> {
             Player pLos1 = Bukkit.getPlayer(uuidLos);
+            NameTagHandler.removeHealthDisplay(pLos1);
             event.getLosingTeam().getPlayers().forEach(uuidLos2 -> {
                 Player pLos2 = Bukkit.getPlayer(uuidLos2);
                 if (pLos1 == pLos2) return;
                 NameTagHandler.removeFromTeams(pLos1, pLos2);
                 NameTagHandler.removeFromTeams(pLos2, pLos1);
             });
-        });*/
+            NametagEdit.updatePrefix(pLos1);
+        });
 
         if (match.isFFA()) {
             Player winner = this.plugin.getServer().getPlayer(event.getWinningTeam().getAlivePlayers().get(0));
-            PlayerData winnerData = this.plugin.getPlayerManager().getPlayerData(winner.getUniqueId());
-            Player losser = this.plugin.getServer().getPlayer(event.getLosingTeam().getAlivePlayers().get(0));
-            PlayerData losserData = this.plugin.getPlayerManager().getPlayerData(losser.getUniqueId());
-            Clickable inventories = new Clickable("            " + CC.DARK_AQUA);
+            String winnerMessage = CC.GREEN + "Ganador: " + CC.WHITE;
+            String losserMessage = CC.RED + "Perdedor: " + CC.WHITE;
+            List<String> winnerPlayers = Lists.newArrayList();
+            List<String> losserPlayers = Lists.newArrayList();
+            /*JSONMessage winnerInventories = JSONMessage.create();
+            JSONMessage losserInventories = JSONMessage.create();*/
 
             event.getWinningTeam().players().forEach(player -> {
                 PlayerData data = this.plugin.getPlayerManager().getPlayerData(player.getUniqueId());
@@ -247,19 +264,15 @@ public class MatchListener implements Listener {
                     match.addSnapshot(player);
                 }
                 if (player.getUniqueId() == winner.getUniqueId()) {
-                    inventories.add(CC.DARK_AQUA + player.getName() + CC.GRAY + " vs ",
-                            CC.AQUA + "Ver inventario",
-                            "/inv " + match.getSnapshot(player.getUniqueId()).getSnapshotId());
+                    winnerPlayers.add(player.getName());
                 } else {
-                    inventories.add(CC.DARK_AQUA + player.getName(),
-                            CC.AQUA + "Ver inventario",
-                            "/inv " + match.getSnapshot(player.getUniqueId()).getSnapshotId());
+                    losserPlayers.add(player.getName());
                 }
 
 
-                NameTagHandler.removeHealthDisplay(player);
+                /*NameTagHandler.removeHealthDisplay(player);
 
-                /*event.getLosingTeam().players().forEach(other -> {
+                event.getLosingTeam().players().forEach(other -> {
                     NameTagHandler.removeFromTeams(other, player);
                     NameTagHandler.removeFromTeams(player, other);
                 });*/
@@ -271,55 +284,46 @@ public class MatchListener implements Listener {
                     playerEp.setKnockback(profile4);
                 }
             });
-            event.getLosingTeam().players().forEach(player -> {
+            /*event.getLosingTeam().players().forEach(player -> {
                 PlayerData data = this.plugin.getPlayerManager().getPlayerData(player.getUniqueId());
                 data.setPlayerState(PlayerState.SPAWN);
-            });
+            });*/
             for (InventorySnapshot snapshot : match.getSnapshots().values()) {
                 this.plugin.getInventoryManager().addSnapshot(snapshot);
             }
 
-            match.broadcast("&b" + winner.getName() + " &fha &aGanado &fla Pelea.");
-            match.broadcast("&7&m---------------------------------------");
-            match.broadcast("                  &b" + match.getKit().getName() + " &7- &b" + TimeUtil.millisToTimer(match.getElapsedDuration()));
-            match.broadcast("");
-            match.broadcast(inventories);
-            match.broadcast("");
-            match.broadcast("               &f" + winnerData.getHits() + " &7- &bGolpes dados &7- &f" + losserData.getHits());
-            match.broadcast("            &f" + winnerData.getLongestCombo() + " &7- &bCombo mas largo &7- &f" + losserData.getLongestCombo());
-            if (match.getKit().getName().equalsIgnoreCase("NoDebuff") || match.getKit().getName().equalsIgnoreCase("NoDebuffLite") ||
-                    match.getKit().getName().equalsIgnoreCase("AxePvP") || match.getKit().getName().equalsIgnoreCase("HCF") ||
-                    match.getKit().getName().equalsIgnoreCase("Tanqueado") || match.getKit().getName().equalsIgnoreCase("Debuff")) {
-                match.broadcast("         &f" + winnerData.getPotsLeft() + " &7- &bPociones restantes &7- &f" + losserData.getPotsLeft());
-                match.broadcast("         &f" + winnerData.getMissedPots() + " &7- &bPociones gastadas &7- &f" + losserData.getMissedPots());
-            }
-            match.broadcast("");
-            match.broadcast("                        &f" + MathUtil.roundToHalves(winner.getHealth() / 2.0D) + " / 10 &c❤");
-            match.broadcast(CC.translate("&7&m---------------------------------------"));
+            match.getTeams().forEach(team -> team.players().forEach(players -> {
+                players.sendMessage(CC.translate("&b" + winner.getName() + " &fha &aGanado &fla Pelea."));
+                players.sendMessage(CC.translate("&7&m---------------------------------------"));
+                players.sendMessage(CC.translate("&eInventarios &7(Clic en el nick)"));
+                players.sendMessage(CC.translate(winnerMessage + winnerPlayers.toString().replace("[", "").replace("]", "")));
+                players.sendMessage(CC.translate(losserMessage + losserPlayers.toString().replace("[", "").replace("]", "")));
+                players.sendMessage(CC.translate("&7&m---------------------------------------"));
+            }));
         } else if (match.isRedrover()) {
             match.broadcast(CC.SECONDARY + event.getWinningTeam().getLeaderName() + CC.PRIMARY + " ha ganado el Redrover!");
         } else {
             Player winner = Bukkit.getPlayer(event.getWinningTeam().getLeader());
             Player losser = Bukkit.getPlayer(event.getLosingTeam().getLeader());
             PlayerData winnerData = this.plugin.getPlayerManager().getPlayerData(winner.getUniqueId());
-            PlayerData losserData = this.plugin.getPlayerManager().getPlayerData(losser.getUniqueId());
-            Clickable inventories = new Clickable("            " + CC.DARK_AQUA);
+            String winnerMessage = CC.GREEN + "Ganador: " + CC.WHITE;
+            String losserMessage = CC.RED + "Perdedor: " + CC.WHITE;
+            JSONMessage winnerInventories = JSONMessage.create();
+            JSONMessage losserInventories = JSONMessage.create();
             match.getTeams().forEach(team -> team.players().forEach(player -> {
-                PlayerData data = this.plugin.getPlayerManager().getPlayerData(player.getUniqueId());
-                data.setPlayerState(PlayerState.SPAWN);
                 if (!match.hasSnapshot(player.getUniqueId())) {
                     match.addSnapshot(player);
                 }
 
                 boolean onWinningTeam = this.plugin.getPlayerManager().getPlayerData(player.getUniqueId()).getTeamID() == event.getWinningTeam().getTeamID();
                 if (onWinningTeam) {
-                    inventories.add(CC.DARK_AQUA + player.getName() + CC.GRAY + " vs ",
-                            CC.AQUA + "Ver inventario",
-                            "/inv " + match.getSnapshot(player.getUniqueId()).getSnapshotId());
+                    winnerInventories.then(winnerMessage + player.getName())
+                            .tooltip("§bVer inventario")
+                            .runCommand("/inv " + match.getSnapshot(player.getUniqueId()).getSnapshotId());
                 } else {
-                    inventories.add(CC.DARK_AQUA + player.getName(),
-                            CC.AQUA + "Ver inventario",
-                            "/inv " + match.getSnapshot(player.getUniqueId()).getSnapshotId());
+                    losserInventories.then(losserMessage + player.getName())
+                            .tooltip("§bVer inventario")
+                            .runCommand("/inv " + match.getSnapshot(player.getUniqueId()).getSnapshotId());
                 }
 
                 MatchTeam otherTeam = team == match.getTeams().get(0) ? match.getTeams().get(1) : match.getTeams().get(0);
@@ -359,38 +363,22 @@ public class MatchListener implements Listener {
                         .filter(Objects::nonNull).map(ItemStack::getDurability).filter(d -> d == 16421).count());
             }
 
-            match.broadcast("&b" + winner.getName() + " &fha &aGanado &fla Pelea.");
-            match.broadcast("&7&m---------------------------------------");
-            match.broadcast("                  &b" + match.getKit().getName() + " &7- &b" + TimeUtil.millisToTimer(match.getElapsedDuration()));
-            match.broadcast("");
-            match.broadcast(inventories);
-            match.broadcast("");
-            match.broadcast("               &f" + winnerData.getHits() + " &7- &bGolpes dados &7- &f" + losserData.getHits());
-            match.broadcast("            &f" + winnerData.getLongestCombo() + " &7- &bCombo mas largo &7- &f" + losserData.getLongestCombo());
-            if (match.getKit().getName().equalsIgnoreCase("NoDebuff") || match.getKit().getName().equalsIgnoreCase("NoDebuffLite") ||
-                    match.getKit().getName().equalsIgnoreCase("AxePvP") || match.getKit().getName().equalsIgnoreCase("HCF") ||
-                    match.getKit().getName().equalsIgnoreCase("Tanqueado") || match.getKit().getName().equalsIgnoreCase("Debuff")) {
-                match.broadcast("         &f" + winnerData.getPotsLeft() + " &7- &bPociones restantes &7- &f" + losserData.getPotsLeft());
-                match.broadcast("         &f" + winnerData.getMissedPots() + " &7- &bPociones gastadas &7- &f" + losserData.getMissedPots());
-            }
-            match.broadcast("");
-            match.broadcast("                        &f" + MathUtil.roundToHalves(winner.getHealth() / 2.0D) + " / 10 &c❤");
-            match.broadcast(CC.translate("&7&m---------------------------------------"));
+            match.getTeams().forEach(team -> team.players().forEach(players -> {
+                players.sendMessage(CC.translate("&b" + winner.getName() + " &fha &aGanado &fla Pelea."));
+                players.sendMessage(CC.translate("&7&m---------------------------------------"));
+                players.sendMessage(CC.translate("&eInventarios &7(Clic en el nick)"));
+                winnerInventories.send(players);
+                losserInventories.send(players);
+                players.sendMessage(CC.translate("&7&m---------------------------------------"));
+            }));
+
+            match.getSpectators().forEach(uuid -> {
+                Player player = Bukkit.getPlayer(uuid);
+                match.getSpectators().remove(uuid);
+            });
 
             if (match.getType().isRanked()) {
                 String kitName = match.getKit().getName();
-                event.getWinningTeam().getPlayers().forEach(player -> {
-                    PlayerData data = this.plugin.getPlayerManager().getPlayerData(player);
-                    int matchWins = data.getMatchWins(kitName);
-                    data.setMatchWins(kitName, matchWins + 1);
-                });
-
-                event.getLosingTeam().getPlayers().forEach(player -> {
-                    PlayerData data = this.plugin.getPlayerManager().getPlayerData(player);
-                    int matchLosses = data.getMatchLosses(kitName);
-                    data.setMatchLosses(kitName, matchLosses + 1);
-                });
-
                 Player winnerLeader = this.plugin.getServer().getPlayer(event.getWinningTeam().getPlayers().get(0));
                 PlayerData winnerLeaderData = this.plugin.getPlayerManager()
                         .getPlayerData(winnerLeader.getUniqueId());
@@ -439,7 +427,6 @@ public class MatchListener implements Listener {
                     if (match.getType() == QueueType.RANKED) {
                         winnerElo = winnerLeaderData.getElo(kitName);
                         loserElo = loserLeaderData.getElo(kitName);
-
                     }
 
                     preElo[0] = winnerElo;
@@ -460,8 +447,14 @@ public class MatchListener implements Listener {
                         winnerLeaderData.setElo(kitName, newWinnerElo);
                         loserLeaderData.setElo(kitName, newLoserElo);
 
-                        winnerLeaderData.setWins(kitName, winnerLeaderData.getWins(kitName) + 1);
-                        loserLeaderData.setLosses(kitName, loserLeaderData.getLosses(kitName) + 1);
+                        int matchWins = winnerLeaderData.getRankedWins(kitName);
+                        winnerData.setRankedWins(kitName, matchWins + 1);
+
+                        int matchLosses = loserLeaderData.getRankedLosses(kitName);
+                        loserLeaderData.setRankedLosses(kitName, matchLosses + 1);
+
+                        /*winnerLeaderData.setRankedWins(kitName, winnerLeaderData.getRankedWins(kitName) + 1);
+                        loserLeaderData.setRankedLosses(kitName, loserLeaderData.getRankedLosses(kitName) + 1);*/
                     }
                 }
 
@@ -484,5 +477,67 @@ public class MatchListener implements Listener {
         }));
         this.plugin.getMatchManager().removeMatch(match);
         new MatchResetRunnable(match).runTaskTimer(plugin, 20L, 20L);
+    }
+
+    @EventHandler
+    public void onMatchReset(MatchResetEvent event) {
+        Match match = event.getMatch();
+        Kit kit = match.getKit();
+        match.setCountdown(6);
+        match.setMatchState(MatchState.STARTING);
+
+        Set<Player> matchPlayers = new HashSet<>();
+
+        CustomLocation locationA = match.getArena().getA();
+        CustomLocation locationB = match.getArena().getB();
+        CustomLocation locationCenter = match.getArena().getCenter();
+        List<Location> locs = Circle.getCircle(MathUtil.getMiddle(locationA.toBukkitLocation(), locationB.toBukkitLocation()), kit.isSumo() ? 2 : 10,
+                match.getTeams().get(0).getAlivePlayers().size());
+
+        match.getTeams().forEach(team -> team.alivePlayers().forEach(player -> {
+            PlayerData playerData = this.plugin.getPlayerManager().getPlayerData(player.getUniqueId());
+            matchPlayers.add(player);
+            PlayerUtil.clearPlayer(player);
+
+            if(match.isFFA()){
+                Location loc = locs.get(0);
+                Location target = kit.isTnttag() ? loc.setDirection(locationCenter.toBukkitLocation().toVector()) : loc.setDirection(MathUtil.getMiddle(locationA.toBukkitLocation(), locationB.toBukkitLocation()).subtract(loc).toVector());
+                player.teleport(target);
+                locs.remove(0);
+            } else {
+                Location locA = locationA.toBukkitLocation();
+                Location locB = locationB.toBukkitLocation();
+                if (kit.isWaterdrop()) {
+                    locA.subtract(0.0, 1.0, 0.0);
+                    locB.subtract(0.0, 1.0, 0.0);
+                }
+                player.teleport(team.getTeamID() == 1 ? locA : locB);
+            }
+
+            if (!match.isRedrover()) {
+                if (!kit.isSumo() && !kit.isTnttag()) {
+                    this.plugin.getMatchManager().giveKits(player, kit);
+                }
+                playerData.setPlayerState(PlayerState.FIGHTING);
+            }
+
+            if(kit.isSumo() || kit.isSpleef() || kit.isWaterdrop()){
+                PlayerUtil.denyMovement(player);
+            }
+        }));
+
+        for (Player player : matchPlayers) {
+            for (Player online : Bukkit.getOnlinePlayers()) {
+                online.hidePlayer(player);
+                player.hidePlayer(online);
+            }
+        }
+
+        for (Player player : matchPlayers) {
+            for (Player other : matchPlayers) {
+                player.showPlayer(other);
+            }
+        }
+        new MatchRunnable(match).runTaskTimer(this.plugin, 20L, 20L);
     }
 }

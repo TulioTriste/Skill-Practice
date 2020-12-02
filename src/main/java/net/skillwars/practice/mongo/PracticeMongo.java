@@ -1,5 +1,6 @@
 package net.skillwars.practice.mongo;
 
+import com.mongodb.AuthenticationMechanism;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;

@@ -35,6 +35,7 @@ public class ArenaCommand {
         player.sendMessage(Style.translate("&a/arena generate &e(name) (numbers)"));
         player.sendMessage(Style.translate("&a/arena tp &e(name)"));
         player.sendMessage(Style.translate("&a/arena save &e(name)"));
+        player.sendMessage(Style.translate("&a/arena manage"));
     }
 
     @Command(names = "arena list", permissionNode = "practice.arena.list")
@@ -70,7 +71,7 @@ public class ArenaCommand {
     public static void a(Player player, @Parameter(name = "arena") Arena arena) {
         Location location = player.getLocation();
         location.setX(location.getBlockX() + 0.5);
-        location.setY(location.getBlockY() + 3.0);
+        location.setY(location.getBlockY() + 1.0);
         location.setZ(location.getBlockZ() + 0.5);
         arena.setA(CustomLocation.fromBukkitLocation(location));
         player.sendMessage(ChatColor.GREEN + "Se ha colocado la posición A correctamente en la arena " + arena.getName() + ".");

@@ -46,16 +46,14 @@ public class EntityListener implements Listener {
             switch (playerData.getPlayerState()) {
                 case FIGHTING:
                     Match match = this.plugin.getMatchManager().getMatch(playerData);
-                    if (match.getMatchState() != MatchState.FIGHTING) {
-                        e.setCancelled(true);
-                    }
-                    if (e.getCause() == EntityDamageEvent.DamageCause.VOID) {
-                        this.plugin.getMatchManager().removeFighter(player, playerData, true);
-                    }
 
-                    if(match.getKit().isParkour()) {
-                        e.setCancelled(true);
-                    }
+                    if (match.getMatchState() != MatchState.FIGHTING) e.setCancelled(true);
+
+                    //if (e.getCause() == EntityDamageEvent.DamageCause.VOID) this.plugin.getMatchManager().removeFighter(player, playerData, true);
+
+                    if(match.getKit().isParkour()) e.setCancelled(true);
+
+                    else if (e.getCause() != EntityDamageEvent.DamageCause.ENTITY_ATTACK && match.getKit().isTnttag()) e.setCancelled(true);
 
                     break;
                 case EVENT:
@@ -260,15 +258,20 @@ public class EntityListener implements Listener {
             if (match.getKit().isTnttag()) {
                 e.setCancelled(false);
                 e.setDamage(0.0D);
-                if (damager.getInventory().getHelmet().getType() != Material.TNT && damager.getInventory().getItem(0).getType() != Material.TNT) {
-                    return;
-                }
+                if (damager.getInventory().getHelmet() == null && damager.getInventory().getItem(0) == null) return;
+
                 if (damager.getInventory().getHelmet().getType() == Material.TNT && damager.getInventory().getItem(0).getType() == Material.TNT) {
                     damager.getInventory().setHelmet(null);
                     damager.getInventory().setItem(0, null);
                     entity.getInventory().setHelmet(new ItemStack(Material.TNT));
                     entity.getInventory().setItem(0, new ItemStack(Material.TNT));
+                    match.broadcast("&b" + entity.getName() + " &fes actualmente la Bomba.");
                 }
+                return;
+            }
+
+            if (match.getKit().isWaterdrop()) {
+                e.setCancelled(true);
                 return;
             }
 

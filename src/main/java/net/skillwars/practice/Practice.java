@@ -90,7 +90,7 @@ public class Practice extends JavaPlugin implements PluginMessageListener {
     @Override
     public void onDisable() {
         matchManager.getMatches().forEach((uuid, match)->{
-            if (match.getKit().isBuild() || match.getKit().isSpleef()) {
+            if (match.getKit().isBuild() || match.getKit().isSpleef() || match.getKit().isWaterdrop()) {
                 for (Location location : match.getPlacedBlockLocations()) {
                     location.getBlock().setType(Material.AIR);
                     match.removePlacedBlockLocation(location);
@@ -122,7 +122,7 @@ public class Practice extends JavaPlugin implements PluginMessageListener {
         mainConfig = new FileConfig(this, "config.yml");
 
         new PracticeMongo();
-        new SevenTab(this, new TablistAdapter());
+        //new SevenTab(this, new TablistAdapter());
 
         FoxSpigot.INSTANCE.addMovementHandler(new CustomMovementHandler());
 
@@ -192,7 +192,10 @@ public class Practice extends JavaPlugin implements PluginMessageListener {
                 new PlayerStatusCommand(),
                 new CancelRankedCommand(),
                 new HologramCommand(),
-                new LeaderboardCommand()
+                new LeaderboardCommand(),
+                new CancelTaskCommand(),
+                new PracticeCommand(),
+                new PlayerResetCommand()
         ).forEach(command -> registerCommand(command, getName()));
     }
 

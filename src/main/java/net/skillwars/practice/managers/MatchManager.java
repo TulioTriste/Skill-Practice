@@ -5,7 +5,6 @@ import me.joeleoli.nucleus.nametag.NameTagHandler;
 import me.joeleoli.nucleus.util.TaskUtil;
 import net.skillwars.practice.Practice;
 import net.skillwars.practice.arena.Arena;
-import net.skillwars.practice.commands.management.PlayersCommand;
 import net.skillwars.practice.event.match.MatchEndEvent;
 import net.skillwars.practice.event.match.MatchStartEvent;
 import net.skillwars.practice.inventory.InventorySnapshot;
@@ -18,13 +17,10 @@ import net.skillwars.practice.match.MatchTeam;
 import net.skillwars.practice.player.PlayerData;
 import net.skillwars.practice.player.PlayerState;
 import net.skillwars.practice.queue.QueueType;
-import net.skillwars.practice.runnable.MatchTntTagRunnable;
 import net.skillwars.practice.runnable.RematchRunnable;
-import net.skillwars.practice.util.*;
 import net.skillwars.practice.util.*;
 import net.skillwars.practice.util.inventory.UtilItem;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
@@ -40,7 +36,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
 public class MatchManager {
@@ -175,12 +170,12 @@ public class MatchManager {
             Set<Item> items = new HashSet<>();
             for (ItemStack item : player.getInventory().getContents()) {
                 if (item != null && item.getType() != Material.AIR) {
-                    items.add(player.getWorld().dropItemNaturally(player.getLocation(), item));
+                    //tems.add(player.getWorld().dropItemNaturally(player.getLocation(), item));
                 }
             }
             for (ItemStack item : player.getInventory().getArmorContents()) {
                 if (item != null && item.getType() != Material.AIR) {
-                    items.add(player.getWorld().dropItemNaturally(player.getLocation(), item));
+                    //items.add(player.getWorld().dropItemNaturally(player.getLocation(), item));
                 }
             }
             this.plugin.getMatchManager().addDroppedItems(match, items);
@@ -398,23 +393,6 @@ public class MatchManager {
         playerB.showPlayer(playerA);
 
         match.broadcast(CC.SECONDARY + playerA.getName() + CC.PRIMARY + " vs. " + CC.SECONDARY + playerB.getName());
-    }
-
-    /*public void selectPlayer(Match match) {
-        Player bomb = Bukkit.getPlayer(match.getTeams().get(0).getAlivePlayers().get(ThreadLocalRandom.current().nextInt(match.getTeams().get(0).getAlivePlayers().size())));
-        match.getTeams().get(0).getAlivePlayers().forEach(uuid -> {
-            Player player = Bukkit.getPlayer(uuid);
-            PlayerData data = this.plugin.getPlayerManager().getPlayerData(uuid);
-            player.sendMessage(CC.translate("&bEl Usuario " + bomb.getName() + " es la Bomba!"));
-            bomb.getInventory().setHelmet(new ItemStack(Material.TNT));
-            bomb.getInventory().setItem(0, new ItemStack(Material.TNT));
-        });
-        match.setMatchState(MatchState.STARTING);
-    }*/
-
-    public Player selectBomb(Match match) {
-        Player bomb = Bukkit.getPlayer(match.getTeams().get(0).getAlivePlayers().get(ThreadLocalRandom.current().nextInt(match.getTeams().get(0).getAlivePlayers().size())));
-        return bomb;
     }
 
     public void saveRematches(Match match) {

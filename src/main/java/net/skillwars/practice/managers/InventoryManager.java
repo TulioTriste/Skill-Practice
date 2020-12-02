@@ -37,13 +37,13 @@ public class InventoryManager {
 
     @Getter private final InventoryUI rankedInventory = new InventoryUI(CC.YELLOW + "Select a Ranked Ladder", true, 2);
 
-    @Getter private final InventoryUI editorInventory = new InventoryUI(CC.YELLOW + "Select an Editable Ladder", true, 2);
+    @Getter private final InventoryUI editorInventory = new InventoryUI(CC.YELLOW + "Select an Editable Ladder", true, 3);
 
-    @Getter private final InventoryUI duelInventory = new InventoryUI(CC.YELLOW + "Select a Duel Ladder", true, 2);
+    @Getter private final InventoryUI duelInventory = new InventoryUI(CC.YELLOW + "Select a Duel Ladder", true, 3);
 
-    @Getter private final InventoryUI partySplitInventory = new InventoryUI(CC.YELLOW + "Select a Party Split Kit", true, 2);
+    @Getter private final InventoryUI partySplitInventory = new InventoryUI(CC.YELLOW + "Select a Party Split Kit", true, 3);
 
-    @Getter private final InventoryUI partyFFAInventory = new InventoryUI(CC.YELLOW + "Select a Party FFA Kit", true, 2);
+    @Getter private final InventoryUI partyFFAInventory = new InventoryUI(CC.YELLOW + "Select a Party FFA Kit", true, 3);
 
     //@Getter private final InventoryUI redroverInventory = new InventoryUI(ChatColor.RED + "Select a Redrover Kit", true, 2);
 

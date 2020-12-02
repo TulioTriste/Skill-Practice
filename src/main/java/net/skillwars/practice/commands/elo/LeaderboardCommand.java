@@ -6,6 +6,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.Arrays;
 import java.util.Collections;
 
 /*
@@ -16,7 +17,7 @@ public class LeaderboardCommand extends Command {
 
     public LeaderboardCommand() {
         super("leaderboard");
-        this.setAliases(Collections.singletonList("topelo"));
+        this.setAliases(Arrays.asList("topelo", "tops"));
     }
 
     @Override

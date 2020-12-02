@@ -1,10 +1,7 @@
 package net.skillwars.practice.managers;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
 import lombok.Getter;
 import net.skillwars.practice.Practice;
 import net.skillwars.practice.file.Config;
@@ -21,7 +18,6 @@ public class KitManager {
 
     private final Map<String, Kit> kits = new HashMap<>();
 
-    @Getter
     private final List<String> rankedKits = new ArrayList<>();
 
     private Config config = new Config("kits", this.plugin);
@@ -60,10 +56,12 @@ public class KitManager {
             boolean spleef = kitSection.getBoolean(name + ".spleef");
             boolean parkour = kitSection.getBoolean(name + ".parkour");
             boolean tnttag = kitSection.getBoolean(name + ".tnttag");
+            boolean waterdrop = kitSection.getBoolean(name + ".waterdrop");
+            boolean freeFall = kitSection.getBoolean(name + ".freefall");
             boolean editable = kitSection.getBoolean(name + ".editable");
 
             Kit kit = new Kit(name, contents, armor, kitEditContents, icon, excludedArenas, arenaWhiteList, enabled,
-                    ranked, combo, sumo, build, spleef, parkour, tnttag, editable);
+                    ranked, combo, sumo, build, spleef, parkour, tnttag, waterdrop, freeFall, editable);
             this.kits.put(name, kit);
         });
     }
@@ -89,6 +87,8 @@ public class KitManager {
                 fileConfig.set("kits." + kitName + ".spleef", kit.isSpleef());
                 fileConfig.set("kits." + kitName + ".parkour", kit.isParkour());
                 fileConfig.set("kits." + kitName + ".tnttag", kit.isTnttag());
+                fileConfig.set("kits." + kitName + ".waterdrop", kit.isWaterdrop());
+                fileConfig.set("kits." + kitName + ".freefall", kit.isFreeFall());
                 fileConfig.set("kits." + kitName + ".editable", kit.isEditable());
             }
         });
@@ -107,6 +107,14 @@ public class KitManager {
 
     public Collection<Kit> getKits() {
         return this.kits.values();
+    }
+
+    public Collection<Kit> getRankedKits() {
+        Collection<Kit> test = new LinkedList<>();
+        this.kits.values().forEach(kit -> {
+            if (kit.isRanked()) test.add(kit);
+        });
+        return test;
     }
 
     public Kit getKit(String name) {

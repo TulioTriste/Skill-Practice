@@ -16,7 +16,7 @@ public class LeaveEventCommand extends Command {
         super("leave");
         this.plugin = Practice.getInstance();
         this.setDescription("Leave an event or tournament.");
-        this.setUsage(ChatColor.RED + "Usage: /leave");
+        this.setUsage(ChatColor.RED + "Usa: /leave");
     }
 
     public boolean execute(CommandSender sender, String alias, String[] args) {

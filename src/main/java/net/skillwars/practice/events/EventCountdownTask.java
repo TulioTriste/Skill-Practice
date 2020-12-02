@@ -40,7 +40,7 @@ public abstract class EventCountdownTask extends BukkitRunnable {
         }
         if (this.shouldAnnounce(this.timeUntilStart)) {
             String toSend = ChatColor.translateAlternateColorCodes('&',"&b[Evento] &c" + event.getName() + "&e Ha sido hosteado por &r" + Practice.getInstance().getChat().getPlayerPrefix(event.getHost()) + event.getHost().getName() + "&e comenzará en &c" + event.getCountdownTask().getTimeUntilStart() + "s" +
-                    " &7(" + event.getPlayers().size() + "/" + event.getLimit() + ") &a[Click Aqui]");
+                    " &7(" + event.getPlayers().size() + "/" + event.getLimit() + ") &a[Click Aquí]");
 
             Clickable message = new Clickable(toSend,
                     CC.GREEN + "Click para entrar al evento.",
