@@ -53,21 +53,22 @@ public class TablistAdapter implements TabAdapter {
         lines.add(new TabEntry(3, 14, CC.translate("&7" + Bukkit.getOnlinePlayers().size() + "/" + Bukkit.getMaxPlayers())));
         int number = 0;
         for (int i = 0; i < 48; i++) {
-            Player target = players().get(i);
+            if (players().isEmpty()) continue;
+            Player target = Bukkit.getPlayer(players().get(i));
             String tag = CC.translate(NametagEdit.getPrefix(target) + target.getName());
             int ping = ((CraftPlayer) target).getHandle().ping;
-           if (i <= 15) {
-               lines.add(new TabEntry(0, number + 2, tag).setPing(ping).setSkin(Skin.getPlayer(target)));
-               number++;
-           }
-           else if (i <= 31) {
-               lines.add(new TabEntry(1, number + 2, tag).setPing(ping).setSkin(Skin.getPlayer(target)));
-               number++;
-           }
-           else {
-               lines.add(new TabEntry(2, number + 2, tag).setPing(ping).setSkin(Skin.getPlayer(target)));
-               number++;
-           }
+            if (i <= 15) {
+                lines.add(new TabEntry(0, number + 2, tag).setPing(ping).setSkin(Skin.getPlayer(target)));
+                number++;
+            }
+            else if (i <= 31) {
+                lines.add(new TabEntry(1, number + 2, tag).setPing(ping).setSkin(Skin.getPlayer(target)));
+                number++;
+            }
+            else {
+                lines.add(new TabEntry(2, number + 2, tag).setPing(ping).setSkin(Skin.getPlayer(target)));
+                number++;
+            }
            if (i == 15 || i == 31 || i == 47) {
                number = 0;
            }
@@ -75,24 +76,9 @@ public class TablistAdapter implements TabAdapter {
         return lines;
     }
 
-    private List<Player> players() {
-        List<Player> players = new ArrayList<>(Bukkit.getOnlinePlayers());
-        Map<UUID, Integer> test = new HashMap<>();
-        Bukkit.getOnlinePlayers().forEach(player -> {
-            try {
-                Group group = Nucleus.getInstance().getLp().getGroupManager().getGroup(Nucleus.getInstance().getLp().getUserManager().getUser(player.getUniqueId()).getPrimaryGroup());
-                test.put(player.getUniqueId(), group.getWeight().getAsInt());
-            } catch (Exception exception) {
-                test.put(player.getUniqueId(), 0);
-            }
-        });
-        players.sort(new Comparator<Player>() {
-            @Override
-            public int compare(Player o1, Player o2) {
-                return Integer.compare(test.getOrDefault(o1.getUniqueId(), 0), test.getOrDefault(o2.getUniqueId(), 0));
-            }
-        });
-        Collections.reverse(players);
+    private List<String> players() {
+        List<String> players = Lists.newArrayList();
+        Bukkit.getOnlinePlayers().forEach(player -> players.add(player.getName()));
         return players;
     }
 }

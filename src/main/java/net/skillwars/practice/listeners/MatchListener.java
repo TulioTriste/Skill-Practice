@@ -1,7 +1,6 @@
 package net.skillwars.practice.listeners;
 
 import com.google.common.collect.Lists;
-import me.joansiitoh.skillcore.apis.NametagEdit;
 import me.joeleoli.nucleus.nametag.NameTagHandler;
 import net.minecraft.server.v1_8_R3.EntityPlayer;
 import net.skillwars.practice.Practice;
@@ -222,7 +221,9 @@ public class MatchListener implements Listener {
 
         event.getWinningTeam().getPlayers().forEach(uuidWin -> {
             Player pWin1 = Bukkit.getPlayer(uuidWin);
-            NameTagHandler.removeHealthDisplay(pWin1);
+            if (match.getKit().isBuild()) {
+                NameTagHandler.removeHealthDisplay(pWin1);
+            }
             event.getWinningTeam().getPlayers().forEach(uuidWin2 -> {
                 Player pWin2 = Bukkit.getPlayer(uuidWin2);
                 if (pWin1 == pWin2) return;
@@ -234,18 +235,20 @@ public class MatchListener implements Listener {
                 NameTagHandler.removeFromTeams(pLos1, pWin1);
                 NameTagHandler.removeFromTeams(pWin1, pLos1);
             });
-            NametagEdit.updatePrefix(pWin1);
+            //NametagEdit.updatePrefix(pWin1);
         });
         event.getLosingTeam().getPlayers().forEach(uuidLos -> {
             Player pLos1 = Bukkit.getPlayer(uuidLos);
-            NameTagHandler.removeHealthDisplay(pLos1);
+            if (match.getKit().isBuild()) {
+                NameTagHandler.removeHealthDisplay(pLos1);
+            }
             event.getLosingTeam().getPlayers().forEach(uuidLos2 -> {
                 Player pLos2 = Bukkit.getPlayer(uuidLos2);
                 if (pLos1 == pLos2) return;
                 NameTagHandler.removeFromTeams(pLos1, pLos2);
                 NameTagHandler.removeFromTeams(pLos2, pLos1);
             });
-            NametagEdit.updatePrefix(pLos1);
+            //NametagEdit.updatePrefix(pLos1);
         });
 
         if (match.isFFA()) {
@@ -256,6 +259,8 @@ public class MatchListener implements Listener {
             List<String> losserPlayers = Lists.newArrayList();
             /*JSONMessage winnerInventories = JSONMessage.create();
             JSONMessage losserInventories = JSONMessage.create();*/
+
+            match.spectatorPlayers().forEach(player -> this.plugin.getPlayerManager().sendToSpawnAndReset(player));
 
             event.getWinningTeam().players().forEach(player -> {
                 PlayerData data = this.plugin.getPlayerManager().getPlayerData(player.getUniqueId());

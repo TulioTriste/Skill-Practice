@@ -134,7 +134,7 @@ fight:
     - "&bDuration&7: &f{duration}"
     - "&7&m-----------------------"
 spectate:
-  formats:
+  teams:
     staff:
       - "&7&m-----------------------"
       - "&bRanked: {ranked}"
@@ -159,3 +159,10 @@ spectate:
       - "&bNombre: &f{secondLeader}"
       - "&BPing: &f{secondPing}"
       - "&7&m-----------------------"
+  ffa:
+    - "&7&m-----------------------"
+    - "&bKit: &f{kit}"
+    - ""
+    - "&3Jugadores Restantes:"
+    - "&b{leftPlayers}/{maxplayers}"
+    - "&7&m-----------------------"

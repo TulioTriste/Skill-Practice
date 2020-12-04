@@ -122,13 +122,18 @@ public class MatchRunnable extends BukkitRunnable {
                     plugin.getTournamentManager().removeTournamentMatch(match);
                     match.getRunnables().forEach(id -> plugin.getServer().getScheduler().cancelTask(id));
                     match.getEntitiesToRemove().forEach(Entity::remove);
-                    match.getTeams().forEach(team ->
-                            team.alivePlayers().forEach(plugin.getPlayerManager()::sendToSpawnAndReset));
-                    match.spectatorPlayers().forEach(plugin.getMatchManager()::removeSpectator);
+                    match.getTeams().forEach(team -> team.players().forEach(plugin.getPlayerManager()::sendToSpawnAndReset));
+                    plugin.getMatchManager().getSpectatorPlayer().keySet().forEach(uuid -> {
+                        if (plugin.getMatchManager().getSpectatorPlayer().get(uuid) == match.getMatchId()) {
+                            Player player = Bukkit.getPlayer(uuid);
+                            //this.plugin.getPlayerManager().sendToSpawnAndReset(player);
+                            plugin.getMatchManager().getSpectatorPlayer().remove(uuid, match.getMatchId());
+                        }
+                    });
                     match.getPlacedBlockLocations().forEach(location -> location.getBlock().setType(Material.AIR));
                     match.getOriginalBlockChanges().forEach((blockState) -> blockState.getLocation().getBlock().setType(blockState.getType()));
                     if (match.getKit().isWaterdrop()) {
-                        this.match.getWaterDropSpawn().forEach((location, block1) -> location.getBlock().setType(Material.OBSIDIAN));
+                        match.getWaterDropSpawn().forEach((location, block1) -> location.getBlock().setType(Material.OBSIDIAN));
                     }
                     plugin.getMatchManager().removeMatch(match);
                     new MatchResetRunnable(match).runTaskTimer(plugin, 20L, 20L);

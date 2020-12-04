@@ -27,6 +27,7 @@ import net.skillwars.practice.commands.management.*;
 import net.skillwars.practice.commands.time.DayCommand;
 import net.skillwars.practice.commands.time.NightCommand;
 import net.skillwars.practice.commands.time.SunsetCommand;
+import net.skillwars.practice.commands.toggle.EventModeCommand;
 import net.skillwars.practice.commands.toggle.SettingsCommand;
 import net.skillwars.practice.commands.warp.SpawnCommand;
 import net.skillwars.practice.handler.CustomMovementHandler;
@@ -86,6 +87,7 @@ public class Practice extends JavaPlugin implements PluginMessageListener {
     private TimerManager timerManager;
     private LeaderboardManager leaderboardManager;
     private ChatManager chatManager;
+    private ServerManager serverManager;
 
     @Override
     public void onDisable() {
@@ -195,7 +197,8 @@ public class Practice extends JavaPlugin implements PluginMessageListener {
                 new LeaderboardCommand(),
                 new CancelTaskCommand(),
                 new PracticeCommand(),
-                new PlayerResetCommand()
+                new PlayerResetCommand(),
+                new EventModeCommand()
         ).forEach(command -> registerCommand(command, getName()));
     }
 
@@ -229,6 +232,7 @@ public class Practice extends JavaPlugin implements PluginMessageListener {
         tournamentManager = new TournamentManager();
         timerManager = new TimerManager(this);
         leaderboardManager = new LeaderboardManager();
+        serverManager = new ServerManager();
 
         if (timerManager.getTimer(EnderpearlTimer.class) == null) {
             timerManager.registerTimer(new EnderpearlTimer());

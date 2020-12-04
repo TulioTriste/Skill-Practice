@@ -214,6 +214,7 @@ public class MatchManager {
 
     private void addDeathSpectator(Player player, PlayerData playerData, Match match) {
         this.spectators.put(player.getUniqueId(), match.getMatchId());
+        this.spectatorPlayer.put(player.getUniqueId(), match.getMatchId());
 
         playerData.setPlayerState(PlayerState.SPECTATING);
 
@@ -271,7 +272,6 @@ public class MatchManager {
 
         if (targetMatch.getMatchState() != MatchState.ENDING) {
             if (!targetMatch.haveSpectated(player.getUniqueId())) {
-
                 String spectatorMessage = ChatColor.AQUA + player.getName() + ChatColor.GRAY + " esta especteando esta pelea.";
 
                 if(!player.hasPermission("practice.staff")) {
@@ -340,7 +340,7 @@ public class MatchManager {
             if (!match.haveSpectated(player.getUniqueId())) {
                 match.getTeams().forEach(team -> team.alivePlayers().forEach(player2 -> {
                     if(!player.hasPermission("practice.staff")){
-                        player2.sendMessage(CC.SECONDARY + player.getName() + CC.PRIMARY + " ya no esta Especteando.");
+                        player2.sendMessage(CC.SECONDARY + player.getName() + CC.PRIMARY + " ya no esta especteando.");
                     }
                 }));
                 match.addHaveSpectated(player.getUniqueId());

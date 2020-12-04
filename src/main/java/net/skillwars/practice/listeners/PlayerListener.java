@@ -17,6 +17,8 @@ import net.skillwars.practice.util.ItemBuilder;
 import org.bukkit.*;
 import org.bukkit.block.Sign;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
+import org.bukkit.entity.EnderPearl;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -716,6 +718,21 @@ public class PlayerListener implements Listener {
                         event.getEntity().remove();
                     }
                 }
+            }
+
+            if (event.getEntity() instanceof EnderPearl) {
+                Entity entity = event.getEntity();
+                Location location = entity.getLocation();
+                Vector velocity = entity.getVelocity();
+                entity.remove();
+
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        Entity newEnderpearl = location.getWorld().spawnEntity(location, EntityType.ENDER_PEARL);
+                        newEnderpearl.setVelocity(velocity);
+                    }
+                }.runTaskLater(this.plugin, 1L);
             }
         }
     }

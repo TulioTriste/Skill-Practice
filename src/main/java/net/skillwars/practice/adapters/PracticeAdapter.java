@@ -19,6 +19,7 @@ import net.skillwars.practice.events.tnttag.TNTTagEvent;
 import net.skillwars.practice.events.tnttag.TNTTagPlayer;
 import net.skillwars.practice.file.Config;
 import net.skillwars.practice.match.Match;
+import net.skillwars.practice.match.MatchState;
 import net.skillwars.practice.match.MatchTeam;
 import net.skillwars.practice.party.Party;
 import net.skillwars.practice.player.PlayerData;
@@ -70,17 +71,14 @@ public class PracticeAdapter implements FrameAdapter {
 			case SPAWN:
 			case EVENT:
 			case SPECTATING:
-				if (this.plugin.getMatchManager().getSpectatorPlayer().containsKey(player.getUniqueId())) {
-					return this.getSpectateBoard(player);
+				if (this.plugin.getMatchManager().getSpectatorPlayer().get(player.getUniqueId()) != null) {
+					return getSpectateBoard(player);
 				}
-				return this.getLobbyBoard(player, false);
+				return getLobbyBoard(player, false);
 			case QUEUE:
-				if (this.plugin.getMatchManager().getSpectatorPlayer().containsKey(player.getUniqueId())) {
-					return this.getSpectateBoard(player);
-				}
-				return this.getLobbyBoard(player, true);
+				return getLobbyBoard(player, true);
 			case FIGHTING:
-				return this.getGameBoard(player);
+				return getGameBoard(player);
 		}
 		return null;
 	}
@@ -478,79 +476,101 @@ public class PracticeAdapter implements FrameAdapter {
 
 	private List<String> getSpectateBoard(Player player) {
 		List<String> lines = Lists.newLinkedList();
-		Match match = plugin.getMatchManager().getMatchFromUUID(this.plugin.getMatchManager().getSpectatorPlayer().get(player.getUniqueId()));
+		Match match = this.plugin.getMatchManager().getMatchFromUUID(this.plugin.getMatchManager().getSpectatorPlayer().get(player.getUniqueId()));
 
-		if (match.isFFA()) return getGameBoard(player);
-
-		if (match.getTeams().size() < 2) return getGameBoard(player);
-
-		OfflinePlayer firstOffLeader = Bukkit.getOfflinePlayer(match.getTeams().get(0).getLeaderName());
-		OfflinePlayer secondOffLeader = Bukkit.getOfflinePlayer(match.getTeams().get(1).getLeaderName());
-		if (!firstOffLeader.isOnline() || !secondOffLeader.isOnline()) {
-			return getGameBoard(player);
+		if (match.getMatchState() == MatchState.ENDING) {
+			return getLobbyBoard(player, false);
 		}
-		Player firstLeader = Bukkit.getPlayer(match.getTeams().get(0).getLeaderName());
-		Player secondLeader = Bukkit.getPlayer(match.getTeams().get(1).getLeaderName());
-		PlayerData firstData = this.plugin.getPlayerManager().getPlayerData(firstLeader.getUniqueId());
-		PlayerData secondData = this.plugin.getPlayerManager().getPlayerData(secondLeader.getUniqueId());
 
-		if (player.hasPermission("practice.staff")) {
-			for (String string : config.getConfig().getStringList("spectate.formats.staff")) {
-
-				if (string.contains("{firstLeader}")) {
-					string = string.replace("{firstLeader}", firstLeader.getName());
-				}
-
-				if (string.contains("{secondLeader}")) {
-					string = string.replace("{secondLeader}", secondLeader.getName());
-				}
-
-				if (string.contains("{firstLeaderCountry}")) {
-					string = string.replace("{firstLeaderCountry}", firstData.getCountry());
-				}
-
-				if (string.contains("{secondLeaderCountry}")) {
-					string = string.replace("{secondLeaderCountry}", secondData.getCountry());
-				}
-
-				if (string.contains("{ranked}")) {
-					string = string.replace("{ranked}", match.getType().isRanked() ? CC.translate("&aSí") : CC.translate("&cNo"));
-				}
-
-				lines.add(Color.translate(string));
-			}
-		} else {
-			for (String string : config.getConfig().getStringList("spectate.formats.staff")) {
-
-				if (string.contains("{firstLeader}")) {
-					string = string.replace("{firstLeader}", firstLeader.getName());
-				}
-
-				if (string.contains("{secondLeader}")) {
-					string = string.replace("{secondLeader}", secondLeader.getName());
-				}
-
-				if (string.contains("{firstCPS}")) {
-					string = string.replace("{firstCPS}", String.valueOf(GlobalBridge.getInstance().getDetectorListener().getClicks(firstLeader)));
-				}
-
-				if (string.contains("{secondCPS}")) {
-					string = string.replace("{secondCPS}", String.valueOf(GlobalBridge.getInstance().getDetectorListener().getClicks(secondLeader)));
-				}
-
-				if (string.contains("{firstPing}")) {
-					string = string.replace("{firstPing}", String.valueOf(PlayerUtil.getPing(firstLeader)));
-				}
-
-				if (string.contains("{secondPing}")) {
-					string = string.replace("{secondPing}", String.valueOf(PlayerUtil.getPing(secondLeader)));
-				}
+		if (match.isFFA()) {
+			MatchTeam playerTeam = match.getTeams().get(match.getTeams().get(0).getTeamID());
+			for (String string : config.getConfig().getStringList("spectate.ffa")) {
 
 				if (string.contains("{kit}")) {
 					string = string.replace("{kit}", match.getKit().getName());
 				}
 
-				lines.add(Color.translate(string));
+				if (string.contains("{leftPlayers}")) {
+					string = string.replace("{leftPlayers}", String.valueOf(playerTeam.getAlivePlayers().size()));
+				}
+
+				if (string.contains("{maxPlayers}")) {
+					string = string.replace("{maxPlayers}", String.valueOf(playerTeam.getPlayers().size()));
+				}
+
+				lines.add(CC.translate(string));
+			}
+		} else {
+			if (match.getTeams().size() < 2) return getGameBoard(player);
+
+			OfflinePlayer firstOffLeader = Bukkit.getOfflinePlayer(match.getTeams().get(0).getLeaderName());
+			OfflinePlayer secondOffLeader = Bukkit.getOfflinePlayer(match.getTeams().get(1).getLeaderName());
+			if (!firstOffLeader.isOnline() || !secondOffLeader.isOnline()) {
+				return getGameBoard(player);
+			}
+			Player firstLeader = Bukkit.getPlayer(match.getTeams().get(0).getLeaderName());
+			Player secondLeader = Bukkit.getPlayer(match.getTeams().get(1).getLeaderName());
+			PlayerData firstData = this.plugin.getPlayerManager().getPlayerData(firstLeader.getUniqueId());
+			PlayerData secondData = this.plugin.getPlayerManager().getPlayerData(secondLeader.getUniqueId());
+
+			if (player.hasPermission("practice.staff")) {
+				for (String string : config.getConfig().getStringList("spectate.teams.staff")) {
+
+					if (string.contains("{firstLeader}")) {
+						string = string.replace("{firstLeader}", firstLeader.getName());
+					}
+
+					if (string.contains("{secondLeader}")) {
+						string = string.replace("{secondLeader}", secondLeader.getName());
+					}
+
+					if (string.contains("{firstLeaderCountry}")) {
+						string = string.replace("{firstLeaderCountry}", firstData.getCountry());
+					}
+
+					if (string.contains("{secondLeaderCountry}")) {
+						string = string.replace("{secondLeaderCountry}", secondData.getCountry());
+					}
+
+					if (string.contains("{ranked}")) {
+						string = string.replace("{ranked}", match.getType().isRanked() ? CC.translate("&aSí") : CC.translate("&cNo"));
+					}
+
+					lines.add(Color.translate(string));
+				}
+			} else {
+				for (String string : config.getConfig().getStringList("spectate.teams.staff")) {
+
+					if (string.contains("{firstLeader}")) {
+						string = string.replace("{firstLeader}", firstLeader.getName());
+					}
+
+					if (string.contains("{secondLeader}")) {
+						string = string.replace("{secondLeader}", secondLeader.getName());
+					}
+
+					if (string.contains("{firstCPS}")) {
+						string = string.replace("{firstCPS}", String.valueOf(GlobalBridge.getInstance().getDetectorListener().getClicks(firstLeader)));
+					}
+
+					if (string.contains("{secondCPS}")) {
+						string = string.replace("{secondCPS}", String.valueOf(GlobalBridge.getInstance().getDetectorListener().getClicks(secondLeader)));
+					}
+
+					if (string.contains("{firstPing}")) {
+						string = string.replace("{firstPing}", String.valueOf(PlayerUtil.getPing(firstLeader)));
+					}
+
+					if (string.contains("{secondPing}")) {
+						string = string.replace("{secondPing}", String.valueOf(PlayerUtil.getPing(secondLeader)));
+					}
+
+					if (string.contains("{kit}")) {
+						string = string.replace("{kit}", match.getKit().getName());
+					}
+
+					lines.add(Color.translate(string));
+				}
 			}
 		}
 

@@ -33,7 +33,7 @@ public class PlayerResetCommand extends Command {
         }
         OfflinePlayer target = Bukkit.getOfflinePlayer(strings[0]);
 
-        if (target.hasPlayedBefore()) {
+        if (!target.hasPlayedBefore()) {
             commandSender.sendMessage(CC.translate("&cEste jugador no existe."));
             return true;
         }

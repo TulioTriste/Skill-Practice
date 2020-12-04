@@ -6,6 +6,7 @@ import net.skillwars.practice.party.Party;
 import net.skillwars.practice.player.PlayerData;
 import net.skillwars.practice.tournament.Tournament;
 import net.skillwars.practice.tournament.TournamentState;
+import net.skillwars.practice.util.CC;
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -86,6 +87,12 @@ public class JoinEventCommand extends Command {
                 }
                 if (tournament.getSize() > tournament.getPlayers().size()) {
                     if ((tournament.getTournamentState() == TournamentState.WAITING || tournament.getTournamentState() == TournamentState.STARTING) && tournament.getCurrentRound() == 1) {
+                        if (this.plugin.getServerManager().isEventMode()) {
+                            if (!player.hasPermission("practice.torneopvp") || !player.hasPermission("practice.staff")) {
+                                player.sendMessage(CC.translate("&cNo puedes unirte a este Tournament en estos momentos"));
+                                return true;
+                            }
+                        }
                         this.plugin.getTournamentManager().joinTournament(id, player);
                     } else {
                         player.sendMessage(ChatColor.RED + "El torneo ya ha comenzado!");
